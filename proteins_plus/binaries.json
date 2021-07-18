@@ -1,0 +1,5 @@
+{
+  "preprocessor": "bin/preprocessor/preprocessor",
+  "protoss": "bin/protoss/protoss_4_pdb",
+  "ediascorer": "bin/ediascorer/EDIAscorer"
+}
