@@ -8,9 +8,9 @@ from django.db.models.signals import pre_delete
 from django.dispatch.dispatcher import receiver
 from django.conf import settings
 
-from proteins_plus.common import ProteinsPlusJob
+from proteins_plus.models import ProteinsPlusJob, ProteinsPlusHashableModel
 
-class Protein(models.Model):
+class Protein(ProteinsPlusHashableModel):
     """Django model for Protein objects"""
     name = models.CharField(max_length=255)
     pdb_code = models.CharField(max_length=4, null=True)
@@ -19,6 +19,8 @@ class Protein(models.Model):
     file_string = models.TextField()
     date_created = models.DateTimeField(auto_now_add=True)
     date_last_accessed = models.DateTimeField(auto_now=True)
+
+    hash_attributes = ['pdb_code', 'uniprot_code', 'file_type', 'file_string']
 
     def write_temp(self):
         """Write content of file_string to a temporary file
@@ -46,7 +48,7 @@ class Protein(models.Model):
         temp_file.seek(0)
         return temp_file
 
-class Ligand(models.Model):
+class Ligand(ProteinsPlusHashableModel):
     """Django model for Ligand objects. Always associated with a Protein object"""
     protein = models.ForeignKey(Protein, on_delete=models.CASCADE, blank=True, null=True)
     name = models.CharField(max_length=255)
@@ -55,9 +57,13 @@ class Ligand(models.Model):
     image = models.ImageField(upload_to=settings.MEDIA_DIRECTORIES['ligands'],
                             blank=True, null=True)
 
-class ElectronDensityMap(models.Model):
+    hash_attributes = ['protein', 'file_type', 'file_string']
+
+class ElectronDensityMap(ProteinsPlusHashableModel):
     """Django Model for electron density map files"""
     file = models.FileField(upload_to=settings.MEDIA_DIRECTORIES['density_files'])
+
+    hash_attributes = ['file']
 
 class PreprocessorJob(ProteinsPlusJob):
     """Django model for Preprocessor job objects"""
@@ -70,6 +76,10 @@ class PreprocessorJob(ProteinsPlusJob):
     ligand_file_type = models.CharField(max_length=3, default='sdf')
     output_protein = models.OneToOneField(Protein, on_delete=models.CASCADE,
                     null=True, related_name='parent_preprocessor_job')
+
+    hash_attributes = ['pdb_code', 'uniprot_code',
+                        'protein_string', 'protein_file_type',
+                        'ligand_string', 'ligand_file_type']
 
 @receiver(pre_delete, sender=Ligand)
 def ligand_image_delete(sender, instance, **kwargs): # pylint: disable=unused-argument

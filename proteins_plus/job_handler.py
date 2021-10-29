@@ -1,8 +1,6 @@
-"""Utility functions for all apps"""
+"""Common classes and functions for all apps"""
 import logging
 import traceback
-from rest_framework import serializers
-from django.db import models
 
 logger = logging.getLogger(__name__)
 
@@ -33,26 +31,6 @@ class Status:  # pylint: disable=too-few-public-methods
         """
         return Status.DETAILED[status]
 
-class ProteinsPlusJob(models.Model):
-    """Abstract model for Job objects"""
-    status = models.CharField(max_length=1, choices=Status.choices, default=Status.PENDING)
-    error = models.TextField(null=True)
-    error_detailed = models.TextField(null=True)
-    date_created = models.DateField(auto_now_add=True)
-    date_last_accessed = models.DateField(auto_now=True)
-
-    class Meta:
-        abstract=True
-
-class ProteinsPlusJobSerializer(serializers.ModelSerializer):
-    """Abstract model for job serializer"""
-    class Meta:
-        fields = ['id', 'status', 'date_created', 'date_last_accessed', 'error']
-
-class JobSubmitResponseSerializer(serializers.Serializer): # pylint: disable=abstract-method
-    """Serializer for response data of job submission requests"""
-    job_id = serializers.IntegerField(required=True)
-
 def execute_job(task, job_id, job_type, tool_name):
     """Execute Job as a celery task following a centralized workflow
 
@@ -74,6 +52,7 @@ def execute_job(task, job_id, job_type, tool_name):
         task(job)
     except Exception as error:
         job.status = Status.FAILURE
+        job.hash_value = None
         job.error = f'An error occurred during the execution of {tool_name}.'
         job.error_detailed = traceback.format_exc()
         job.save()
@@ -87,3 +66,29 @@ def execute_job(task, job_id, job_type, tool_name):
         job.status = Status.SUCCESS
         job.save()
         logger.info(f'Successfully finished executing {task} on {job_type} with id {job_id}.')
+
+def submit_task(job, task, use_cache):
+    """Retrieve an existing job from cache or start its execution
+
+    :param job: Job to be executed or retrieved from cache
+    :type job: ProteinsPlusJob
+    :param task: The task function to be called if no caching occurrs
+    :type task: celery.local.celery.local (celery shared task)
+    :param use_cache: Indicates whether caching should be used
+    :type use_cache: bool
+    :return: A dictionary containing the response information for the user
+    :rtype: dict('job_id': UUID, 'retrieved_from_cache': bool)
+    """
+    cached_job = None
+    retrieved_from_cache = False
+    if use_cache and len(job.hash_attributes) != 0:
+        cached_job = job.retrieve_job_from_cache()
+    if cached_job is None:
+        job.save()
+        task.delay(job.id)
+    else:
+        job = cached_job
+        retrieved_from_cache = True
+
+    response_data = {'job_id': job.id, 'retrieved_from_cache': retrieved_from_cache}
+    return response_data

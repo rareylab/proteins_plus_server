@@ -1,10 +1,12 @@
 """tests for ediascorer views"""
+import uuid
 from django.core.files import File
 
 from proteins_plus.test.utils import PPlusTestCase, call_api
 from molecule_handler.test.utils import create_test_protein
 
 from ..views import EdiascorerView
+from ..models import EdiaJob
 from .config import TestConfig
 
 class ViewTests(PPlusTestCase):
@@ -37,7 +39,7 @@ class ViewTests(PPlusTestCase):
 
     def test_post_non_existing_protein_id(self):
         """Test ediascorer endpoint with non existing protein id"""
-        data = {'protein_id': -1}
+        data = {'protein_id': uuid.uuid4()}
         response = call_api(EdiascorerView, 'post', data)
 
         self.assertEqual(response.status_code, 404)
@@ -60,3 +62,40 @@ class ViewTests(PPlusTestCase):
         response = call_api(EdiascorerView, 'post', data)
 
         self.assertEqual(response.status_code, 202)
+
+    def test_cache_behaviour(self):
+        """Test storing and retrieving objects from cache via api"""
+        protein = create_test_protein()
+        with open(TestConfig.density_file, 'rb') as density_file:
+            data = {'electron_density_map': File(density_file),
+                    'pdb_code': TestConfig.protein,
+                    'protein_id': protein.id}
+            response1 = call_api(EdiascorerView, 'post', data)
+
+        with open(TestConfig.density_file, 'rb') as density_file:
+            data = {'electron_density_map': File(density_file),
+                    'protein_id': protein.id}
+            response2 = call_api(EdiascorerView, 'post', data)
+
+        self.assertTrue(response2.data['retrieved_from_cache'])
+        self.assertEqual(response1.data['job_id'], response2.data['job_id'])
+
+        with open(TestConfig.density_file, 'rb') as density_file:
+            data = {'pdb_code': TestConfig.protein,
+                    'protein_id': protein.id}
+            response3 = call_api(EdiascorerView, 'post', data)
+
+        self.assertFalse(response3.data['retrieved_from_cache'])
+        self.assertNotEqual(response3.data['job_id'], response1.data['job_id'])
+
+        with open(TestConfig.density_file, 'rb') as density_file:
+            data = {'electron_density_map': File(density_file),
+                    'pdb_code': TestConfig.protein,
+                    'protein_id': protein.id,
+                    'use_cache': False}
+            response4 = call_api(EdiascorerView, 'post', data)
+
+        self.assertFalse(response4.data['retrieved_from_cache'])
+        self.assertNotEqual(response4.data['job_id'], response1.data['job_id'])
+        job = EdiaJob.objects.get(id=response4.data['job_id'])
+        self.assertIsNone(job.hash_value)

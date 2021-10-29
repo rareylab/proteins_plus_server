@@ -6,7 +6,8 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from drf_spectacular.utils import extend_schema
 
-from proteins_plus.common import JobSubmitResponseSerializer
+from proteins_plus.serializers import ProteinsPlusJobResponseSerializer
+from proteins_plus.job_handler import submit_task
 from molecule_handler.models import Protein, ElectronDensityMap
 
 from .models import AtomScores, EdiaJob
@@ -20,7 +21,7 @@ class EdiascorerView(APIView):
 
     @extend_schema(
         request=EdiascorerSubmitSerializer,
-        responses=JobSubmitResponseSerializer
+        responses=ProteinsPlusJobResponseSerializer
     )
     def post(self, request):
         """API endpoint for executing the ediascorer binary
@@ -52,12 +53,10 @@ class EdiascorerView(APIView):
             job.density_file_pdb_code = request_data['pdb_code']
         else:
             job.density_file_pdb_code = input_protein.pdb_code
-        job.save()
 
-        ediascore_protein_task.delay(job.id)
+        response_data = submit_task(job, ediascore_protein_task, request_data['use_cache'])
+        serializer = ProteinsPlusJobResponseSerializer(response_data)
 
-        response_data = {'job_id': job.id}
-        serializer = JobSubmitResponseSerializer(response_data)
         return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
 
 class EdiaJobViewSet(ReadOnlyModelViewSet): # pylint: disable=too-many-ancestors

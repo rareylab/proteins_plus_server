@@ -1,7 +1,7 @@
 """Protoss model serializers"""
 from rest_framework import serializers
 from rest_framework.exceptions import NotFound
-from proteins_plus.common import ProteinsPlusJobSerializer
+from proteins_plus.serializers import ProteinsPlusJobSerializer, ProteinsPlusJobSubmitSerializer
 from molecule_handler.models import Protein
 from .models import ProtossJob
 
@@ -11,9 +11,9 @@ class ProtossJobSerializer(ProteinsPlusJobSerializer):
         model = ProtossJob
         fields = ProteinsPlusJobSerializer.Meta.fields + ['input_protein', 'output_protein']
 
-class ProtossSubmitSerializer(serializers.Serializer): # pylint: disable=abstract-method
+class ProtossSubmitSerializer(ProteinsPlusJobSubmitSerializer): # pylint: disable=abstract-method
     """Serializer for the Protoss job submission data"""
-    protein_id = serializers.IntegerField(required=True)
+    protein_id = serializers.UUIDField(required=True)
 
     def validate(self, data): # pylint: disable=arguments-renamed
         """Data validation

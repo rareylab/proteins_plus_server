@@ -6,7 +6,8 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from drf_spectacular.utils import extend_schema
 
-from proteins_plus.common import JobSubmitResponseSerializer
+from proteins_plus.serializers import ProteinsPlusJobResponseSerializer
+from proteins_plus.job_handler import submit_task
 from molecule_handler.models import Protein
 from .models import ProtossJob
 from .serializers import ProtossJobSerializer, ProtossSubmitSerializer
@@ -18,7 +19,7 @@ class ProtossView(APIView):
 
     @extend_schema(
         request=ProtossSubmitSerializer,
-        responses=JobSubmitResponseSerializer
+        responses=ProteinsPlusJobResponseSerializer,
     )
     def post(self, request):
         """API endpoint for protossing protein objects in the database
@@ -36,12 +37,10 @@ class ProtossView(APIView):
         input_protein = Protein.objects.get(id=request_data['protein_id'])
 
         job = ProtossJob(input_protein=input_protein)
-        job.save()
 
-        protoss_protein_task.delay(job.id)
+        response_data = submit_task(job, protoss_protein_task, request_data['use_cache'])
+        serializer = ProteinsPlusJobResponseSerializer(response_data)
 
-        response_data = {'job_id': job.id}
-        serializer = JobSubmitResponseSerializer(response_data)
         return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
 
 class ProtossJobViewSet(ReadOnlyModelViewSet): # pylint: disable=too-many-ancestors

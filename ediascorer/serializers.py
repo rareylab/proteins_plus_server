@@ -2,7 +2,7 @@
 import re
 from rest_framework import serializers
 from rest_framework.exceptions import NotFound
-from proteins_plus.common import ProteinsPlusJobSerializer
+from proteins_plus.serializers import ProteinsPlusJobSerializer, ProteinsPlusJobSubmitSerializer
 from molecule_handler.models import Protein
 from .models import EdiaJob, AtomScores
 
@@ -21,9 +21,9 @@ class AtomScoresSerializer(serializers.ModelSerializer):
         model = AtomScores
         fields = ['id', 'scores', 'edia_job']
 
-class EdiascorerSubmitSerializer(serializers.Serializer): # pylint: disable=abstract-method
+class EdiascorerSubmitSerializer(ProteinsPlusJobSubmitSerializer): # pylint: disable=abstract-method
     """Serializer for the Protoss job submission data"""
-    protein_id = serializers.IntegerField(required=True)
+    protein_id = serializers.UUIDField(required=True)
     pdb_code = serializers.CharField(min_length=4, max_length=4, default=None)
     electron_density_map = serializers.FileField(default=None)
 

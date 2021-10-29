@@ -2,7 +2,7 @@
 import os
 import re
 from rest_framework import serializers
-from proteins_plus.common import ProteinsPlusJobSerializer
+from proteins_plus.serializers import ProteinsPlusJobSerializer, ProteinsPlusJobSubmitSerializer
 from .models import Protein, Ligand, ElectronDensityMap, PreprocessorJob
 
 class ProteinSerializer(serializers.ModelSerializer):
@@ -34,7 +34,7 @@ class PreprocessorJobSerializer(ProteinsPlusJobSerializer):
         fields = ProteinsPlusJobSerializer.Meta.fields + ['protein_name', 'pdb_code',
                 'output_protein', 'protein_string', 'ligand_string']
 
-class UploadSerializer(serializers.Serializer): # pylint: disable=abstract-method
+class UploadSerializer(ProteinsPlusJobSubmitSerializer): # pylint: disable=abstract-method
     """Serializer for Protein upload data"""
     pdb_code = serializers.CharField(min_length=4, max_length=4, default=None)
     uniprot_code = serializers.CharField(min_length=6, max_length=10, default=None)

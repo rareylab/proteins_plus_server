@@ -48,7 +48,7 @@ class ProteinsPlusJob(ProteinsPlusHashableModel):
     error_detailed = models.TextField(null=True)
     date_created = models.DateField(auto_now_add=True)
     date_last_accessed = models.DateField(auto_now=True)
-    hash_value = models.CharField(max_length=256, null=True, default=None)
+    hash_value = models.CharField(max_length=256, null=True, default=None, unique=True)
 
     def set_hash_value(self):
         """Generate and set hash value for caching"""
