@@ -4,6 +4,7 @@ from proteins_plus.job_handler import execute_job
 from .models import ProtossJob
 from .protoss_wrapper import ProtossWrapper
 
+
 @shared_task
 def protoss_protein_task(job_id):
     """Start job execution
@@ -12,6 +13,7 @@ def protoss_protein_task(job_id):
     :type job_id: int
     """
     execute_job(protoss_protein, job_id, ProtossJob, 'Protoss')
+
 
 def protoss_protein(job):
     """Protoss Protein object and store a new Protein object into the database

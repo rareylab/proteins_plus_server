@@ -12,6 +12,7 @@ from ediascorer.models import AtomScores
 
 logger = logging.getLogger(__name__)
 
+
 class EdiascorerWrapper:
     """A django model friendly wrapper around the Ediascorer binary"""
 
@@ -61,7 +62,7 @@ class EdiascorerWrapper:
                 # Wird auf Mac zurückgegeben, wenn der ediascorer mit Liganden ausgeführt wird:
                 # Error code 127: Noch unbekannt
                 # Wird auf Mac zurückgegeben, wenn der ediascorer ohne Liganden ausgeführt wird
-                if error.returncode not in frozenset([9,127]):
+                if error.returncode not in frozenset([9, 127]):
                     raise error
 
     @staticmethod
@@ -112,11 +113,11 @@ class EdiascorerWrapper:
             pdb_string = pdb_file.read()
 
         job.output_protein = Protein(
-            name = job.input_protein.name,
-            pdb_code = job.input_protein.pdb_code,
-            uniprot_code = job.input_protein.uniprot_code,
-            file_type = 'pdb',
-            file_string = pdb_string
+            name=job.input_protein.name,
+            pdb_code=job.input_protein.pdb_code,
+            uniprot_code=job.input_protein.uniprot_code,
+            file_type='pdb',
+            file_string=pdb_string
         )
         job.output_protein.save()
 
@@ -138,7 +139,7 @@ class EdiascorerWrapper:
         atom_score_file = atom_score_files[0]
 
         atom_scores = AtomScores(
-            scores = EdiascorerWrapper.csv_to_dict(atom_score_file)
+            scores=EdiascorerWrapper.csv_to_dict(atom_score_file)
         )
         atom_scores.save()
 

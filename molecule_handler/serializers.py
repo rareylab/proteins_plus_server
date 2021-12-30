@@ -6,20 +6,35 @@ from proteins_plus.serializers import ProteinsPlusJobSerializer, ProteinsPlusJob
 from .models import Protein, Ligand, ElectronDensityMap, PreprocessorJob
 from .validation import valid_protein_extension, valid_ligand_extension, valid_pdb_code, valid_uniprot_code
 
+
 class ProteinSerializer(serializers.ModelSerializer):
     """Serializer for the Protein model"""
+
     class Meta:
         model = Protein
-        fields = ['id', 'name', 'pdb_code', 'file_type',
-                'ligand_set', 'parent_protoss_job', 'child_protoss_job_set',
-                'parent_edia_job', 'child_edia_job_set',
-                'file_string', 'date_created', 'date_last_accessed']
+        fields = [
+            'id',
+            'name',
+            'pdb_code',
+            'file_type',
+            'ligand_set',
+            'parent_protoss_job',
+            'child_protoss_job_set',
+            'parent_edia_job',
+            'child_edia_job_set',
+            'file_string',
+            'date_created',
+            'date_last_accessed'
+        ]
+
 
 class LigandSerializer(serializers.ModelSerializer):
     """Serializer for the Ligand model"""
+
     class Meta:
         model = Ligand
         fields = ['id', 'name', 'protein', 'file_type', 'file_string', 'image']
+
 
 class ElectronDensityMapSerializer(serializers.ModelSerializer):
     """Serializer for the ElectronDensityMap model"""
@@ -28,21 +43,29 @@ class ElectronDensityMapSerializer(serializers.ModelSerializer):
         model = ElectronDensityMap
         fields = ['id', 'file', 'edia_job']
 
+
 class PreprocessorJobSerializer(ProteinsPlusJobSerializer):
     """Serializer for the PreprocessorJob model"""
+
     class Meta(ProteinsPlusJobSerializer.Meta):
         model = PreprocessorJob
-        fields = ProteinsPlusJobSerializer.Meta.fields + ['protein_name', 'pdb_code',
-                'output_protein', 'protein_string', 'ligand_string']
+        fields = ProteinsPlusJobSerializer.Meta.fields + [
+            'protein_name',
+            'pdb_code',
+            'output_protein',
+            'protein_string',
+            'ligand_string'
+        ]
 
-class UploadSerializer(ProteinsPlusJobSubmitSerializer): # pylint: disable=abstract-method
+
+class UploadSerializer(ProteinsPlusJobSubmitSerializer):  # pylint: disable=abstract-method
     """Serializer for Protein upload data"""
     pdb_code = serializers.CharField(min_length=4, max_length=4, default=None)
     uniprot_code = serializers.CharField(min_length=6, max_length=10, default=None)
     protein_file = serializers.FileField(default=None)
     ligand_file = serializers.FileField(default=None)
 
-    def validate(self, data): # pylint: disable=arguments-renamed
+    def validate(self, data):  # pylint: disable=arguments-renamed
         """Data validation
 
         :param data: Upload data

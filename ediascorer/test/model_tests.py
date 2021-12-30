@@ -2,8 +2,10 @@
 from proteins_plus.test.utils import PPlusTestCase
 from .utils import create_test_edia_job
 
+
 class ModelTests(PPlusTestCase):
     """Testcases for ediascorer database models"""
+
     def test_cache_behaviour(self):
         """Test storing and retrieving objects from cache"""
         job = create_test_edia_job()

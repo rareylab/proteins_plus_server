@@ -1,8 +1,10 @@
 """Common classes and functions for all apps"""
 import logging
 import traceback
+from rest_framework import serializers
 
 logger = logging.getLogger(__name__)
+
 
 class Status:  # pylint: disable=too-few-public-methods
     """Class wrapping a status enum"""
@@ -31,6 +33,13 @@ class Status:  # pylint: disable=too-few-public-methods
         """
         return Status.DETAILED[status]
 
+
+class StatusField(serializers.Field):
+
+    def to_representation(self, value):
+        return Status.to_string(value)
+
+
 def execute_job(task, job_id, job_type, tool_name):
     """Execute Job as a celery task following a centralized workflow
 
@@ -43,7 +52,7 @@ def execute_job(task, job_id, job_type, tool_name):
     :raises error: If an error occurs during job execution
     """
 
-    logger.info(f'Started task. Executing {task} on {job_type} with id {job_id}.')
+    logger.info('Started task. Executing %s on %s with id %s.', task, job_type, job_id)
     job = job_type.objects.get(id=job_id)
     try:
         job.status = Status.RUNNING
@@ -58,14 +67,15 @@ def execute_job(task, job_id, job_type, tool_name):
         job.save()
 
         logger.error(
-            f'Error occured during execution of task {task} on {job_type} with id {job_id}.\n' +
-            f'Error: \n\t{traceback.format_exc()}'
+            'Error occurred during execution of task %s on %s with id %s.\n'
+            'Error: \n\t%s', task, job_type, job_id, traceback.format_exc()
         )
         raise error
     else:
         job.status = Status.SUCCESS
         job.save()
-        logger.info(f'Successfully finished executing {task} on {job_type} with id {job_id}.')
+        logger.info('Successfully finished executing %s on %s with id %s.', task, job_type, job_id)
+
 
 def submit_task(job, task, use_cache, immediate=False):
     """Retrieve an existing job from cache or start its execution

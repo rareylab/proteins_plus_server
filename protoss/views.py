@@ -14,6 +14,7 @@ from .models import ProtossJob
 from .serializers import ProtossJobSerializer, ProtossSubmitSerializer
 from .tasks import protoss_protein_task
 
+
 class ProtossView(APIView):
     """View for protossing Protein objects in the database"""
     parser_classes = (JSONParser, MultiPartParser, FormParser)
@@ -39,8 +40,10 @@ class ProtossView(APIView):
             input_protein = Protein.objects.get(id=request_data['protein_id'])
             job = ProtossJob(input_protein=input_protein)
         else:
-            preprocess_job = PreprocessorJob.from_file(request_data['protein_file'], request_data['ligand_file'])
-            job_id, retrieved = submit_task(preprocess_job, preprocess_molecule_task, request_data['use_cache'], immediate=True)
+            preprocess_job = PreprocessorJob.from_file(
+                request_data['protein_file'], request_data['ligand_file'])
+            job_id, retrieved = submit_task(
+                preprocess_job, preprocess_molecule_task, request_data['use_cache'], immediate=True)
             preprocess_job = PreprocessorJob.objects.get(id=job_id)
             job = ProtossJob(input_protein=preprocess_job.output_protein)
 
@@ -51,7 +54,8 @@ class ProtossView(APIView):
         })
         return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
 
-class ProtossJobViewSet(ReadOnlyModelViewSet): # pylint: disable=too-many-ancestors
+
+class ProtossJobViewSet(ReadOnlyModelViewSet):  # pylint: disable=too-many-ancestors
     """Viewset for retrieving specifiv or listing all ProtossJob instances from database"""
     queryset = ProtossJob.objects.all()
     serializer_class = ProtossJobSerializer

@@ -4,15 +4,19 @@ from hashlib import blake2b
 from django.db import models
 from .job_handler import Status
 
+
 class ProteinsPlusBaseModel(models.Model):
     """Abstract base model for all objects"""
+
     class Meta:
         abstract = True
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
+
 class ProteinsPlusHashableModel(ProteinsPlusBaseModel):
     """Abstract base model for hashable objects"""
+
     class Meta:
         abstract = True
 
@@ -38,8 +42,10 @@ class ProteinsPlusHashableModel(ProteinsPlusBaseModel):
         hashable_string = b'_'.join(hashable_substrings)
         return hashable_string
 
+
 class ProteinsPlusJob(ProteinsPlusHashableModel):
     """Abstract base model for job objects"""
+
     class Meta:
         abstract = True
 

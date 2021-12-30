@@ -8,13 +8,20 @@ from molecule_handler.models import Protein
 from molecule_handler.validation import valid_protein_extension, valid_ligand_extension, valid_pdb_code
 from .models import EdiaJob, AtomScores
 
+
 class EdiaJobSerializer(ProteinsPlusJobSerializer):
     """Serializer for the EdiaJob model"""
 
     class Meta(ProteinsPlusJobSerializer.Meta):
         model = EdiaJob
-        fields = ProteinsPlusJobSerializer.Meta.fields + ['input_protein', 'density_file_pdb_code',
-                'electron_density_map', 'atom_scores', 'output_protein']
+        fields = ProteinsPlusJobSerializer.Meta.fields + [
+            'input_protein',
+            'density_file_pdb_code',
+            'electron_density_map',
+            'atom_scores',
+            'output_protein'
+        ]
+
 
 class AtomScoresSerializer(serializers.ModelSerializer):
     """Serializer for the AtomScores model"""
@@ -23,7 +30,8 @@ class AtomScoresSerializer(serializers.ModelSerializer):
         model = AtomScores
         fields = ['id', 'scores', 'edia_job']
 
-class EdiascorerSubmitSerializer(ProteinsPlusJobSubmitSerializer): # pylint: disable=abstract-method
+
+class EdiascorerSubmitSerializer(ProteinsPlusJobSubmitSerializer):  # pylint: disable=abstract-method
     """Serializer for the Protoss job submission data"""
     protein_id = serializers.UUIDField(required=False, default=None)
     protein_file = serializers.FileField(required=False, default=None)
@@ -31,7 +39,7 @@ class EdiascorerSubmitSerializer(ProteinsPlusJobSubmitSerializer): # pylint: dis
     pdb_code = serializers.CharField(min_length=4, max_length=4, default=None)
     electron_density_map = serializers.FileField(default=None)
 
-    def validate(self, data): # pylint: disable=arguments-renamed
+    def validate(self, data):  # pylint: disable=arguments-renamed
         """Data validation
 
         :param data: Job submission data
@@ -62,14 +70,15 @@ class EdiascorerSubmitSerializer(ProteinsPlusJobSubmitSerializer): # pylint: dis
                     )
         else:
             raise serializers.ValidationError('Neither protein id nor protein file were provided.')
-        if data['electron_density_map'] is None and data['pdb_code'] is None and \
-                (protein is not None and protein.pdb_code is None):
+        if data['electron_density_map'] is None \
+                and data['pdb_code'] is None \
+                and (protein is not None and protein.pdb_code is None):
             raise serializers.ValidationError(
                 'Neither electron density map nor pdb code were given.'
-                )
+            )
         if data['pdb_code'] is not None:
             if not valid_pdb_code(data['pdb_code']):
                 raise serializers.ValidationError(
                     'Invalid pdb code was provided.'
-                    )
+                )
         return data

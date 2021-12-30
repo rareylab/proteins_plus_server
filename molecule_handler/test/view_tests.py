@@ -9,8 +9,10 @@ from ..models import PreprocessorJob
 from .config import TestConfig
 from .utils import create_test_protein, create_multiple_test_ligands, create_test_preprocesser_job
 
+
 class ViewTests(PPlusTestCase):
     """Testcases for the molecule_handler views"""
+
     def test_molecule_upload_protein(self):
         """Test upload of Protein"""
         with open(TestConfig.protein_file, 'rb') as protein_file:
@@ -28,8 +30,8 @@ class ViewTests(PPlusTestCase):
 
     def test_molecule_upload_protein_and_ligand(self):
         """Test upload of Protein and Ligand"""
-        with open(TestConfig.protein_file, 'rb') as protein_file,\
-            open(TestConfig.ligand_file, 'rb') as ligand_file:
+        with open(TestConfig.protein_file, 'rb') as protein_file, \
+                open(TestConfig.ligand_file, 'rb') as ligand_file:
             data = {'protein_file': File(protein_file),
                     'ligand_file': File(ligand_file)}
             response = call_api(ProteinUploadView, 'post', data)
@@ -46,8 +48,8 @@ class ViewTests(PPlusTestCase):
 
     def test_molecule_upload_ligand_wrong_filetype(self):
         """Test Ligand upload with wrong filetype"""
-        with open(TestConfig.protein_file, 'rb') as protein_file,\
-            open(TestConfig.testdir / (TestConfig.ligand + '.txt'), 'rb') as ligand_file:
+        with open(TestConfig.protein_file, 'rb') as protein_file, \
+                open(TestConfig.testdir / (TestConfig.ligand + '.txt'), 'rb') as ligand_file:
             data = {'protein_file': File(protein_file),
                     'ligand_file': File(ligand_file)}
             response = call_api(ProteinUploadView, 'post', data)
@@ -121,8 +123,8 @@ class ViewTests(PPlusTestCase):
         job.set_hash_value()
         job.save()
 
-        with open(TestConfig.protein_file, 'rb') as protein_file,\
-            open(TestConfig.ligand_file, 'rb') as ligand_file:
+        with open(TestConfig.protein_file, 'rb') as protein_file, \
+                open(TestConfig.ligand_file, 'rb') as ligand_file:
             data = {'protein_file': File(protein_file),
                     'pdb_code': TestConfig.protein,
                     'ligand_file': File(ligand_file)}
@@ -137,8 +139,8 @@ class ViewTests(PPlusTestCase):
         self.assertFalse(response.data['retrieved_from_cache'])
         self.assertNotEqual(response.data['job_id'], str(job.id))
 
-        with open(TestConfig.protein_file, 'rb') as protein_file,\
-            open(TestConfig.ligand_file, 'rb') as ligand_file:
+        with open(TestConfig.protein_file, 'rb') as protein_file, \
+                open(TestConfig.ligand_file, 'rb') as ligand_file:
             data = {'protein_file': File(protein_file),
                     'pdb_code': TestConfig.protein,
                     'ligand_file': File(ligand_file),

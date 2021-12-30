@@ -2,6 +2,7 @@
 from django.core.files import File
 from .models import Ligand
 
+
 def load_processed_ligands(path, input_protein, output_protein):
     """Extract Ligand objects from multi sdf file after execution of a job.
 
@@ -26,8 +27,11 @@ def load_processed_ligands(path, input_protein, output_protein):
             ligand_name = ligand_string.split('\n')[0]
 
             ligand = Ligand(
-                name=ligand_name, file_type='sdf',
-                file_string=ligand_string+'$$$$', protein=output_protein)
+                name=ligand_name,
+                file_type='sdf',
+                file_string=ligand_string + '$$$$',
+                protein=output_protein
+            )
 
             # TODO: Check if new images were created. If so, connect them to the ligand objects
             # instead of the old images.

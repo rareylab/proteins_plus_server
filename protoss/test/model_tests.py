@@ -3,8 +3,10 @@ from proteins_plus.test.utils import PPlusTestCase
 from molecule_handler.test.utils import create_test_protein
 from ..models import ProtossJob
 
+
 class ModelTests(PPlusTestCase):
     """Testcases for protoss database models"""
+
     def test_cache_behaviour(self):
         """Test storing and retrieving objects from cache"""
         protein1 = create_test_protein()

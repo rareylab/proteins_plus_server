@@ -6,8 +6,10 @@ from .config import TestConfig
 from ..views import ProtossView
 from ..models import ProtossJob
 
+
 class ViewTests(PPlusTestCase):
     """Testcases for protoss views"""
+
     def test_post_protein(self):
         """Test protoss view with existing protein id"""
         protein = create_test_protein()

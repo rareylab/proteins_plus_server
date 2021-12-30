@@ -9,6 +9,7 @@ from ..views import EdiascorerView
 from ..models import EdiaJob
 from .config import TestConfig
 
+
 class ViewTests(PPlusTestCase):
     """Testcases for ediascorer views"""
 

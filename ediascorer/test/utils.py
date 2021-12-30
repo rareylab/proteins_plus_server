@@ -7,8 +7,10 @@ from molecule_handler.test.utils import create_test_protein
 from ..models import EdiaJob
 from .config import TestConfig
 
-def create_test_edia_job(pdb_code=TestConfig.protein,
-                        density_filepath=TestConfig.density_file):
+
+def create_test_edia_job(
+        pdb_code=TestConfig.protein,
+        density_filepath=TestConfig.density_file):
     """Helper function for creating dummy EdiaJob objects
 
     :param pdb_code: pdb code for the EdiaJob, defaults to TestConfig.protein

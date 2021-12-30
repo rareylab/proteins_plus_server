@@ -9,11 +9,13 @@ from ..models import ProtossJob
 
 from .config import TestConfig
 
+
 class TaskTests(PPlusTestCase):
     """Celery task tests"""
+
     def test_protoss_protein_without_ligands(self):
         """test of protoss workflow with protein"""
-        input_protein = create_test_protein(TestConfig.protein+'_clean')
+        input_protein = create_test_protein(TestConfig.protein + '_clean')
 
         job = ProtossJob(input_protein=input_protein)
         job.save()
@@ -40,7 +42,7 @@ class TaskTests(PPlusTestCase):
 
     def test_protoss_non_existing_protein(self):
         """Test error behavior of protoss task"""
-        input_protein = create_test_protein(TestConfig.protein+'_empty', empty=True)
+        input_protein = create_test_protein(TestConfig.protein + '_empty', empty=True)
         job = ProtossJob(input_protein=input_protein)
         job.save()
 

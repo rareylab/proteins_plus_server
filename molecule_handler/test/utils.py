@@ -2,6 +2,7 @@
 from ..models import Protein, Ligand, PreprocessorJob
 from .config import TestConfig
 
+
 def create_test_preprocesser_job(ligand_filepath=TestConfig.ligand_file):
     """Helper function for creating dummy PreprocessorJob objects
 
@@ -14,10 +15,10 @@ def create_test_preprocesser_job(ligand_filepath=TestConfig.ligand_file):
     with open(TestConfig.protein_file) as protein_file:
         protein_string = protein_file.read()
     job = PreprocessorJob(
-            protein_name=TestConfig.protein,
-            pdb_code=TestConfig.protein,
-            protein_string=protein_string,
-        )
+        protein_name=TestConfig.protein,
+        pdb_code=TestConfig.protein,
+        protein_string=protein_string,
+    )
 
     if ligand_filepath is not None:
         with open(ligand_filepath) as ligand_file:
@@ -26,6 +27,7 @@ def create_test_preprocesser_job(ligand_filepath=TestConfig.ligand_file):
 
     job.save()
     return job
+
 
 def create_test_protein(protein_name=TestConfig.protein,
                         protein_filepath=TestConfig.protein_file,
@@ -54,8 +56,9 @@ def create_test_protein(protein_name=TestConfig.protein,
     protein.save()
     return protein
 
+
 def create_test_ligand(protein, ligand_name=TestConfig.ligand,
-                        ligand_filepath=TestConfig.ligand_file):
+                       ligand_filepath=TestConfig.ligand_file):
     """Helper function for creating dummy Ligand objects
 
     :param protein: Protein object that the created dummy Ligand object should be associated with
@@ -74,9 +77,13 @@ def create_test_ligand(protein, ligand_name=TestConfig.ligand,
     ligand.save()
     return ligand
 
-def create_multiple_test_ligands(protein, ligand=TestConfig.ligand, ligand2=TestConfig.ligand2,
-                                ligand_file1=TestConfig.ligand_file,
-                                ligand_file2=TestConfig.ligand2_file):
+
+def create_multiple_test_ligands(
+        protein,
+        ligand=TestConfig.ligand,
+        ligand2=TestConfig.ligand2,
+        ligand_file1=TestConfig.ligand_file,
+        ligand_file2=TestConfig.ligand2_file):
     """Helper function for creating two dummy ligand objects
 
     :param protein: Protein object that the created dummy Ligand object should be associated with

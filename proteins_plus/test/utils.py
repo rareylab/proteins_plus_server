@@ -3,15 +3,19 @@ from django.test import RequestFactory, TestCase
 
 from molecule_handler.models import Ligand, ElectronDensityMap
 
+
 class PPlusTestCase(TestCase):
     """Global TestCase class to handle global setup and teardown"""
+
     def tearDown(self):
         """Make sure object associated files are deleted"""
         ElectronDensityMap.objects.all().delete()
         Ligand.objects.all().delete()
 
-class MockRequest: # pylint: disable=too-few-public-methods
+
+class MockRequest:  # pylint: disable=too-few-public-methods
     """Mock class for imitating basic request objects"""
+
     def __init__(self, data={}, query_params={}):
         """Constructor
 
@@ -23,8 +27,9 @@ class MockRequest: # pylint: disable=too-few-public-methods
         self.data = data
         self.query_params = query_params
 
+
 def call_api(view_class, method, data={}, query_params={},
-            viewset_actions=None, **req_kwargs):
+             viewset_actions=None, **req_kwargs):
     """Helper function for making calls to the api
 
     :param view_class: View to send the api call to
@@ -44,7 +49,7 @@ def call_api(view_class, method, data={}, query_params={},
     factory = RequestFactory()
     kwargs = {'data': data}
 
-    req_string = '\?' # pylint: disable=anomalous-backslash-in-string
+    req_string = '\?'  # pylint: disable=anomalous-backslash-in-string
     for key in query_params:
         req_string += key + '=' + str(query_params[key]) + '&'
 

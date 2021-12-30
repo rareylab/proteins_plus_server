@@ -11,6 +11,7 @@ from django.conf import settings
 
 from proteins_plus.models import ProteinsPlusJob, ProteinsPlusHashableModel
 
+
 class Protein(ProteinsPlusHashableModel):
     """Django model for Protein objects"""
     name = models.CharField(max_length=255)
@@ -49,6 +50,7 @@ class Protein(ProteinsPlusHashableModel):
         temp_file.seek(0)
         return temp_file
 
+
 class Ligand(ProteinsPlusHashableModel):
     """Django model for Ligand objects. Always associated with a Protein object"""
     protein = models.ForeignKey(Protein, on_delete=models.CASCADE, blank=True, null=True)
@@ -56,15 +58,17 @@ class Ligand(ProteinsPlusHashableModel):
     file_type = models.CharField(max_length=3, default='sdf')
     file_string = models.TextField()
     image = models.ImageField(upload_to=settings.MEDIA_DIRECTORIES['ligands'],
-                            blank=True, null=True)
+                              blank=True, null=True)
 
     hash_attributes = ['protein', 'file_type', 'file_string']
+
 
 class ElectronDensityMap(ProteinsPlusHashableModel):
     """Django Model for electron density map files"""
     file = models.FileField(upload_to=settings.MEDIA_DIRECTORIES['density_files'])
 
     hash_attributes = ['file']
+
 
 class PreprocessorJob(ProteinsPlusJob):
     """Django model for Preprocessor job objects"""
@@ -76,11 +80,11 @@ class PreprocessorJob(ProteinsPlusJob):
     ligand_string = models.TextField(null=True)
     ligand_file_type = models.CharField(max_length=3, default='sdf')
     output_protein = models.OneToOneField(Protein, on_delete=models.CASCADE,
-                    null=True, related_name='parent_preprocessor_job')
+                                          null=True, related_name='parent_preprocessor_job')
 
     hash_attributes = ['pdb_code', 'uniprot_code',
-                        'protein_string', 'protein_file_type',
-                        'ligand_string', 'ligand_file_type']
+                       'protein_string', 'protein_file_type',
+                       'ligand_string', 'ligand_file_type']
 
     @staticmethod
     def from_file(protein_file, ligand_file=None):
@@ -101,8 +105,9 @@ class PreprocessorJob(ProteinsPlusJob):
             ligand_string=ligand_string
         )
 
+
 @receiver(pre_delete, sender=Ligand)
-def ligand_image_delete(sender, instance, **kwargs): # pylint: disable=unused-argument
+def ligand_image_delete(sender, instance, **kwargs):  # pylint: disable=unused-argument
     """Make sure corresponding image is deleted when Ligand object is deleted
 
     :param sender: sender of deletion signal. Not in use
@@ -111,8 +116,9 @@ def ligand_image_delete(sender, instance, **kwargs): # pylint: disable=unused-ar
     """
     instance.image.delete(False)
 
+
 @receiver(pre_delete, sender=ElectronDensityMap)
-def electrondensitymap_file_delete(sender, instance, **kwargs): # pylint: disable=unused-argument
+def electrondensitymap_file_delete(sender, instance, **kwargs):  # pylint: disable=unused-argument
     """Make sure corresponding density file is deleted when ElectronDensityMap object
         is deleted
 

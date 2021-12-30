@@ -5,8 +5,10 @@ from ..tasks import ediascore_protein_task
 from ..models import EdiaJob
 from .utils import create_test_edia_job
 
+
 class TaskTests(PPlusTestCase):
     """Celery task tests"""
+
     def test_ediascore_protein_from_file(self):
         """Test ediascorer binary with uploading electron density file"""
         edia_job = create_test_edia_job()

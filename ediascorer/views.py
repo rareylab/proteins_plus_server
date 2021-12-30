@@ -13,8 +13,9 @@ from molecule_handler.models import Protein, ElectronDensityMap, PreprocessorJob
 
 from .models import AtomScores, EdiaJob
 from .tasks import ediascore_protein_task
-from .serializers import EdiaJobSerializer, AtomScoresSerializer,\
-                            EdiascorerSubmitSerializer
+from .serializers import EdiaJobSerializer, AtomScoresSerializer, \
+    EdiascorerSubmitSerializer
+
 
 class EdiascorerView(APIView):
     """View for executing the Ediascorer"""
@@ -40,7 +41,8 @@ class EdiascorerView(APIView):
         if request_data['protein_id']:
             input_protein = Protein.objects.get(id=request_data['protein_id'])
         else:
-            preprocess_job = PreprocessorJob.from_file(request_data['protein_file'], request_data['ligand_file'])
+            preprocess_job = PreprocessorJob.from_file(
+                request_data['protein_file'], request_data['ligand_file'])
             job_id, retrieved = submit_task(
                 preprocess_job,
                 preprocess_molecule_task,
@@ -72,12 +74,14 @@ class EdiascorerView(APIView):
         })
         return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
 
-class EdiaJobViewSet(ReadOnlyModelViewSet): # pylint: disable=too-many-ancestors
+
+class EdiaJobViewSet(ReadOnlyModelViewSet):  # pylint: disable=too-many-ancestors
     """Viewset for retrieving specific or listing all EdiaJob objects"""
     queryset = EdiaJob.objects.all()
     serializer_class = EdiaJobSerializer
 
-class AtomScoresViewSet(ReadOnlyModelViewSet): # pylint: disable=too-many-ancestors
+
+class AtomScoresViewSet(ReadOnlyModelViewSet):  # pylint: disable=too-many-ancestors
     """Viewset for retrieving specific or listing all AtomScores objects"""
     queryset = AtomScores.objects.all()
     serializer_class = AtomScoresSerializer

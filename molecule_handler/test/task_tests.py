@@ -13,8 +13,10 @@ from ..models import PreprocessorJob
 from .config import TestConfig
 from .utils import create_test_preprocesser_job
 
+
 class TaskTests(PPlusTestCase):
     """Celery task tests"""
+
     def test_preprocessor_available(self):
         """Test the preprocessor binary exists at the correct location and is licensed"""
         path = settings.BINARIES['preprocessor']
@@ -48,7 +50,7 @@ class TaskTests(PPlusTestCase):
 
     def test_preprocess_molecule_with_multisdf(self):
         """Test preprocessing of molecule with a multi sdf ligand file"""
-        job = create_test_preprocesser_job(ligand_filepath = TestConfig.multi_ligands_file)
+        job = create_test_preprocesser_job(ligand_filepath=TestConfig.multi_ligands_file)
 
         preprocess_molecule_task.run(job.id)
         job = PreprocessorJob.objects.get(id=job.id)

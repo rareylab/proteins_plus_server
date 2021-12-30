@@ -12,6 +12,7 @@ from molecule_handler.utils import load_processed_ligands
 
 logger = logging.getLogger(__name__)
 
+
 class ProtossWrapper:
     """A django model friendly wrapper around the protoss binary"""
 
@@ -47,8 +48,8 @@ class ProtossWrapper:
             ]
             if ligand_file:
                 args.extend(['--ligand_input', ligand_file.name,
-                            '--ligand_output',
-                            os.path.join(str(directory.absolute()), 'ligand_out.sdf')])
+                             '--ligand_output',
+                             os.path.join(str(directory.absolute()), 'ligand_out.sdf')])
 
             logger.debug('Executing command line call: %s', " ".join(args))
             subprocess.check_call(args)
@@ -83,10 +84,10 @@ class ProtossWrapper:
             pdb_string = pdb_file.read()
 
         job.output_protein = Protein(
-            name = job.input_protein.name,
-            pdb_code = job.input_protein.pdb_code,
-            uniprot_code = job.input_protein.uniprot_code,
-            file_type = 'pdb',
-            file_string = pdb_string
+            name=job.input_protein.name,
+            pdb_code=job.input_protein.pdb_code,
+            uniprot_code=job.input_protein.uniprot_code,
+            file_type='pdb',
+            file_string=pdb_string
         )
         job.output_protein.save()

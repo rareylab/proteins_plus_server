@@ -10,10 +10,10 @@ from drf_spectacular.utils import extend_schema
 from proteins_plus.serializers import ProteinsPlusJobResponseSerializer
 from proteins_plus.job_handler import submit_task
 from .models import Protein, Ligand, ElectronDensityMap, PreprocessorJob
-from .serializers import ProteinSerializer, LigandSerializer,\
-                    ElectronDensityMapSerializer, PreprocessorJobSerializer,\
-                    UploadSerializer
+from .serializers import ProteinSerializer, LigandSerializer, ElectronDensityMapSerializer, \
+    PreprocessorJobSerializer, UploadSerializer
 from .tasks import preprocess_molecule_task
+
 
 class ProteinUploadView(APIView):
     """View for uploading proteins and ligands"""
@@ -50,11 +50,11 @@ class ProteinUploadView(APIView):
             ligand_string = request_data['ligand_file'].file.read().decode('utf8')
 
         job = PreprocessorJob(
-            protein_name = protein_name,
-            pdb_code = pdb_code,
-            uniprot_code = uniprot_code,
-            protein_string = protein_string,
-            ligand_string = ligand_string
+            protein_name=protein_name,
+            pdb_code=pdb_code,
+            uniprot_code=uniprot_code,
+            protein_string=protein_string,
+            ligand_string=ligand_string
         )
 
         job_id, retrieved = submit_task(job, preprocess_molecule_task, request_data['use_cache'])
@@ -64,22 +64,26 @@ class ProteinUploadView(APIView):
         })
         return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
 
-class ProteinViewSet(ReadOnlyModelViewSet): # pylint: disable=too-many-ancestors
+
+class ProteinViewSet(ReadOnlyModelViewSet):  # pylint: disable=too-many-ancestors
     """Viewset for retrieving specific or listing all Protein instances from database"""
     queryset = Protein.objects.all()
     serializer_class = ProteinSerializer
 
-class LigandViewSet(ReadOnlyModelViewSet): # pylint: disable=too-many-ancestors
+
+class LigandViewSet(ReadOnlyModelViewSet):  # pylint: disable=too-many-ancestors
     """Viewset for retrieving specific or listing all Ligand instances from database"""
     queryset = Ligand.objects.all()
     serializer_class = LigandSerializer
 
-class ElectronDensityMapViewSet(ReadOnlyModelViewSet): # pylint: disable=too-many-ancestors
+
+class ElectronDensityMapViewSet(ReadOnlyModelViewSet):  # pylint: disable=too-many-ancestors
     """Viewset for retrieving specific or listing all ElectronDensityMap objects"""
     queryset = ElectronDensityMap.objects.all()
     serializer_class = ElectronDensityMapSerializer
 
-class PreprocessorJobViewSet(ReadOnlyModelViewSet): # pylint: disable=too-many-ancestors
+
+class PreprocessorJobViewSet(ReadOnlyModelViewSet):  # pylint: disable=too-many-ancestors
     """Viewset for retrieving specific or listing all PreprocessorJob instances from database"""
     queryset = PreprocessorJob.objects.all()
     serializer_class = PreprocessorJobSerializer

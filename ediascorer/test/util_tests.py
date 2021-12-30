@@ -3,8 +3,10 @@ from proteins_plus.test.utils import PPlusTestCase
 from ..tasks import get_density_file
 from .utils import create_test_edia_job
 
+
 class UtilTests(PPlusTestCase):
     """Utility tests"""
+
     def test_get_density_file_with_pdb_code(self):
         """Test retrieving electron density file from server"""
         job = create_test_edia_job(density_filepath=None)

@@ -9,6 +9,7 @@ from molecule_handler.models import ElectronDensityMap
 from .models import EdiaJob
 from .ediascorer_wrapper import EdiascorerWrapper
 
+
 @shared_task
 def ediascore_protein_task(job_id):
     """Start job execution
@@ -17,6 +18,7 @@ def ediascore_protein_task(job_id):
     :type job_id: int
     """
     execute_job(ediascore_protein, job_id, EdiaJob, 'EDIAscorer')
+
 
 def get_density_file(job):
     """Fetch electron density file from server and save it as a new ElectronDensityMap instance
@@ -32,10 +34,10 @@ def get_density_file(job):
     req = requests.get(url)
     if req.status_code != 200:
         raise RuntimeError(
-            f"Error while retrieving density file with pdb code {pdb_code}\n"+
-            f"Request: GET {url}\n"+
+            f"Error while retrieving density file with pdb code {pdb_code}\n" +
+            f"Request: GET {url}\n" +
             f"Response: \n{req.text}"
-            )
+        )
 
     with TemporaryFile() as tmpfile:
         content_as_bytes = bytearray(req.content)
@@ -46,6 +48,7 @@ def get_density_file(job):
 
     job.electron_density_map = density_map
     job.save()
+
 
 def ediascore_protein(job):
     """Execute the Ediascorer on a Protein object and store the results into new database objects

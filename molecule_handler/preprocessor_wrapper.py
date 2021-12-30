@@ -12,6 +12,7 @@ from .models import Protein, Ligand
 
 logger = logging.getLogger(__name__)
 
+
 class PreprocessorWrapper:
     """A django model friendly wrapper around the preprocessor binary"""
 
@@ -38,10 +39,10 @@ class PreprocessorWrapper:
         :param directory: Path to desired output directory
         :type directory: Path
         """
-        with PreprocessorWrapper.create_temp_molecule_file(job.protein_string, 'pdb')\
-                as protein_file,\
-                PreprocessorWrapper.create_temp_molecule_file(job.ligand_string, 'sdf')\
-                as ligand_file:
+        with PreprocessorWrapper.create_temp_molecule_file(job.protein_string, 'pdb') \
+                as protein_file, \
+                PreprocessorWrapper.create_temp_molecule_file(job.ligand_string, 'sdf') \
+                        as ligand_file:
             args = [
                 settings.BINARIES['preprocessor'],
                 '--protein', protein_file.name,
@@ -100,11 +101,11 @@ class PreprocessorWrapper:
         with pdb_files[0].open() as pdb_file:
             pdb_string = pdb_file.read()
         job.output_protein = Protein(
-            name = job.protein_name,
-            pdb_code = job.pdb_code,
-            uniprot_code = job.uniprot_code,
-            file_type = 'pdb',
-            file_string = pdb_string
+            name=job.protein_name,
+            pdb_code=job.pdb_code,
+            uniprot_code=job.uniprot_code,
+            file_type='pdb',
+            file_string=pdb_string
         )
         job.output_protein.save()
 

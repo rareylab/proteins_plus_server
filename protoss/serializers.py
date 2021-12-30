@@ -7,19 +7,22 @@ from molecule_handler.models import Protein
 from molecule_handler.validation import valid_protein_extension, valid_ligand_extension
 from .models import ProtossJob
 
+
 class ProtossJobSerializer(ProteinsPlusJobSerializer):
     """Serializer for ProtossJob model"""
+
     class Meta(ProteinsPlusJobSerializer.Meta):
         model = ProtossJob
         fields = ProteinsPlusJobSerializer.Meta.fields + ['input_protein', 'output_protein']
 
-class ProtossSubmitSerializer(ProteinsPlusJobSubmitSerializer): # pylint: disable=abstract-method
+
+class ProtossSubmitSerializer(ProteinsPlusJobSubmitSerializer):  # pylint: disable=abstract-method
     """Serializer for the Protoss job submission data"""
     protein_id = serializers.UUIDField(required=False, default=None)
     protein_file = serializers.FileField(required=False, default=None)
     ligand_file = serializers.FileField(required=False, default=None)
 
-    def validate(self, data): # pylint: disable=arguments-renamed
+    def validate(self, data):  # pylint: disable=arguments-renamed
         """Data validation
 
         :param data: Job submission data
