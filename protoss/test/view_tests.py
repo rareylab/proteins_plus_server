@@ -2,6 +2,7 @@
 import uuid
 from proteins_plus.test.utils import PPlusTestCase, call_api
 from molecule_handler.test.utils import create_test_protein
+from .config import TestConfig
 from ..views import ProtossView
 from ..models import ProtossJob
 
@@ -12,6 +13,14 @@ class ViewTests(PPlusTestCase):
         protein = create_test_protein()
         data = {'protein_id': protein.id}
         response = call_api(ProtossView, 'post', data)
+
+        self.assertEqual(response.status_code, 202)
+
+    def test_post_protein_file(self):
+        """Test protoss view with a file upload"""
+        with open(TestConfig.protein_file) as protein_file:
+            data = {'protein_file': protein_file}
+            response = call_api(ProtossView, 'post', data)
 
         self.assertEqual(response.status_code, 202)
 

@@ -67,7 +67,7 @@ def execute_job(task, job_id, job_type, tool_name):
         job.save()
         logger.info(f'Successfully finished executing {task} on {job_type} with id {job_id}.')
 
-def submit_task(job, task, use_cache):
+def submit_task(job, task, use_cache, immediate=False):
     """Retrieve an existing job from cache or start its execution
 
     :param job: Job to be executed or retrieved from cache
@@ -76,19 +76,20 @@ def submit_task(job, task, use_cache):
     :type task: celery.local.celery.local (celery shared task)
     :param use_cache: Indicates whether caching should be used
     :type use_cache: bool
-    :return: A dictionary containing the response information for the user
-    :rtype: dict('job_id': UUID, 'retrieved_from_cache': bool)
+    :param immediate: Whether to process the task immediately
+    :type immediate: bool
+    :return: the job id and whether the job was retrieved from cache
+    :rtype: tuple(job_id, retrieved)
     """
     cached_job = None
-    retrieved_from_cache = False
+    retrieved = False
     if use_cache and len(job.hash_attributes) != 0:
         cached_job = job.retrieve_job_from_cache()
     if cached_job is None:
         job.save()
-        task.delay(job.id)
+        task(job.id) if immediate else task.delay(job.id)
     else:
         job = cached_job
-        retrieved_from_cache = True
+        retrieved = True
 
-    response_data = {'job_id': job.id, 'retrieved_from_cache': retrieved_from_cache}
-    return response_data
+    return job.id, retrieved

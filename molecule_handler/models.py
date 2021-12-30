@@ -1,4 +1,5 @@
 """molecule_handler database models"""
+import os
 from tempfile import NamedTemporaryFile
 from contextlib import nullcontext
 
@@ -80,6 +81,25 @@ class PreprocessorJob(ProteinsPlusJob):
     hash_attributes = ['pdb_code', 'uniprot_code',
                         'protein_string', 'protein_file_type',
                         'ligand_string', 'ligand_file_type']
+
+    @staticmethod
+    def from_file(protein_file, ligand_file=None):
+        """Build a PreprocessorJob from file(s)
+
+        :param protein_file: Protein file to build job from
+        :param ligand_file: Optional ligand file to build job from
+        """
+        protein_string = protein_file.file.read().decode('utf8')
+        protein_name = os.path.basename(protein_file.name)
+        protein_name = os.path.splitext(protein_name)[0]
+        ligand_string = None
+        if ligand_file:
+            ligand_string = ligand_file.file.read().decode('utf8')
+        return PreprocessorJob(
+            protein_name=protein_name,
+            protein_string=protein_string,
+            ligand_string=ligand_string
+        )
 
 @receiver(pre_delete, sender=Ligand)
 def ligand_image_delete(sender, instance, **kwargs): # pylint: disable=unused-argument

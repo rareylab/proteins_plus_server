@@ -65,6 +65,11 @@ which should start the server at http://localhost:8000/
 
 ### API Reference - Swagger
 
+Generate the schema with:
+```bash
+python manage.py spectacular --file schema.yml
+```
+
 See the interactive API at http://localhost:8000/api/schema/swagger-ui
 or download the API schema at http://localhost:8000/api/schema
 

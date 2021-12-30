@@ -4,6 +4,7 @@ import re
 from rest_framework import serializers
 from proteins_plus.serializers import ProteinsPlusJobSerializer, ProteinsPlusJobSubmitSerializer
 from .models import Protein, Ligand, ElectronDensityMap, PreprocessorJob
+from .validation import valid_protein_extension, valid_ligand_extension, valid_pdb_code, valid_uniprot_code
 
 class ProteinSerializer(serializers.ModelSerializer):
     """Serializer for the Protein model"""
@@ -55,29 +56,23 @@ class UploadSerializer(ProteinsPlusJobSubmitSerializer): # pylint: disable=abstr
         if data['pdb_code'] is None and data['protein_file'] is None:
             raise serializers.ValidationError('Neither pdb code not pdb file were provided.')
         if data['protein_file'] is not None:
-            ext = os.path.splitext(data['protein_file'].name)[1]
-            if ext != '.pdb':
+            if not valid_protein_extension(data['protein_file']):
                 raise serializers.ValidationError(
                     'For proteins only pdb files are supported at the moment.'
-                    )
+                )
         if data['pdb_code'] is not None:
-            pdb_pattern = re.compile('[0-9][a-zA-Z0-9]{3}')
-            if not pdb_pattern.match(data['pdb_code']):
+            if not valid_pdb_code(data['pdb_code']):
                 raise serializers.ValidationError(
                     'Invalid pdb code was provided.'
-                    )
-        if data['uniprot_code'] is not None:
-            uniprot_pattern = re.compile(
-                '[OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2}'
                 )
-            if not uniprot_pattern.match(data['uniprot_code']):
+        if data['uniprot_code'] is not None:
+            if not valid_uniprot_code(data['uniprot_code']):
                 raise serializers.ValidationError(
                     'Invalid uniprot code was provided.'
-                    )
+                )
         if data['ligand_file'] is not None:
-            ext = os.path.splitext(data['ligand_file'].name)[1]
-            if ext != '.sdf':
+            if not valid_ligand_extension(data['ligand_file']):
                 raise serializers.ValidationError(
                     'For ligands only sdf files are supported at the moment.'
-                    )
+                )
         return data

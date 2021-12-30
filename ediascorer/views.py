@@ -2,13 +2,14 @@
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.viewsets import ReadOnlyModelViewSet
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 from rest_framework.response import Response
 from drf_spectacular.utils import extend_schema
 
 from proteins_plus.serializers import ProteinsPlusJobResponseSerializer
 from proteins_plus.job_handler import submit_task
-from molecule_handler.models import Protein, ElectronDensityMap
+from molecule_handler.tasks import preprocess_molecule_task
+from molecule_handler.models import Protein, ElectronDensityMap, PreprocessorJob
 
 from .models import AtomScores, EdiaJob
 from .tasks import ediascore_protein_task
@@ -17,7 +18,7 @@ from .serializers import EdiaJobSerializer, AtomScoresSerializer,\
 
 class EdiascorerView(APIView):
     """View for executing the Ediascorer"""
-    parser_classes = (MultiPartParser, FormParser)
+    parser_classes = (JSONParser, MultiPartParser, FormParser)
 
     @extend_schema(
         request=EdiascorerSubmitSerializer,
@@ -36,8 +37,18 @@ class EdiascorerView(APIView):
         serializer.is_valid(raise_exception=True)
         request_data = serializer.validated_data
 
-        input_protein = Protein.objects.get(id=request_data['protein_id'])
-
+        if request_data['protein_id']:
+            input_protein = Protein.objects.get(id=request_data['protein_id'])
+        else:
+            preprocess_job = PreprocessorJob.from_file(request_data['protein_file'], request_data['ligand_file'])
+            job_id, retrieved = submit_task(
+                preprocess_job,
+                preprocess_molecule_task,
+                request_data['use_cache'],
+                immediate=True
+            )
+            preprocess_job = PreprocessorJob.objects.get(id=job_id)
+            input_protein = preprocess_job.output_protein
         job = EdiaJob(input_protein=input_protein)
         job.save()
 
@@ -54,9 +65,11 @@ class EdiascorerView(APIView):
         else:
             job.density_file_pdb_code = input_protein.pdb_code
 
-        response_data = submit_task(job, ediascore_protein_task, request_data['use_cache'])
-        serializer = ProteinsPlusJobResponseSerializer(response_data)
-
+        job_id, retrieved = submit_task(job, ediascore_protein_task, request_data['use_cache'])
+        serializer = ProteinsPlusJobResponseSerializer({
+            'job_id': job_id,
+            'retrieved_from_cache': retrieved
+        })
         return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
 
 class EdiaJobViewSet(ReadOnlyModelViewSet): # pylint: disable=too-many-ancestors

@@ -57,9 +57,11 @@ class ProteinUploadView(APIView):
             ligand_string = ligand_string
         )
 
-        response_data = submit_task(job, preprocess_molecule_task, request_data['use_cache'])
-        serializer = ProteinsPlusJobResponseSerializer(response_data)
-
+        job_id, retrieved = submit_task(job, preprocess_molecule_task, request_data['use_cache'])
+        serializer = ProteinsPlusJobResponseSerializer({
+            'job_id': job_id,
+            'retrieved_from_cache': retrieved
+        })
         return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
 
 class ProteinViewSet(ReadOnlyModelViewSet): # pylint: disable=too-many-ancestors
