@@ -1,6 +1,4 @@
 """molecule_handler model serializers for django rest framework"""
-import os
-import re
 from rest_framework import serializers
 from proteins_plus.serializers import ProteinsPlusJobSerializer, ProteinsPlusJobSubmitSerializer
 from .models import Protein, Ligand, ElectronDensityMap, PreprocessorJob
@@ -18,10 +16,6 @@ class ProteinSerializer(serializers.ModelSerializer):
             'pdb_code',
             'file_type',
             'ligand_set',
-            'parent_protoss_job',
-            'child_protoss_job_set',
-            'parent_edia_job',
-            'child_edia_job_set',
             'file_string',
             'date_created',
             'date_last_accessed'
@@ -41,7 +35,7 @@ class ElectronDensityMapSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ElectronDensityMap
-        fields = ['id', 'file', 'edia_job']
+        fields = ['id', 'file', 'date_created', 'date_last_accessed']
 
 
 class PreprocessorJobSerializer(ProteinsPlusJobSerializer):

@@ -66,6 +66,8 @@ class Ligand(ProteinsPlusHashableModel):
 class ElectronDensityMap(ProteinsPlusHashableModel):
     """Django Model for electron density map files"""
     file = models.FileField(upload_to=settings.MEDIA_DIRECTORIES['density_files'])
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_last_accessed = models.DateTimeField(auto_now=True)
 
     hash_attributes = ['file']
 

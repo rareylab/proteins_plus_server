@@ -1,5 +1,4 @@
 """Protoss model serializers"""
-import os
 from rest_framework import serializers
 from rest_framework.exceptions import NotFound
 from proteins_plus.serializers import ProteinsPlusJobSerializer, ProteinsPlusJobSubmitSerializer
