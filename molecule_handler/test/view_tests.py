@@ -64,10 +64,17 @@ class ViewTests(PPlusTestCase):
 
     def test_protein_upload_with_wrong_pdb_code(self):
         """Test upload with an invalid pdb code"""
-        data = {'pdb_code': '1111'}
+        data = {'pdb_code': 'i111'}
         response = call_api(ProteinUploadView, 'post', data)
 
-        self.assertEqual(response.status_code, 202)
+        self.assertEqual(response.status_code, 400)
+
+    def test_protein_upload_with_wrong_uniprot_code(self):
+        """Test upload with an invalid pdb code"""
+        data = {'uniprot_code': '1112'}
+        response = call_api(ProteinUploadView, 'post', data)
+
+        self.assertEqual(response.status_code, 400)
 
     def test_retrieve_protein(self):
         """Test retrieve and list Protein behavior"""

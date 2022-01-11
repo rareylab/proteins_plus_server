@@ -2,7 +2,7 @@
 from rest_framework import serializers
 from proteins_plus.serializers import ProteinsPlusJobSerializer, ProteinsPlusJobSubmitSerializer
 from .models import Protein, Ligand, ElectronDensityMap, PreprocessorJob
-from .validation import valid_protein_extension, valid_ligand_extension, valid_pdb_code, valid_uniprot_code
+from .input_validation import MoleculeInputValidator
 
 
 class ProteinSerializer(serializers.ModelSerializer):
@@ -64,32 +64,11 @@ class UploadSerializer(ProteinsPlusJobSubmitSerializer):  # pylint: disable=abst
 
         :param data: Upload data
         :raises serializers.ValidationError: If neither pdb code or pdb file were provided
-        :raises serializers.ValidationError: If the protein file has the wrong filetype
-        :raises serializers.ValidationError: If an invalid pdb code was provided
-        :raises serializers.ValidationError: If an invalid uniprot code was provided
-        :raises serializers.ValidationError: If the ligand file has the wrong filetype
         :return: Validated data
         """
-        if data['pdb_code'] is None and data['protein_file'] is None:
+        validator = MoleculeInputValidator(data)
+        if not validator.has_valid_pdb_code() and not validator.has_valid_protein_file():
             raise serializers.ValidationError('Neither pdb code not pdb file were provided.')
-        if data['protein_file'] is not None:
-            if not valid_protein_extension(data['protein_file']):
-                raise serializers.ValidationError(
-                    'For proteins only pdb files are supported at the moment.'
-                )
-        if data['pdb_code'] is not None:
-            if not valid_pdb_code(data['pdb_code']):
-                raise serializers.ValidationError(
-                    'Invalid pdb code was provided.'
-                )
-        if data['uniprot_code'] is not None:
-            if not valid_uniprot_code(data['uniprot_code']):
-                raise serializers.ValidationError(
-                    'Invalid uniprot code was provided.'
-                )
-        if data['ligand_file'] is not None:
-            if not valid_ligand_extension(data['ligand_file']):
-                raise serializers.ValidationError(
-                    'For ligands only sdf files are supported at the moment.'
-                )
+        validator.has_valid_uniprot_code()
+        validator.has_valid_ligand_file()
         return data
