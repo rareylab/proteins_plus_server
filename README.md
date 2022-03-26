@@ -30,7 +30,7 @@ celery -A proteins_plus worker --loglevel=INFO
 ```
 ...or in a more debug and IDE friendly way:
 ```bash
-python path/to/celery -A fast_grow_server worker --loglevel=INFO
+python path/to/celery -A proteins_plus worker --loglevel=INFO
 ```
 
 At this point either set the environment variables `$USER`, `$PASSWORD` and

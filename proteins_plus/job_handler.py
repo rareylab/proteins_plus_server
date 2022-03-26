@@ -2,6 +2,7 @@
 import logging
 import traceback
 from rest_framework import serializers
+from drf_spectacular.utils import extend_schema_field, OpenApiTypes
 
 logger = logging.getLogger(__name__)
 
@@ -34,6 +35,7 @@ class Status:  # pylint: disable=too-few-public-methods
         return Status.DETAILED[status]
 
 
+@extend_schema_field(OpenApiTypes.STR)
 class StatusField(serializers.Field):
 
     def to_representation(self, value):
