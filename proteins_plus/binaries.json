@@ -1,5 +1,6 @@
 {
   "preprocessor": "bin/preprocessor/preprocessor",
   "protoss": "bin/protoss/protoss_4_pdb",
-  "ediascorer": "bin/ediascorer/EDIAscorer"
+  "ediascorer": "bin/ediascorer/EDIAscorer",
+  "metalizer": "bin/metalizer/metalizer"
 }

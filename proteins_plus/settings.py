@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'protoss.apps.ProtossConfig',
     'ediascorer.apps.EdiascorerConfig',
     'proteins_plus.apps.ProteinsPlusConfig',
+    'metalizer.apps.MetalizerConfig'
 ]
 
 MIDDLEWARE = [

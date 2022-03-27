@@ -1,0 +1,244 @@
+{
+  "cutoff": 2.8,
+  "element": "Zn",
+  "metal_coordinate": [
+    96.726,
+    70.904,
+    -20.23
+  ],
+  "metal_name": "1300:A.ZN/0",
+  "molecule_name": "ZN_A_1300",
+  "pdb_code": "4AGM",
+  "predictions": [
+    {
+      "coordination_number": 4,
+      "free_sites": 0,
+      "geometry": "tetrahedral",
+      "id": 0,
+      "nof_bidentates": 0,
+      "overlap_penalty": 0,
+      "partners": [
+        {
+          "atoms": [
+            {
+              "atom_distance": 2.0493886893412827,
+              "atom_name": "179:A.ND1/0",
+              "element": "N"
+            }
+          ],
+          "localization": 0,
+          "min_distance": 0,
+          "optimal_direction": [
+            -0.9887744374700351,
+            -0.13815808542095684,
+            0.05689864004203249
+          ],
+          "partner_coordinate": [
+            94.706,
+            70.599,
+            -20.067
+          ],
+          "partner_distance": 2.0493886893412827,
+          "type": 1
+        },
+        {
+          "atoms": [
+            {
+              "atom_distance": 2.3067591985294023,
+              "atom_name": "238:A.SG/0",
+              "element": "S"
+            }
+          ],
+          "localization": 0,
+          "min_distance": 0,
+          "optimal_direction": [
+            0.22519938455719885,
+            0.443757223835033,
+            -0.8673896261134811
+          ],
+          "partner_coordinate": [
+            97.146,
+            71.881,
+            -22.277
+          ],
+          "partner_distance": 2.3067591985294023,
+          "type": 1
+        },
+        {
+          "atoms": [
+            {
+              "atom_distance": 2.3141812807124693,
+              "atom_name": "242:A.SG/0",
+              "element": "S"
+            }
+          ],
+          "localization": 0,
+          "min_distance": 0,
+          "optimal_direction": [
+            0.4637028840482324,
+            -0.8844517360051217,
+            0.052199252895793524
+          ],
+          "partner_coordinate": [
+            97.261,
+            72.217,
+            -18.401
+          ],
+          "partner_distance": 2.3141812807124693,
+          "type": 1
+        },
+        {
+          "atoms": [
+            {
+              "atom_distance": 2.3312372251660736,
+              "atom_name": "176:A.SG/0",
+              "element": "S"
+            }
+          ],
+          "localization": 0,
+          "min_distance": 0,
+          "optimal_direction": [
+            0.2998721688646038,
+            0.5788525975910456,
+            0.7582917331756551
+          ],
+          "partner_coordinate": [
+            97.677,
+            68.779,
+            -20.109
+          ],
+          "partner_distance": 2.3312372251660736,
+          "type": 1
+        }
+      ],
+      "prmsd": 0.05103970405470625,
+      "rmsd": 3.7443147810571875,
+      "score": 2.5519852027353127,
+      "unique": true
+    },
+    {
+      "coordination_number": 4,
+      "free_sites": 1,
+      "geometry": "trigonal bipyramid",
+      "id": 1,
+      "nof_bidentates": 0,
+      "overlap_penalty": 0.0002624655223633149,
+      "partners": [
+        {
+          "atoms": [
+            {
+              "atom_distance": 2.0493886893412827,
+              "atom_name": "179:A.ND1/0",
+              "element": "N"
+            }
+          ],
+          "localization": 0,
+          "min_distance": 0,
+          "optimal_direction": [
+            -0.11254017440001482,
+            0.4215355780070396,
+            -0.8998013478653409
+          ],
+          "partner_coordinate": [
+            94.706,
+            70.599,
+            -20.067
+          ],
+          "partner_distance": 2.0493886893412827,
+          "type": 1
+        },
+        {
+          "atoms": [
+            {
+              "atom_distance": 2.3067591985294023,
+              "atom_name": "238:A.SG/0",
+              "element": "S"
+            }
+          ],
+          "localization": 0,
+          "min_distance": 0,
+          "optimal_direction": [
+            -0.03444724920907892,
+            0.5647363206081639,
+            0.8245521664563622
+          ],
+          "partner_coordinate": [
+            97.146,
+            71.881,
+            -22.277
+          ],
+          "partner_distance": 2.3067591985294023,
+          "type": 1
+        },
+        {
+          "atoms": [
+            {
+              "atom_distance": 2.3141812807124693,
+              "atom_name": "242:A.SG/0",
+              "element": "S"
+            }
+          ],
+          "localization": 0,
+          "min_distance": 0,
+          "optimal_direction": [
+            0.14698742360909378,
+            -0.9862718986152037,
+            0.07524918140897896
+          ],
+          "partner_coordinate": [
+            97.261,
+            72.217,
+            -18.401
+          ],
+          "partner_distance": 2.3141812807124693,
+          "type": 1
+        },
+        {
+          "atoms": [
+            {
+              "atom_distance": 2.3312372251660736,
+              "atom_name": "176:A.SG/0",
+              "element": "S"
+            }
+          ],
+          "localization": 0,
+          "min_distance": 0,
+          "optimal_direction": [
+            -0.9881102480555838,
+            -0.14294144876413373,
+            0.056620490219902446
+          ],
+          "partner_coordinate": [
+            97.677,
+            68.779,
+            -20.109
+          ],
+          "partner_distance": 2.3312372251660736,
+          "type": 1
+        },
+        {
+          "atoms": [
+          ],
+          "localization": 5,
+          "min_distance": 1.983799212291888,
+          "optimal_direction": [
+            0.9881102480555838,
+            0.14294144876413373,
+            -0.056620490219902446
+          ],
+          "partner_coordinate": [
+            null,
+            null,
+            null
+          ],
+          "partner_distance": null,
+          "type": 0
+        }
+      ],
+      "prmsd": 0.21609430952554984,
+      "rmsd": 12.508200257292064,
+      "score": 14.807340131501125,
+      "unique": true
+    }
+  ]
+}

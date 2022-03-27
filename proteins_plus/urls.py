@@ -26,7 +26,8 @@ urlpatterns = [
          name='swagger-ui'),
     path('molecule_handler/', include('molecule_handler.urls')),
     path('protoss/', include('protoss.urls')),
-    path('ediascorer/', include('ediascorer.urls'))
+    path('ediascorer/', include('ediascorer.urls')),
+    path('metalizer/', include('metalizer.urls'))
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
