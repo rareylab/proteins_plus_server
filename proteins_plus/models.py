@@ -3,6 +3,7 @@ import uuid
 from hashlib import blake2b
 from django.db import models
 from .job_handler import Status
+from .utils import json_to_sorted_string
 
 
 class ProteinsPlusBaseModel(models.Model):
@@ -36,6 +37,11 @@ class ProteinsPlusHashableModel(ProteinsPlusBaseModel):
                 hashable_substrings.append(value.generate_hashable_string())
             elif isinstance(value, models.fields.files.FieldFile):
                 hashable_substrings.append(value.read())
+            elif isinstance(value, dict):
+                # all hashable dicts are expected to be JSON-like objects.
+                # A unique string representation of the intrinsically unordered
+                # dict is generated.
+                hashable_substrings.append(json_to_sorted_string(value, copy=True).encode('utf-8'))
             # add other unique field handlings here if str() is insufficient
             else:
                 hashable_substrings.append(str(value).encode('utf-8'))
