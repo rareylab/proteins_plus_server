@@ -70,10 +70,10 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'HOST': 'localhost',
         'PORT': 5432,
-        'NAME': 'pplusdb',
+        'NAME': 'pplusdb' if 'PPLUS_DB_NAME' not in os.environ else os.environ['PPLUS_DB_NAME'],
         'USER': 'pplususer',
         'PASSWORD': 'PPlusRocks',
-    }
+    },
 }
 
 # Password validation
