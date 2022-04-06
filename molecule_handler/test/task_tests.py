@@ -1,11 +1,6 @@
 """tests for molecule_handler tasks"""
-import os
-import subprocess
-
-from django.conf import settings
-
 from proteins_plus.job_handler import Status
-from proteins_plus.test.utils import PPlusTestCase
+from proteins_plus.test.utils import PPlusTestCase, is_tool_available
 
 from ..tasks import preprocess_molecule_task
 from ..models import PreprocessorJob
@@ -17,16 +12,10 @@ from .utils import create_test_preprocesser_job
 class TaskTests(PPlusTestCase):
     """Celery task tests"""
 
-    def test_preprocessor_available(self):
-        """Test the preprocessor binary exists at the correct location and is licensed"""
-        path = settings.BINARIES['preprocessor']
-        self.assertTrue(
-            os.path.exists(path), f'Preprocessor binary does not exist at {path}')
-        completed_process = subprocess.run(
-            path, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=False)
-        # 64 == ArgumentError, which means the preprocessor is ready to accept arguments
-        self.assertEqual(completed_process.returncode, 64,
-                         'Preprocessor ran with unexpected error code. Is it licensed?')
+    def test_available(self):
+        """Test if binary exists at the correct location and is licensed"""
+        self.assertEqual(is_tool_available('preprocessor'), 64,
+                         'Ran with unexpected error code. Is it licensed?')
 
     def test_preprocess_molecule(self):
         """Test the preprocessor correctly processes a protein file on it's own"""

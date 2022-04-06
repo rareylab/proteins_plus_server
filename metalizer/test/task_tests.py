@@ -1,7 +1,7 @@
 """Metalizer task tests"""
 import json
 
-from proteins_plus.test.utils import PPlusTestCase
+from proteins_plus.test.utils import PPlusTestCase, is_tool_available
 from proteins_plus.models import Status
 
 from ..models import MetalizerJob
@@ -12,6 +12,11 @@ from .utils import create_test_metalizer_job
 
 class TaskTests(PPlusTestCase):
     """Metalizer task tests"""
+
+    def test_available(self):
+        """Test if binary exists at the correct location and is licensed"""
+        self.assertEqual(is_tool_available('metalizer'), 1,
+                         'Ran with unexpected error code. Is it licensed?')
 
     def test_metalize(self):
         """Test Metalizer execution produces expected results"""

@@ -1,6 +1,6 @@
 """tests for protoss tasks"""
 from proteins_plus.job_handler import Status
-from proteins_plus.test.utils import PPlusTestCase
+from proteins_plus.test.utils import PPlusTestCase, is_tool_available
 
 from molecule_handler.test.utils import create_test_protein, create_multiple_test_ligands
 
@@ -12,6 +12,11 @@ from .config import TestConfig
 
 class TaskTests(PPlusTestCase):
     """Celery task tests"""
+
+    def test_available(self):
+        """Test if binary exists at the correct location and is licensed"""
+        self.assertEqual(is_tool_available('protoss'), 1,
+                         'Ran with unexpected error code. Is it licensed?')
 
     def test_protoss_protein_without_ligands(self):
         """test of protoss workflow with protein"""

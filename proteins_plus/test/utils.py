@@ -1,5 +1,9 @@
 """Utility functions used in unit tests"""
+import subprocess
+from pathlib import Path
 from django.test import RequestFactory, TestCase
+
+from proteins_plus import settings
 
 from molecule_handler.models import Ligand, ElectronDensityMap
 
@@ -68,3 +72,21 @@ def call_api(view_class, method, data={}, query_params={},
     else:
         response = view_class.as_view(viewset_actions)(request, *[], **req_kwargs)
     return response
+
+
+def is_tool_available(tool_name_key):
+    """Calls the tool binary by command line and returns the return code or None if unavailable
+
+    :param tool_name_key: name of the tool to check
+    :type tool_name_key: str
+    :return: Return code of the command line tool execution or None if tool not available.
+    :rtype: int or None
+    """
+    path = Path(settings.BINARIES[tool_name_key])
+    if not path.is_file():
+        print(f'{tool_name_key} binary does not exist at {path}')
+        return None
+    completed_process = subprocess.run(
+        path, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=False)
+    # 64 == ArgumentError, which means ready to accept arguments
+    return completed_process.returncode

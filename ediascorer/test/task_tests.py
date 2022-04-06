@@ -1,6 +1,6 @@
 """tests for ediascorer tasks"""
 from proteins_plus.job_handler import Status
-from proteins_plus.test.utils import PPlusTestCase
+from proteins_plus.test.utils import PPlusTestCase, is_tool_available
 from ..tasks import ediascore_protein_task
 from ..models import EdiaJob
 from .utils import create_test_edia_job
@@ -8,6 +8,11 @@ from .utils import create_test_edia_job
 
 class TaskTests(PPlusTestCase):
     """Celery task tests"""
+
+    def test_available(self):
+        """Test if binary exists at the correct location and is licensed"""
+        self.assertEqual(is_tool_available('ediascorer'), 64,
+                         'Ran with unexpected error code. Is it licensed?')
 
     def test_ediascore_protein_from_file(self):
         """Test ediascorer binary with uploading electron density file"""
