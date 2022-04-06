@@ -1,0 +1,50 @@
+# EDF Format to define binding site and ensemble.
+# Lines starting with a '#' character are considered as comments.
+# Use the REFERENCE line to define a reference protein.
+# This line is also considered as the beginning of a new ensemble entry.
+
+REFERENCE ./data/referenceStructures/1a3e.pdb
+
+# Use RESIDUE lines to define the residues of the query binding site.
+# Please use the residue's name, it's chain identifier and the serial number
+# as specified in the REFERENCE PDB file to define a residue that should be part
+# of the query. Additional 'insertion codes' in the REFERENCE PDB file must also
+# be specified here. Please use the following order:
+# RESIDUE residueName chainIdentifier serialNumber <insertion code>
+
+RESIDUE LEU H 41
+RESIDUE CYS H 42
+RESIDUE HIS H 57
+RESIDUE CYS H 58
+RESIDUE TYR H 60 A
+RESIDUE TRP H 60 D
+RESIDUE LYS H 60 F
+RESIDUE ASN H 95 
+RESIDUE TRP H 96
+RESIDUE GLU H 97 A
+RESIDUE ASN H 98
+RESIDUE LEU H 99
+RESIDUE ASP H 102
+RESIDUE ASN H 143
+RESIDUE GLU H 146
+RESIDUE ILE H 174
+RESIDUE ASP H 189
+RESIDUE ALA H 190
+RESIDUE CYS H 191
+RESIDUE GLU H 192
+RESIDUE GLY H 193
+RESIDUE ASP H 194
+RESIDUE SER H 195
+RESIDUE GLY H 196
+RESIDUE VAL H 213
+RESIDUE SER H 214
+RESIDUE TRP H 215
+RESIDUE GLY H 216
+RESIDUE GLU H 217
+RESIDUE GLY H 219
+RESIDUE CYS H 220
+RESIDUE ASP H 221 A
+RESIDUE ARG H 221
+RESIDUE GLY H 226
+RESIDUE PHE H 227
+RESIDUE TYR H 228

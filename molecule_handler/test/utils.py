@@ -1,6 +1,6 @@
 """Helper functions for the molecule_handler unit tests"""
 from proteins_plus.models import Status
-from ..models import Protein, Ligand, PreprocessorJob
+from ..models import Protein, Ligand, PreprocessorJob, ProteinSite
 from .config import TestConfig
 
 
@@ -120,3 +120,20 @@ def create_multiple_test_ligands(
     ligand1 = create_test_ligand(protein, ligand, ligand_file1)
     ligand2 = create_test_ligand(protein, ligand2, ligand_file2)
     return ligand1, ligand2
+
+
+def create_test_proteinsite(protein, site_json_dict=None):
+    """Helper function for creating dummy ProteinSite objects
+
+    :param protein: The protein instance
+    :type protein: Protein
+    :param site_json_dict: Dict of site description.
+    :type site_json_dict: dict
+    :return: The newly created protein site.
+    :rtype: ProteinSite
+    """
+    if site_json_dict is None:
+        site_json_dict = TestConfig.site_json
+    protein_site = ProteinSite(protein=protein, site_description=site_json_dict)
+    protein_site.save()
+    return protein_site

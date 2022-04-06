@@ -10,6 +10,7 @@ from django.dispatch.dispatcher import receiver
 from django.conf import settings
 
 from proteins_plus.models import ProteinsPlusJob, ProteinsPlusHashableModel
+from .protein_site_handler import ProteinSiteHandler
 
 
 class Protein(ProteinsPlusHashableModel):
@@ -106,6 +107,54 @@ class Ligand(ProteinsPlusHashableModel):
         """
         temp_file = NamedTemporaryFile(mode='w+', suffix='.' + self.file_type)
         temp_file.write(self.file_string)
+        temp_file.seek(0)
+        return temp_file
+
+
+class ProteinSite(ProteinsPlusHashableModel):
+    """Django model for ProteinSite objects.
+
+    Always associated with a Protein object. This model describes a part of a protein
+    structure. It is used to represent a binding sites, protein-protein interfaces (PPIs),
+    residue 3D micro-environments and more.
+
+    The site_description looks like this:
+        {'residue_ids': [
+            {'name': 'LEU', 'position': '145', 'chain': 'A'},
+            {'name': 'TRP', 'position': '146', 'chain': 'A'},
+        ]}
+    """
+    protein = models.ForeignKey(Protein, on_delete=models.CASCADE, blank=True, null=True)
+    site_description = models.JSONField()
+
+    hash_attributes = ['protein', 'site_description']
+
+    @staticmethod
+    def from_edf(protein, edf_path):
+        """Convenience function to create a ProteinSite from EDF file for the given Protein.
+
+        note:: Reference protein path in EDF file will be ignored. Instead protein will
+              set as reference.
+        :param protein: The protein for which the site in the EDF file belongs.
+        :type protein: Protein
+        :param edf_path: File path to EDF file.
+        :type edf_path: pathlib.Path
+        :return: A new ProteinSite.
+        :rtype: ProteinSite
+        """
+        return ProteinSite(
+            protein=protein,
+            site_description=ProteinSiteHandler.edf_to_json(edf_path))
+
+    def write_edf_temp(self, protein_filepath):
+        """Write site as EDF (ensemble data file, a NAOMI intern file format) to a temporary file
+
+        :param Filepath to the parent Protein.
+        :return: temporary EDF file
+        :rtype: NamedTemporaryFile
+        """
+        temp_file = NamedTemporaryFile(mode='w+', suffix='.edf')
+        temp_file.write(ProteinSiteHandler.proteinsite_to_edf(self, protein_filepath))
         temp_file.seek(0)
         return temp_file
 
