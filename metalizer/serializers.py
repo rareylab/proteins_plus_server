@@ -2,7 +2,8 @@
 from rest_framework import serializers
 from proteins_plus.serializers import ProteinsPlusJobSerializer, ProteinsPlusJobSubmitSerializer
 from molecule_handler.input_validation import MoleculeInputValidator
-from .models import MetalizerJob
+
+from .models import MetalizerJob, MetalizerInfo
 
 
 class MetalizerJobSerializer(ProteinsPlusJobSerializer):
@@ -17,8 +18,16 @@ class MetalizerJobSerializer(ProteinsPlusJobSerializer):
             'name',
             'distance_threshold',
             'output_protein',
-            'metalizer_result'
+            'metalizer_info'
         ]
+
+
+class MetalizerInfoSerializer(serializers.ModelSerializer):
+    """Serializer for the MetalizerInfo model"""
+
+    class Meta:
+        model = MetalizerInfo
+        fields = ['id', 'info', 'parent_metalizer_job']
 
 
 class MetalizerJobSubmitSerializer(ProteinsPlusJobSubmitSerializer):  # pylint: disable=abstract-method

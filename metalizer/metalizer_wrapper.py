@@ -7,6 +7,8 @@ from tempfile import TemporaryDirectory
 from proteins_plus import settings
 from molecule_handler.models import Protein
 
+from .models import MetalizerInfo
+
 logger = logging.getLogger(__name__)
 
 
@@ -59,7 +61,9 @@ class MetalizerWrapper:
             metalizer_data = json.load(metalizer_result_file)
         if not len(metalizer_data) > 0:
             raise RuntimeError('Metalizer did not generate results')
-        job.metalizer_result = metalizer_data[0]
+        metalizer_info = MetalizerInfo(info=metalizer_data[0], parent_metalizer_job=job)
+        metalizer_info.save()
+        job.metalizer_info = metalizer_info
         with open(metalized_protein_path) as metalizer_protein_file:
             pdb_string = metalizer_protein_file.read()
         output_protein = Protein(

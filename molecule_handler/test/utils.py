@@ -1,4 +1,5 @@
 """Helper functions for the molecule_handler unit tests"""
+from proteins_plus.models import Status
 from ..models import Protein, Ligand, PreprocessorJob
 from .config import TestConfig
 
@@ -27,6 +28,21 @@ def create_test_preprocesser_job(ligand_filepath=TestConfig.ligand_file):
 
     job.save()
     return job
+
+
+def create_successful_preprocessor_job():
+    """Helper function for creating dummy successful PreprocessorJob objects
+
+    :return: Dummy PreprocessorJob object
+    :rtype: PreprocessorJob
+    """
+    preprocessor_job = create_test_preprocesser_job()
+    output_protein = create_test_protein()
+    create_test_ligand(output_protein)
+    preprocessor_job.output_protein = output_protein
+    preprocessor_job.status = Status.SUCCESS
+    preprocessor_job.save()
+    return preprocessor_job
 
 
 def create_test_protein(protein_name=TestConfig.protein,

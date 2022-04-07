@@ -138,10 +138,9 @@ class EdiascorerWrapper:
             raise RuntimeError('Edia scorer: found no atom score file in output')
         atom_score_file = atom_score_files[0]
 
-        atom_scores = AtomScores(
-            scores=EdiascorerWrapper.csv_to_dict(atom_score_file)
+        job.atom_scores = AtomScores(
+            scores=EdiascorerWrapper.csv_to_dict(atom_score_file),
+            parent_edia_job=job
         )
-        atom_scores.save()
-
-        job.atom_scores = atom_scores
+        job.atom_scores.save()
         job.save()

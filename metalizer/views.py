@@ -10,8 +10,9 @@ from proteins_plus.serializers import ProteinsPlusJobResponseSerializer
 from proteins_plus.job_handler import submit_task
 from molecule_handler.models import Protein
 
-from .serializers import MetalizerJobSerializer, MetalizerJobSubmitSerializer
-from .models import MetalizerJob
+from .serializers import MetalizerJobSerializer, MetalizerJobSubmitSerializer, \
+    MetalizerInfoSerializer
+from .models import MetalizerJob, MetalizerInfo
 from .tasks import metalize_task
 
 
@@ -56,3 +57,9 @@ class MetalizerJobViewSet(ReadOnlyModelViewSet):
     """Metalizer job views"""
     queryset = MetalizerJob.objects.all()
     serializer_class = MetalizerJobSerializer
+
+
+class MetalizerInfoViewSet(ReadOnlyModelViewSet):
+    """Metalizer info views"""
+    queryset = MetalizerInfo.objects.all()
+    serializer_class = MetalizerInfoSerializer

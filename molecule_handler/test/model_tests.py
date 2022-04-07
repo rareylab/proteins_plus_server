@@ -1,10 +1,13 @@
 """tests for molecule_handler database models"""
 import os
 from proteins_plus.test.utils import PPlusTestCase
-from .config import TestConfig
-from .utils import create_test_preprocesser_job
+
 from ..tasks import preprocess_molecule_task
-from ..models import PreprocessorJob
+from ..models import PreprocessorJob, Protein, Ligand
+from .config import TestConfig
+from .utils import create_test_preprocesser_job, create_successful_preprocessor_job, \
+    create_test_protein, create_test_ligand
+
 
 class ModelTests(PPlusTestCase):
     """Database model tests"""
@@ -36,3 +39,31 @@ class ModelTests(PPlusTestCase):
         job3 = PreprocessorJob(pdb_code=TestConfig.protein)
         cached_job = job3.retrieve_job_from_cache()
         self.assertIsNone(cached_job)
+
+    def test_job_delete_cascade(self):
+        """Test cascading deletion behavior of the preprocessor job"""
+        job = create_successful_preprocessor_job()
+        protein = job.output_protein
+        job.delete()
+        # deleting the job does not delete the protein
+        self.assertTrue(Protein.objects.filter(id=protein.id).exists())
+
+        job = create_successful_preprocessor_job()
+        protein = job.output_protein
+        protein.delete()
+        # deleting the protein deletes the job
+        self.assertFalse(PreprocessorJob.objects.filter(id=job.id).exists())
+
+    def test_ligand_delete_cascade(self):
+        """Test cascading deletion behavior of the protein"""
+        protein = create_test_protein()
+        ligand = create_test_ligand(protein)
+        ligand.delete()
+        # deleting the ligand does not delete the protein
+        self.assertTrue(Protein.objects.filter(id=protein.id))
+
+        protein = create_test_protein()
+        ligand = create_test_ligand(protein)
+        protein.delete()
+        # deleting the protein deletes the ligand
+        self.assertFalse(Ligand.objects.filter(id=ligand.id))

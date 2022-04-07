@@ -26,7 +26,7 @@ class AtomScoresSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AtomScores
-        fields = ['id', 'scores', 'edia_job']
+        fields = ['id', 'scores', 'parent_edia_job']
 
 
 class EdiascorerSubmitSerializer(ProteinsPlusJobSubmitSerializer):  # pylint: disable=abstract-method

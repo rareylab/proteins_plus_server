@@ -1,9 +1,9 @@
 """Metalizer model tests"""
 from proteins_plus.test.utils import PPlusTestCase
-from molecule_handler.test.utils import create_test_protein
+from molecule_handler.models import Protein
 
-from .config import TestConfig
-from ..models import MetalizerJob
+from ..models import MetalizerInfo, MetalizerJob
+from .utils import create_test_metalizer_job, create_successful_metalizer_job
 
 
 class ModelTests(PPlusTestCase):
@@ -11,35 +11,40 @@ class ModelTests(PPlusTestCase):
 
     def test_cache_behavior(self):
         """Test caching behavior of Metalizer jobs"""
-        input_protein = create_test_protein(TestConfig.protein)
 
-        job = MetalizerJob(
-            input_protein=input_protein,
-            residue_id=1300,
-            chain_id='A',
-            name='ZN',
-            distance_threshold=2.8
-        )
+        job = create_test_metalizer_job()
         job.set_hash_value()
         job.save()
 
-        other_job = MetalizerJob(
-            input_protein=input_protein,
-            residue_id=1300,
-            chain_id='A',
-            name='ZN',
-            distance_threshold=2.8
-        )
+        other_job = create_test_metalizer_job()
         cached_job = other_job.retrieve_job_from_cache()
         self.assertIsNotNone(cached_job)
         self.assertEqual(cached_job.id, job.id)
 
-        another_job = MetalizerJob(
-            input_protein=input_protein,
-            residue_id=1300,
-            chain_id='A',
-            name='ZN',
-            distance_threshold=3.0  # changed distance threshold
-        )
+        another_job = create_test_metalizer_job()
+        another_job.distance_threshold = 3.0
+        another_job.save()
         cached_job = another_job.retrieve_job_from_cache()
         self.assertIsNone(cached_job)
+
+    def test_job_delete_cascade(self):
+        """Test cascading deletion behavior"""
+        job = create_successful_metalizer_job()
+        input_protein = job.input_protein
+        output_protein = job.output_protein
+        metalizer_info = job.metalizer_info
+        job.delete()
+        # deleting the job deletes the metalizer info but not the protein
+        self.assertFalse(MetalizerInfo.objects.filter(id=metalizer_info.id).exists())
+        self.assertTrue(Protein.objects.filter(id=input_protein.id).exists())
+        self.assertTrue(Protein.objects.filter(id=output_protein.id).exists())
+
+        job = create_successful_metalizer_job()
+        output_protein = job.output_protein
+        input_protein = job.input_protein
+        metalizer_info = job.metalizer_info
+        metalizer_info.delete()
+        # deleting the metalizer info deletes the job but not the protein
+        self.assertFalse(MetalizerJob.objects.filter(id=job.id).exists())
+        self.assertTrue(Protein.objects.filter(id=input_protein.id).exists())
+        self.assertTrue(Protein.objects.filter(id=output_protein.id).exists())
