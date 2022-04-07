@@ -37,6 +37,7 @@ class Status:  # pylint: disable=too-few-public-methods
 
 @extend_schema_field(OpenApiTypes.STR)
 class StatusField(serializers.Field):
+    """Custom serializer field for status"""
 
     def to_representation(self, value):
         return Status.to_string(value)
