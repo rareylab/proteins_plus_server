@@ -2,9 +2,11 @@
 import uuid
 from proteins_plus.test.utils import PPlusTestCase, call_api
 from molecule_handler.test.utils import create_test_protein
-from .config import TestConfig
-from ..views import ProtossView
+
+from ..views import ProtossView, ProtossJobViewSet
 from ..models import ProtossJob
+from .config import TestConfig
+from .utils import create_successful_protoss_job
 
 
 class ViewTests(PPlusTestCase):
@@ -70,3 +72,16 @@ class ViewTests(PPlusTestCase):
         self.assertNotEqual(response.data['job_id'], str(job.id))
         job2 = ProtossJob.objects.get(id=response.data['job_id'])
         self.assertIsNone(job2.hash_value)
+
+    def test_get_protoss_job(self):
+        """Test getting Protoss results"""
+        protoss_job = create_successful_protoss_job()
+        response = call_api(
+            ProtossJobViewSet,
+            'get',
+            viewset_actions={'get': 'retrieve'},
+            pk=protoss_job.id
+        )
+        fields = ['input_protein', 'output_protein']
+        for field in fields:
+            self.assertIn(field, response.data)

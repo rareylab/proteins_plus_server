@@ -2,8 +2,9 @@
 from proteins_plus.test.utils import PPlusTestCase, call_api
 from molecule_handler.test.utils import create_test_protein
 
+from ..views import MetalizerView, MetalizerJobViewSet, MetalizerInfoViewSet
 from .config import TestConfig
-from ..views import MetalizerView
+from .utils import create_successful_metalizer_job
 
 
 class ViewTests(PPlusTestCase):
@@ -47,3 +48,34 @@ class ViewTests(PPlusTestCase):
             }
             response = call_api(MetalizerView, 'post', data)
         self.assertEqual(response.status_code, 202)
+
+    def test_get_metalizer_job(self):
+        """Test getting Metalizer results"""
+        metalizer_job = create_successful_metalizer_job()
+        response = call_api(
+            MetalizerJobViewSet,
+            'get',
+            viewset_actions={'get': 'retrieve'},
+            pk=metalizer_job.id
+        )
+        fields = [
+            'input_protein',
+            'residue_id',
+            'chain_id',
+            'name',
+            'distance_threshold',
+            'output_protein',
+            'metalizer_info'
+        ]
+        for field in fields:
+            self.assertIn(field, response.data)
+
+        fields = ['id', 'info', 'parent_metalizer_job']
+        response = call_api(
+            MetalizerInfoViewSet,
+            'get',
+            viewset_actions={'get': 'retrieve'},
+            pk=response.data['metalizer_info']
+        )
+        for field in fields:
+            self.assertIn(field, response.data)

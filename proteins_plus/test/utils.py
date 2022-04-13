@@ -32,6 +32,15 @@ def call_api(view_class, method, data={}, query_params={},
              viewset_actions=None, **req_kwargs):
     """Helper function for making calls to the api
 
+    Examples
+
+    POST to APIView:
+    response = call_api(MyView, 'post', data)
+
+    GET model from ReadOnlyModelViewSet:
+    response = call_api(MyViewSet, 'get', viewset_actions={'get': 'retrieve'}, pk=model.id)
+
+
     :param view_class: View to send the api call to
     :type view_class: APIView or ViewSet
     :param method: Http method to use for the api call

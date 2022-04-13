@@ -85,7 +85,19 @@ class ViewTests(PPlusTestCase):
                             viewset_actions={'get': 'retrieve'},
                             pk=protein.id)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data['id'], str(protein.id))
+
+        fields = [
+            'id',
+            'name',
+            'pdb_code',
+            'file_type',
+            'ligand_set',
+            'file_string',
+            'date_created',
+            'date_last_accessed'
+        ]
+        for field in fields:
+            self.assertIn(field, response.data)
 
         response = call_api(ProteinViewSet, 'get',
                             viewset_actions={'get': 'list'})
@@ -101,7 +113,9 @@ class ViewTests(PPlusTestCase):
                             viewset_actions={'get': 'retrieve'},
                             pk=ligand.id)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data['id'], str(ligand.id))
+        fields = ['id', 'name', 'protein', 'file_type', 'file_string', 'image']
+        for field in fields:
+            self.assertIn(field, response.data)
 
         response = call_api(LigandViewSet, 'get',
                             viewset_actions={'get': 'list'})
@@ -117,7 +131,15 @@ class ViewTests(PPlusTestCase):
                             viewset_actions={'get': 'retrieve'},
                             pk=job.id)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data['id'], str(job.id))
+        fields = [
+            'protein_name',
+            'pdb_code',
+            'output_protein',
+            'protein_string',
+            'ligand_string'
+        ]
+        for field in fields:
+            self.assertIn(field, response.data)
 
         response = call_api(PreprocessorJobViewSet, 'get',
                             viewset_actions={'get': 'list'})

@@ -5,9 +5,10 @@ from django.core.files import File
 from proteins_plus.test.utils import PPlusTestCase, call_api
 from molecule_handler.test.utils import create_test_protein
 
-from ..views import EdiascorerView
+from ..views import EdiascorerView, EdiaJobViewSet, AtomScoresViewSet
 from ..models import EdiaJob
 from .config import TestConfig
+from .utils import create_successful_edia_job
 
 
 class ViewTests(PPlusTestCase):
@@ -98,10 +99,9 @@ class ViewTests(PPlusTestCase):
         self.assertTrue(response2.data['retrieved_from_cache'])
         self.assertEqual(response1.data['job_id'], response2.data['job_id'])
 
-        with open(TestConfig.density_file, 'rb') as density_file:
-            data = {'pdb_code': TestConfig.protein,
-                    'protein_id': protein.id}
-            response3 = call_api(EdiascorerView, 'post', data)
+        data = {'pdb_code': TestConfig.protein,
+                'protein_id': protein.id}
+        response3 = call_api(EdiascorerView, 'post', data)
 
         self.assertFalse(response3.data['retrieved_from_cache'])
         self.assertNotEqual(response3.data['job_id'], response1.data['job_id'])
@@ -117,3 +117,32 @@ class ViewTests(PPlusTestCase):
         self.assertNotEqual(response4.data['job_id'], response1.data['job_id'])
         job = EdiaJob.objects.get(id=response4.data['job_id'])
         self.assertIsNone(job.hash_value)
+
+    def test_get_edia_job_view(self):
+        """Test getting EDIA results"""
+        edia_job = create_successful_edia_job()
+        response = call_api(
+            EdiaJobViewSet,
+            'get',
+            viewset_actions={'get': 'retrieve'},
+            pk=edia_job.id
+        )
+        fields = [
+            'input_protein',
+            'density_file_pdb_code',
+            'electron_density_map',
+            'atom_scores',
+            'output_protein'
+        ]
+        for field in fields:
+            self.assertIn(field, response.data)
+
+        response = call_api(
+            AtomScoresViewSet,
+            'get',
+            viewset_actions={'get': 'retrieve'},
+            pk=response.data['atom_scores']
+        )
+        fields = ['id', 'scores', 'parent_edia_job']
+        for field in fields:
+            self.assertIn(field, response.data)
