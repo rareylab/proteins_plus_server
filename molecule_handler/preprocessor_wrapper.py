@@ -124,9 +124,7 @@ class PreprocessorWrapper:
         for sd_file in sd_files:
             ligand_name = sd_file.stem
             with sd_file.open() as ligand_file:
-                ligand_string = ligand_file.read()
-            ligand = Ligand(
-                name=ligand_name, file_type='sdf', file_string=ligand_string, protein=protein)
+                ligand = Ligand.from_file(ligand_file, protein)
             image_name = f'{ligand_name}.png'
             for image in image_files:
                 if image.name == image_name:

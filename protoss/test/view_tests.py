@@ -26,6 +26,15 @@ class ViewTests(PPlusTestCase):
 
         self.assertEqual(response.status_code, 202)
 
+    def test_post_protein_and_ligand_file(self):
+        """Test protoss view with a protein and ligand file upload"""
+        with open(TestConfig.protein_file) as protein_file:
+            with open(TestConfig.ligand_file) as ligand_file:
+                data = {'protein_file': protein_file, 'ligand_file': ligand_file}
+                response = call_api(ProtossView, 'post', data)
+
+        self.assertEqual(response.status_code, 202)
+
     def test_post_non_existing_protein(self):
         """Test protoss view with non existing protein id"""
         data = {'protein_id': uuid.uuid4()}

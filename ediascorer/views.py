@@ -8,8 +8,7 @@ from drf_spectacular.utils import extend_schema
 
 from proteins_plus.serializers import ProteinsPlusJobResponseSerializer
 from proteins_plus.job_handler import submit_task
-from molecule_handler.tasks import preprocess_molecule_task
-from molecule_handler.models import Protein, ElectronDensityMap, PreprocessorJob
+from molecule_handler.models import Protein, Ligand, ElectronDensityMap
 
 from .models import AtomScores, EdiaJob
 from .tasks import ediascore_protein_task
@@ -41,16 +40,13 @@ class EdiascorerView(APIView):
         if request_data['protein_id']:
             input_protein = Protein.objects.get(id=request_data['protein_id'])
         else:
-            preprocess_job = PreprocessorJob.from_file(
-                request_data['protein_file'], request_data['ligand_file'])
-            job_id, retrieved = submit_task(
-                preprocess_job,
-                preprocess_molecule_task,
-                request_data['use_cache'],
-                immediate=True
-            )
-            preprocess_job = PreprocessorJob.objects.get(id=job_id)
-            input_protein = preprocess_job.output_protein
+            input_protein = Protein.from_file(
+                request_data['protein_file'], pdb_code=request_data['pdb_code'])
+            if request_data['ligand_file']:
+                ligand = Ligand.from_file(request_data['ligand_file'], input_protein)
+                ligand.save()
+            input_protein.save()
+
         job = EdiaJob(input_protein=input_protein)
         job.save()
 

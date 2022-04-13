@@ -8,8 +8,7 @@ from drf_spectacular.utils import extend_schema
 
 from proteins_plus.serializers import ProteinsPlusJobResponseSerializer
 from proteins_plus.job_handler import submit_task
-from molecule_handler.tasks import preprocess_molecule_task
-from molecule_handler.models import Protein, PreprocessorJob
+from molecule_handler.models import Protein
 
 from .serializers import MetalizerJobSerializer, MetalizerJobSubmitSerializer
 from .models import MetalizerJob
@@ -33,16 +32,9 @@ class MetalizerView(APIView):
         if request_data['protein_id']:
             input_protein = Protein.objects.get(id=request_data['protein_id'])
         else:
-            preprocess_job = PreprocessorJob.from_file(
-                request_data['protein_file'])
-            job_id, retrieved = submit_task(
-                preprocess_job,
-                preprocess_molecule_task,
-                request_data['use_cache'],
-                immediate=True
-            )
-            preprocess_job = PreprocessorJob.objects.get(id=job_id)
-            input_protein = preprocess_job.output_protein
+            input_protein = Protein.from_file(request_data['protein_file'])
+            input_protein.save()
+
         job = MetalizerJob(
             input_protein=input_protein,
             residue_id=request_data['residue_id'],

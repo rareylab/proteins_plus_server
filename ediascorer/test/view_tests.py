@@ -29,6 +29,15 @@ class ViewTests(PPlusTestCase):
 
         self.assertEqual(response.status_code, 202)
 
+    def test_post_protein_and_ligand_file(self):
+        """Test ediascorer endpoint with protein and ligand file"""
+        with open(TestConfig.protein_file) as protein_file:
+            with open(TestConfig.ligand_file) as ligand_file:
+                data = {'protein_file': protein_file, 'ligand_file': ligand_file}
+                response = call_api(EdiascorerView, 'post', data)
+
+        self.assertEqual(response.status_code, 202)
+
     def test_post_protein_id_with_explicit_pdb_code(self):
         """Test ediascorer endpoint with protein id and explicit pdb code
           as query parameter"""

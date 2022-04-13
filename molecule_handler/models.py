@@ -24,6 +24,26 @@ class Protein(ProteinsPlusHashableModel):
 
     hash_attributes = ['pdb_code', 'uniprot_code', 'file_type', 'file_string']
 
+    @staticmethod
+    def from_file(protein_file, pdb_code=None, uniprot_code=None, file_type='pdb'):
+        """Build a protein from a file"""
+        protein_string = protein_file.read()
+        if isinstance(protein_string, bytes):
+            protein_string = protein_string.decode('utf8')
+
+        if pdb_code:
+            protein_name = pdb_code
+        else:
+            protein_name = os.path.basename(protein_file.name)
+            protein_name = os.path.splitext(protein_name)[0]
+        return Protein(
+            name=protein_name,
+            pdb_code=pdb_code,
+            uniprot_code=uniprot_code,
+            file_type=file_type,
+            file_string=protein_string
+        )
+
     def write_temp(self):
         """Write content of file_string to a temporary file
 
@@ -61,6 +81,22 @@ class Ligand(ProteinsPlusHashableModel):
                               blank=True, null=True)
 
     hash_attributes = ['protein', 'file_type', 'file_string']
+
+    @staticmethod
+    def from_file(ligand_file, protein, file_type='sdf', image=None):
+        """Build a ligand from a file"""
+        ligand_string = ligand_file.read()
+        if isinstance(ligand_string, bytes):
+            ligand_string = ligand_string.decode('utf8')
+        ligand_name = os.path.basename(ligand_file.name)
+        ligand_name = os.path.splitext(ligand_name)[0]
+        return Ligand(
+            name=ligand_name,
+            file_string=ligand_string,
+            file_type=file_type,
+            protein=protein,
+            image=image
+        )
 
 
 class ElectronDensityMap(ProteinsPlusHashableModel):

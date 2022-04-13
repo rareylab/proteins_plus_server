@@ -8,8 +8,7 @@ from drf_spectacular.utils import extend_schema
 
 from proteins_plus.serializers import ProteinsPlusJobResponseSerializer
 from proteins_plus.job_handler import submit_task
-from molecule_handler.tasks import preprocess_molecule_task
-from molecule_handler.models import Protein, PreprocessorJob
+from molecule_handler.models import Protein, Ligand
 from .models import ProtossJob
 from .serializers import ProtossJobSerializer, ProtossSubmitSerializer
 from .tasks import protoss_protein_task
@@ -40,12 +39,12 @@ class ProtossView(APIView):
             input_protein = Protein.objects.get(id=request_data['protein_id'])
             job = ProtossJob(input_protein=input_protein)
         else:
-            preprocess_job = PreprocessorJob.from_file(
-                request_data['protein_file'], request_data['ligand_file'])
-            job_id, retrieved = submit_task(
-                preprocess_job, preprocess_molecule_task, request_data['use_cache'], immediate=True)
-            preprocess_job = PreprocessorJob.objects.get(id=job_id)
-            job = ProtossJob(input_protein=preprocess_job.output_protein)
+            protein = Protein.from_file(request_data['protein_file'])
+            if request_data['ligand_file']:
+                ligand = Ligand.from_file(request_data['ligand_file'], protein)
+                ligand.save()
+            protein.save()
+            job = ProtossJob(input_protein=protein)
 
         job_id, retrieved = submit_task(job, protoss_protein_task, request_data['use_cache'])
         serializer = ProteinsPlusJobResponseSerializer({
