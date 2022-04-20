@@ -98,6 +98,17 @@ class Ligand(ProteinsPlusHashableModel):
             image=image
         )
 
+    def write_temp(self):
+        """Write content of file_string to a temporary file
+
+        :return: temporary ligand file
+        :rtype: NamedTemporaryFile
+        """
+        temp_file = NamedTemporaryFile(mode='w+', suffix='.' + self.file_type)
+        temp_file.write(self.file_string)
+        temp_file.seek(0)
+        return temp_file
+
 
 class ElectronDensityMap(ProteinsPlusHashableModel):
     """Django Model for electron density map files"""

@@ -33,7 +33,8 @@ INSTALLED_APPS = [
     'protoss.apps.ProtossConfig',
     'ediascorer.apps.EdiascorerConfig',
     'proteins_plus.apps.ProteinsPlusConfig',
-    'metalizer.apps.MetalizerConfig'
+    'metalizer.apps.MetalizerConfig',
+    'poseview.apps.PoseviewConfig'
 ]
 
 MIDDLEWARE = [
@@ -138,6 +139,7 @@ MEDIA_URL = '/media/'
 MEDIA_DIRECTORIES = {
     'ligands': 'ligands/',
     'density_files': 'density_files/',
+    'posview_images': 'poseview/',
 }
 
 # Paths for binary files

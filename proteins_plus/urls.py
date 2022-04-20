@@ -27,7 +27,8 @@ urlpatterns = [
     path('molecule_handler/', include('molecule_handler.urls')),
     path('protoss/', include('protoss.urls')),
     path('ediascorer/', include('ediascorer.urls')),
-    path('metalizer/', include('metalizer.urls'))
+    path('metalizer/', include('metalizer.urls')),
+    path('poseview/', include('poseview.urls'))
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
