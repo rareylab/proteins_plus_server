@@ -37,14 +37,16 @@ class MetalizerJobSubmitSerializer(ProteinsPlusJobSubmitSerializer):  # pylint: 
     residue_id = serializers.IntegerField()
     chain_id = serializers.CharField(max_length=2)
     name = serializers.CharField(max_length=2)
-    distance_threshold = serializers.FloatField()
+    distance_threshold = serializers.FloatField(default=3.0)
 
     def validate(self, data):  # pylint: disable=arguments-renamed
         """Validate Metalizer submission data
 
         :param data: data to validate
+        :type data: collections.OrderedDict
         :raises serializers.ValidationError: If neither pdb code or pdb file were provided
         :return: Validated data
+        :rtype: collections.OrderedDict
         """
         validator = MoleculeInputValidator(data)
         if not validator.has_valid_protein_id() and not validator.has_valid_protein_file():

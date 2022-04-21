@@ -1,6 +1,6 @@
 """Metalizer admin configuration"""
 from django.contrib import admin
-from .models import MetalizerJob
+from .models import MetalizerJob, MetalizerInfo
 
 
 class MetalizerJobAdmin(admin.ModelAdmin):
@@ -9,3 +9,4 @@ class MetalizerJobAdmin(admin.ModelAdmin):
 
 
 admin.site.register(MetalizerJob, MetalizerJobAdmin)
+admin.site.register(MetalizerInfo)

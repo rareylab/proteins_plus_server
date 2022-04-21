@@ -1,4 +1,4 @@
-"""Helper functions for the metalizer unit tests"""
+"""Helper functions for the Metalizer unit tests"""
 from molecule_handler.test.utils import create_test_protein
 from ..models import MetalizerJob, MetalizerInfo
 from .config import TestConfig
@@ -13,7 +13,7 @@ def create_test_metalizer_job():
     input_protein = create_test_protein(TestConfig.protein)
     job = MetalizerJob(
         input_protein=input_protein,
-        residue_id=1300,
+        residue_id='1300',
         chain_id='A',
         name='ZN',
         distance_threshold=2.8

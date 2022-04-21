@@ -17,9 +17,10 @@ class MetalizerWrapper:
 
     @staticmethod
     def metalize(job):
-        """Execute metalizer and load the results
+        """Execute Metalizer and load the results
 
         :param job: Metalizer job
+        :type job: MetalizerJob
         """
         with TemporaryDirectory() as directory:
             dir_path = Path(directory)
@@ -29,10 +30,15 @@ class MetalizerWrapper:
 
     @staticmethod
     def execute_metalizer(job, dir_path):
-        """Execute metalizer
+        """Execute Metalizer
 
         :param job: Metalizer job
-        :param dir_path: directory to execute Metalizer in"""
+        :type job: MetalizerJob
+        :param dir_path: directory to execute Metalizer in
+        :type dir_path: Path
+        :return: path to output protein and path to Metalizer info
+        :rtype: (Path, Path)
+        """
         metalized_protein_path = dir_path / 'metalized.pdb'
         metalizer_result_path = dir_path / 'metalizer_result.json'
         with job.input_protein.write_temp() as protein_file:
@@ -53,10 +59,15 @@ class MetalizerWrapper:
 
     @staticmethod
     def load_results(job, metalized_protein_path, metalizer_result_path):
-        """Load metalizer results into the database
+        """Load Metalizer results into the database
+
         :param job: Metalizer job
+        :type job: MetalizerJob
         :param metalized_protein_path: path to the Metalizer output protein
-        :param metalizer_result_path: path to the Metalizer JSON output"""
+        :type metalized_protein_path: Path
+        :param metalizer_result_path: path to the Metalizer JSON output
+        :type metalizer_result_path: Path
+        """
         with open(metalizer_result_path) as metalizer_result_file:
             metalizer_data = json.load(metalizer_result_file)
         if not len(metalizer_data) > 0:

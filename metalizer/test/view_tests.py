@@ -11,7 +11,7 @@ class ViewTests(PPlusTestCase):
     """Metalizer view tests"""
 
     def test_protein_with_id(self):
-        """Test metalizer with protein id"""
+        """Test Metalizer with protein id"""
         input_protein = create_test_protein(TestConfig.protein)
         data = {
             'protein_id': input_protein.id,
@@ -24,7 +24,7 @@ class ViewTests(PPlusTestCase):
         self.assertEqual(response.status_code, 202)
 
     def test_protein_file(self):
-        """Test metalizer with protein file"""
+        """Test Metalizer with protein file"""
         with open(TestConfig.protein_file) as protein_file:
             data = {
                 'protein_file': protein_file,
@@ -37,7 +37,7 @@ class ViewTests(PPlusTestCase):
         self.assertEqual(response.status_code, 202)
 
     def test_other_case(self):
-        """Test metalizer with protein file"""
+        """Test Metalizer with protein file"""
         with open(TestConfig.protein_file) as protein_file:
             data = {
                 'protein_file': protein_file,

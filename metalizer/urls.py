@@ -9,4 +9,5 @@ urlpatterns = [
 
 router = DefaultRouter()
 router.register('jobs', views.MetalizerJobViewSet)
+router.register('info', views.MetalizerInfoViewSet)
 urlpatterns.extend(router.urls)

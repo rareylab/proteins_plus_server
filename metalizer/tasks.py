@@ -11,13 +11,15 @@ def metalize_task(job_id):
     """Metalizer shared task
 
     :param job_id: id of the job to execute
+    :type job_id: uuid
     """
     execute_job(metalize, job_id, MetalizerJob, 'Metalizer')
 
 
 def metalize(job):
-    """Execute metalizer job
+    """Execute Metalizer job
 
-    :param job: metalizer job to execute
+    :param job: Metalizer job to execute
+    :type job: MetalizerJob
     """
     MetalizerWrapper.metalize(job)
