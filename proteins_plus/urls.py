@@ -28,7 +28,8 @@ urlpatterns = [
     path('protoss/', include('protoss.urls')),
     path('ediascorer/', include('ediascorer.urls')),
     path('metalizer/', include('metalizer.urls')),
-    path('poseview/', include('poseview.urls'))
+    path('poseview/', include('poseview.urls')),
+    path('siena/', include('siena.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

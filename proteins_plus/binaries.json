@@ -3,5 +3,7 @@
   "protoss": "bin/protoss/protoss_4_pdb",
   "ediascorer": "bin/ediascorer/EDIAscorer",
   "metalizer": "bin/metalizer/metalizer",
-  "poseview": "bin/poseview/poseview"
+  "poseview": "bin/poseview/poseview",
+  "siena": "bin/siena/siena",
+  "generate_siena_database": "bin/generate_siena_database/generate_siena_database"
 }

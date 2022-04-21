@@ -34,7 +34,8 @@ INSTALLED_APPS = [
     'ediascorer.apps.EdiascorerConfig',
     'proteins_plus.apps.ProteinsPlusConfig',
     'metalizer.apps.MetalizerConfig',
-    'poseview.apps.PoseviewConfig'
+    'poseview.apps.PoseviewConfig',
+    'siena.apps.SienaConfig',
 ]
 
 MIDDLEWARE = [
