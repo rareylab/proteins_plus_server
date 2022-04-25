@@ -20,35 +20,6 @@ def ediascore_protein_task(job_id):
     execute_job(ediascore_protein, job_id, EdiaJob, 'EDIAscorer')
 
 
-def get_density_file(job):
-    """Fetch electron density file from server and save it as a new ElectronDensityMap instance
-
-    :param job: Job object that the ElectronDensityMap object will be assiciated with
-    :type job: EdiaJob
-    :raises Exception: If an error occurs while downloading the electron density file
-    """
-    density_map = ElectronDensityMap()
-    pdb_code = job.density_file_pdb_code
-
-    url = f'{settings.URLS["density_files"]}{pdb_code}.ccp4'
-    req = requests.get(url)
-    if req.status_code != 200:
-        raise RuntimeError(
-            f"Error while retrieving density file with pdb code {pdb_code}\n" +
-            f"Request: GET {url}\n" +
-            f"Response: \n{req.text}"
-        )
-
-    with TemporaryFile() as tmpfile:
-        content_as_bytes = bytearray(req.content)
-        tmpfile.write(content_as_bytes)
-        tmpfile.seek(0)
-        density_map.file.save(f'{pdb_code}.ccp4', File(tmpfile))
-        density_map.save()
-
-    job.electron_density_map = density_map
-    job.save()
-
 
 def ediascore_protein(job):
     """Execute the Ediascorer on a Protein object and store the results into new database objects
@@ -56,6 +27,13 @@ def ediascore_protein(job):
     :param job: EdiaJob object containing the job data
     :type job: EdiaJob
     """
+
     if job.electron_density_map is None:
-        get_density_file(job)
+        job.electron_density_map = ElectronDensityMap.from_pdb_code(job.density_file_pdb_code)
+        if not job.electron_density_map:
+            raise RuntimeError(
+                f"Error while retrieving density file with pdb code {job.density_file_pdb_code}\n"
+            )
+        job.save()
+
     EdiascorerWrapper.ediascore(job)

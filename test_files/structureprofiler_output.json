@@ -1,0 +1,99 @@
+{
+  "id": "4ea3847d-3cc0-4099-80eb-92220f70fec4",
+  "output_data": {
+    "complex": {
+      "DPI": 0.115,
+      "rFree": 0.197,
+      "rFactor": 0.173,
+      "resolution": 1.52,
+      "overfittingTest": true,
+      "significanceTest": true,
+      "complexStructureProfilerTests": true
+    },
+    "ligands": {
+      "1": {
+        "ID": "400",
+        "NROT": 5,
+        "OWAB": 18.2,
+        "logP": 1.07,
+        "name": "P86_A_400",
+        "EDIAm": 0.32,
+        "chain": "A",
+        "HETCode": "P86",
+        "noAltLocs": true,
+        "heavyAtoms": 21,
+        "stereoCenters": 0,
+        "bondAnglesTest": false,
+        "lipinskiDonors": 1,
+        "maxAtomBFactor": 0,
+        "bondLengthsTest": true,
+        "molecularWeight": 514,
+        "HETExclusionTest": true,
+        "lipinskiAcceptors": 3,
+        "noCrystalContacts": false,
+        "ringPlanarityTest": true,
+        "torsionAnglesTest": true,
+        "nofPeptideResidues": 0,
+        "SMARTSExklusionTest": true,
+        "noIntramolecularClash": true,
+        "ligandStructureProfilerTests": false
+      },
+      "2": {
+        "ID": "400",
+        "NROT": 5,
+        "OWAB": 20.1,
+        "logP": 1.07,
+        "name": "P86_B_400",
+        "EDIAm": 0.71,
+        "chain": "B",
+        "HETCode": "P86",
+        "noAltLocs": true,
+        "heavyAtoms": 21,
+        "stereoCenters": 0,
+        "bondAnglesTest": false,
+        "lipinskiDonors": 1,
+        "maxAtomBFactor": 0,
+        "bondLengthsTest": true,
+        "molecularWeight": 514,
+        "HETExclusionTest": true,
+        "lipinskiAcceptors": 3,
+        "noCrystalContacts": true,
+        "ringPlanarityTest": false,
+        "torsionAnglesTest": true,
+        "nofPeptideResidues": 0,
+        "SMARTSExklusionTest": true,
+        "noIntramolecularClash": true,
+        "ligandStructureProfilerTests": false
+      }
+    },
+    "active_sites": {
+      "1": {
+        "chains": "A,B",
+        "ligand": "P86_A_400",
+        "noAltLocs": true,
+        "uniprotID": "P04637",
+        "bondAnglesTest": false,
+        "bondLengthsTest": true,
+        "residueEDIATest": true,
+        "bFactorRatioTest": true,
+        "noIntermolecularClash": true,
+        "noIntramolecularClash": true,
+        "activeSiteStructureProfilerTests": false
+      },
+      "2": {
+        "chains": "A,B",
+        "ligand": "P86_B_400",
+        "noAltLocs": true,
+        "uniprotID": "P04637",
+        "bondAnglesTest": false,
+        "bondLengthsTest": true,
+        "residueEDIATest": false,
+        "bFactorRatioTest": true,
+        "noIntermolecularClash": true,
+        "noIntramolecularClash": true,
+        "activeSiteStructureProfilerTests": false
+      }
+    }
+  },
+  "parent_structureprofiler_job": "19a2a19c-41ca-417a-85e0-dd707a977d51"
+}

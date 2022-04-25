@@ -1,9 +1,12 @@
 """molecule_handler database models"""
 import os
-from tempfile import NamedTemporaryFile
+import requests
+from tempfile import NamedTemporaryFile, TemporaryFile
+from contextlib import nullcontext
 
 from django.core.files import File
 from django.db import models
+
 # Receive the pre_delete signal and delete the file associated with the model instance.
 from django.db.models.signals import pre_delete
 from django.dispatch.dispatcher import receiver
@@ -180,6 +183,30 @@ class ElectronDensityMap(ProteinsPlusHashableModel):
         with ccp4_path.open(mode='rb') as density_file:
             density_file_container = File(density_file, name=ccp4_path.name)
             density_map.file.save(ccp4_path.name, density_file_container)
+        return density_map
+
+    @staticmethod
+    def from_pdb_code(pdb_code):
+        """Fetch electron density file from server and save it in an ElectronDensityMap instance
+
+        :param pdb_code: pdb code of protein in question
+        :type pdb_code: str
+        :return: A new ElectronDensityMap
+        :rtype: ElectronDensityMap instance or NONE if failure
+        """
+
+        url = f'{settings.URLS["density_files"]}{pdb_code}.ccp4'
+        req = requests.get(url)
+        if req.status_code != 200:
+            return None
+        density_map = ElectronDensityMap()
+        with TemporaryFile() as tmpfile:
+            content_as_bytes = bytearray(req.content)
+            tmpfile.write(content_as_bytes)
+            tmpfile.seek(0)
+            density_map.file.save(f'{pdb_code}.ccp4', File(tmpfile))
+            density_map.save()
+
         return density_map
 
 

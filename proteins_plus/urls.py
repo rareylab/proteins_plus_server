@@ -31,6 +31,7 @@ urlpatterns = [
     path('poseview/', include('poseview.urls')),
     path('siena/', include('siena.urls')),
     path('dogsite/', include('dogsite.urls')),
+    path('structureprofiler/', include('structureprofiler.urls'))
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
