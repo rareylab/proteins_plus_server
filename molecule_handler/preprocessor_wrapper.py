@@ -119,16 +119,16 @@ class PreprocessorWrapper:
         :type protein: Protein
         """
         sd_files = list(path.glob('*.sdf'))
-        image_files = list(path.glob('*.png'))
+        image_files = list(path.glob('*.svg'))
 
         for sd_file in sd_files:
             ligand_name = sd_file.stem
             with sd_file.open() as ligand_file:
                 ligand = Ligand.from_file(ligand_file, protein)
-            image_name = f'{ligand_name}.png'
+            image_name = f'{ligand_name}.svg'
             for image in image_files:
                 if image.name == image_name:
-                    new_image_name = f'{ligand_name}_{ligand.id}.png'
+                    new_image_name = f'{ligand_name}_{ligand.id}.svg'
                     ligand.image.save(new_image_name, File(image.open('rb')))
                 break
             ligand.save()

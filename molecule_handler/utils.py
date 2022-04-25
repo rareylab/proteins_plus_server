@@ -37,7 +37,7 @@ def load_processed_ligands(path, input_protein, output_protein):
             # instead of the old images.
             old_ligand = input_protein.ligand_set.get(name=ligand_name)
             if old_ligand.image:
-                new_image = f'{ligand.name}_{ligand.id}.png'
+                new_image = f'{ligand.name}_{ligand.id}.svg'
                 ligand.image.save(new_image, File(old_ligand.image.open('rb')))
 
             ligand.save()
