@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'siena.apps.SienaConfig',
     'dogsite.apps.DoGSiteConfig',
     'structureprofiler.apps.StructureprofilerConfig',
+    'geomine.apps.GeoMineConfig',
 ]
 
 MIDDLEWARE = [

@@ -7,6 +7,6 @@
   "siena": "bin/siena/siena",
   "generate_siena_database": "bin/generate_siena_database/generate_siena_database",
   "dogsite": "bin/dogsite/compasite",
-  "structureprofiler": "bin/structureprofiler/StructureProfiler"
-
+  "structureprofiler": "bin/structureprofiler/StructureProfiler",
+  "geomine": "bin/geomine/GeoMine"
 }
