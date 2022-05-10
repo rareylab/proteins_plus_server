@@ -1,6 +1,8 @@
 """Helper functions for the molecule_handler unit tests"""
+from tempfile import TemporaryFile
+from django.core.files import File
 from proteins_plus.models import Status
-from ..models import Protein, Ligand, PreprocessorJob, ProteinSite
+from ..models import Protein, Ligand, PreprocessorJob, ProteinSite, ElectronDensityMap
 from .config import TestConfig
 
 
@@ -137,3 +139,17 @@ def create_test_proteinsite(protein, site_json_dict=None):
     protein_site = ProteinSite(protein=protein, site_description=site_json_dict)
     protein_site.save()
     return protein_site
+
+
+def create_test_electrondensitymap():
+    """Helper function for creating dummy ElectronDensityMap object
+
+    :return: The newly created electron density map.
+    :rtype: ElectronDensityMap
+    """
+    density_map = ElectronDensityMap()
+    with TemporaryFile() as tmpfile:
+        density_map.file.save('empty.ccp4', File(tmpfile))
+        density_map.save()
+
+    return density_map

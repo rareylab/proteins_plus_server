@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'metalizer.apps.MetalizerConfig',
     'poseview.apps.PoseviewConfig',
     'siena.apps.SienaConfig',
+    'dogsite.apps.DoGSiteConfig'
 ]
 
 MIDDLEWARE = [

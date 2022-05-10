@@ -3,6 +3,7 @@ import os
 from tempfile import NamedTemporaryFile
 from contextlib import nullcontext
 
+from django.core.files import File
 from django.db import models
 # Receive the pre_delete signal and delete the file associated with the model instance.
 from django.db.models.signals import pre_delete
@@ -166,6 +167,21 @@ class ElectronDensityMap(ProteinsPlusHashableModel):
     date_last_accessed = models.DateTimeField(auto_now=True)
 
     hash_attributes = ['file']
+
+    @staticmethod
+    def from_ccp4(ccp4_path):
+        """Convenience function to create an ElectronDensityMap from CCP4 file.
+
+        :param ccp4_path: File path to CCP4 file.
+        :type ccp4_path: pathlib.Path
+        :return: A new ElectronDensityMap.
+        :rtype: ElectronDensityMap
+        """
+        density_map = ElectronDensityMap()
+        with ccp4_path.open(mode='rb') as density_file:
+            density_file_container = File(density_file, name=ccp4_path.name)
+            density_map.file.save(ccp4_path.name, density_file_container)
+        return density_map
 
 
 class PreprocessorJob(ProteinsPlusJob):
