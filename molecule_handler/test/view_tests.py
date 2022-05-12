@@ -7,7 +7,7 @@ from ..views import ProteinUploadView, ProteinViewSet, LigandViewSet, Preprocess
 from ..models import PreprocessorJob
 
 from .config import TestConfig
-from .utils import create_test_protein, create_multiple_test_ligands, create_test_preprocesser_job
+from .utils import create_test_protein, create_multiple_test_ligands, create_test_preprocessor_job
 
 
 class ViewTests(PPlusTestCase):
@@ -124,8 +124,8 @@ class ViewTests(PPlusTestCase):
 
     def test_retrieve_preprocessor_job(self):
         """Test retrieve and list PreprocessorJob behavior"""
-        job = create_test_preprocesser_job()
-        create_test_preprocesser_job()
+        job = create_test_preprocessor_job()
+        create_test_preprocessor_job()
 
         response = call_api(PreprocessorJobViewSet, 'get',
                             viewset_actions={'get': 'retrieve'},
@@ -148,7 +148,7 @@ class ViewTests(PPlusTestCase):
 
     def test_cache_behaviour(self):
         """Test storing and retrieving objects from cache via api"""
-        job = create_test_preprocesser_job()
+        job = create_test_preprocessor_job()
         job.set_hash_value()
         job.save()
 

@@ -6,7 +6,7 @@ from ..tasks import preprocess_molecule_task
 from ..models import PreprocessorJob
 
 from .config import TestConfig
-from .utils import create_test_preprocesser_job
+from .utils import create_test_preprocessor_job
 
 
 class TaskTests(PPlusTestCase):
@@ -19,7 +19,7 @@ class TaskTests(PPlusTestCase):
 
     def test_preprocess_molecule(self):
         """Test the preprocessor correctly processes a protein file on it's own"""
-        job = create_test_preprocesser_job(ligand_filepath=None)
+        job = create_test_preprocessor_job(ligand_filepath=None)
         preprocess_molecule_task.run(job.id)
         job = PreprocessorJob.objects.get(id=job.id)
         self.assertEqual(job.status, Status.SUCCESS)
@@ -30,7 +30,7 @@ class TaskTests(PPlusTestCase):
 
     def test_preprocess_molecule_with_ligand(self):
         """Test the preprocessor correctly processes a protein with an explicitly set ligand"""
-        job = create_test_preprocesser_job()
+        job = create_test_preprocessor_job()
 
         preprocess_molecule_task.run(job.id)
         job = PreprocessorJob.objects.get(id=job.id)
@@ -41,7 +41,7 @@ class TaskTests(PPlusTestCase):
 
     def test_preprocess_molecule_with_multisdf(self):
         """Test preprocessing of molecule with a multi sdf ligand file"""
-        job = create_test_preprocesser_job(ligand_filepath=TestConfig.multi_ligands_file)
+        job = create_test_preprocessor_job(ligand_filepath=TestConfig.multi_ligands_file)
 
         preprocess_molecule_task.run(job.id)
         job = PreprocessorJob.objects.get(id=job.id)

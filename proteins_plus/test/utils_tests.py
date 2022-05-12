@@ -1,6 +1,7 @@
 """tests for proteins_plus utility functions"""
 from proteins_plus.test.utils import PPlusTestCase
-from ..utils import json_to_sorted_string
+from ..models import MockJob, MockModel
+from ..utils import json_to_sorted_string, clean_up_models
 
 
 class UtilTests(PPlusTestCase):
@@ -87,6 +88,7 @@ class UtilTests(PPlusTestCase):
         self.assertRaises(TypeError, json_to_sorted_string, {'key': set()})
 
     def test_unify_protein_site_dicts(self):
+        """Test converting site dicts to unique string for JSON"""
         # sort objects against objects
         self.assertEqual(json_to_sorted_string({'res_id': [
             {'name': 'ALA', 'pos': '123', 'chain': 'A'},
@@ -143,3 +145,19 @@ class UtilTests(PPlusTestCase):
                 {'name': 'THR', 'pos': '123', 'chain': 'A'},
                 {'name': 'ALA', 'chain': 'A', 'pos': '123'},
             ]}))
+
+    def test_cleanup(self):
+        """Test cleanup of models and their child/parent jobs"""
+        mock_model = MockModel()
+        mock_model.save()
+        mock_parent = MockJob(output_model=mock_model)
+        mock_parent.save()
+        mock_child = MockJob(input_model=mock_model)
+        mock_child.save()
+        other_mock_child = MockJob(input_model=mock_model)
+        other_mock_child.save()
+        clean_up_models(MockModel)
+        self.assertFalse(MockJob.objects.filter(id=mock_child.id).exists())
+        self.assertFalse(MockJob.objects.filter(id=other_mock_child.id).exists())
+        self.assertFalse(MockJob.objects.filter(id=mock_parent.id).exists())
+        self.assertFalse(MockJob.objects.filter(id=mock_model.id).exists())

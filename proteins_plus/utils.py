@@ -1,7 +1,10 @@
 """utils for proteins_plus app"""
 from copy import deepcopy
-import json
 from functools import cmp_to_key
+import inspect
+import json
+import logging
+from django.db import models
 
 
 def compare_json_dict(first, second):
@@ -93,3 +96,62 @@ def json_to_sorted_string(obj, copy=True):
         this_obj = deepcopy(this_obj)
     sort_json_lists(this_obj)
     return json.dumps(this_obj, sort_keys=True, separators=(',', ':'))
+
+
+def clean_up_models(model_type):
+    """Perform cleanup of the passed model type
+
+    Will trigger cleanup of child and parent jobs associated with this model type.
+
+    :param model_type: type of the model to perform cleanup for
+    :type model_type: Type[proteins_plus.models.ProteinsPlusBaseModel]
+    """
+    for model in model_type.objects.all():
+        job_relations = [
+            member for member in inspect.getmembers(model)
+            if is_job_relation(member[0]) and member[1] is not None
+        ]
+        jobs = cleanup_job_relations(job_relations)
+        if jobs == 0:
+            logging.info('Removing %s', model)
+            model.delete()
+
+
+def is_job_relation(member_name):
+    """Is the member name a job relation
+
+    Job relations should be named (parent|child)_app_job(_set)?
+    Specifically excluding 'id' from the name because it is an easy mistake to make
+
+    :param member_name: member name to check
+    :type member_name: str
+    :return: True if a job relation else False
+    :rtype: bool
+    """
+    return 'job' in member_name \
+           and ('child' in member_name or 'parent' in member_name) \
+           and 'id' not in member_name
+
+
+def cleanup_job_relations(job_relations):
+    """Perform cleanup of job relations
+
+    :param job_relations: job relations of jobs to clean up
+    :type job_relations:  [(models.Manager|proteins_plus.models.ProteinsPlusJob), ...]
+    :return: number of jobs that still exist after cleanup
+    :rtype: int
+    """
+    jobs = 0
+    for relation in job_relations:
+        if isinstance(relation[1], models.Manager):
+            relation_manager = relation[1]
+            jobs += relation_manager.count()
+            for model in relation_manager.all():
+                if model.clean_up():
+                    jobs -= 1
+        else:
+            model = relation[1]
+            jobs += 1
+            if model.clean_up():
+                jobs -= 1
+    return jobs

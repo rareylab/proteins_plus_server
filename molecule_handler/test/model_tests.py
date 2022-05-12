@@ -4,7 +4,7 @@ from pathlib import Path
 
 from proteins_plus.test.utils import PPlusTestCase
 from .config import TestConfig
-from .utils import create_test_preprocesser_job, create_successful_preprocessor_job, \
+from .utils import create_test_preprocessor_job, create_successful_preprocessor_job, \
     create_test_protein, create_test_ligand, create_test_proteinsite
 from ..tasks import preprocess_molecule_task
 from ..models import PreprocessorJob, Protein, Ligand, ProteinSite
@@ -15,7 +15,7 @@ class ModelTests(PPlusTestCase):
 
     def test_ligand_images(self):
         """Test creation and deletion of ligand images"""
-        job = create_test_preprocesser_job()
+        job = create_test_preprocessor_job()
 
         preprocess_molecule_task.run(job.id)
         job = PreprocessorJob.objects.get(pk=job.id)
@@ -28,11 +28,11 @@ class ModelTests(PPlusTestCase):
 
     def test_preprocessor_cache_behaviour(self):
         """Test storing and retrieving objects from cache"""
-        job = create_test_preprocesser_job()
+        job = create_test_preprocessor_job()
         job.set_hash_value()
         job.save()
 
-        job2 = create_test_preprocesser_job()
+        job2 = create_test_preprocessor_job()
         cached_job = job2.retrieve_job_from_cache()
         self.assertIsNotNone(cached_job)
         self.assertEqual(cached_job.id, job.id)

@@ -155,7 +155,7 @@ with open(BINARY_PATHS_CONFIG) as binary_paths_file:
 # Important urls
 URLS = {
     'pdb_files': 'https://files.rcsb.org/download/',
-    'density_files': 'http://www.ebi.ac.uk/pdbe/coordinates/files/',
+    'density_files': 'https://www.ebi.ac.uk/pdbe/coordinates/files/',
 }
 
 # Configuration of logging module
@@ -174,3 +174,5 @@ LOGGING = {
         'level': 'DEBUG',
     }
 }
+
+DEFAULT_JOB_CACHE_TIME = 7  # days

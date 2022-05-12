@@ -1,7 +1,12 @@
 """Base models for ProteinsPlus objects"""
-import uuid
+from datetime import date, timedelta
 from hashlib import blake2b
+import logging
+import uuid
+
+from django.conf import settings
 from django.db import models
+
 from .job_handler import Status
 from .utils import json_to_sorted_string
 
@@ -81,3 +86,38 @@ class ProteinsPlusJob(ProteinsPlusHashableModel):
             return self.__class__.objects.get(hash_value=self.hash_value)
         except self.__class__.DoesNotExist:
             return None
+
+    def clean_up(self, cache_time=None):
+        """Clean up if the job has not been accessed for longer than the cache time
+
+        :param cache_time: time to keep job after last access
+        :type cache_time: int
+        :return: True if job was cleaned up
+        :rtype: bool
+        """
+        # this cannot be set as the default value for the argument for testing reasons
+        if not cache_time:
+            cache_time = settings.DEFAULT_JOB_CACHE_TIME
+        caching_time = timedelta(days=cache_time)
+        if self.date_last_accessed - date.today() > caching_time:
+            logging.info('Removing %s', self)
+            self.delete()
+            return True
+        return False
+
+
+class MockModel(ProteinsPlusBaseModel):
+    """Mock model for testing"""
+
+
+class MockJob(ProteinsPlusJob):
+    """Mock job for testing"""
+    input_model = models.ForeignKey(
+        MockModel, on_delete=models.CASCADE, related_name='child_mock_job_set', null=True)
+    output_model = models.OneToOneField(
+        MockModel, on_delete=models.CASCADE, related_name='parent_mock_job', null=True)
+
+    def clean_up(self, cache_time=-1):
+        """Mock jobs are always stale"""
+        super().clean_up(cache_time=-1)
+        return True

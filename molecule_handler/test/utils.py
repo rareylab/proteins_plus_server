@@ -6,7 +6,7 @@ from ..models import Protein, Ligand, PreprocessorJob, ProteinSite, ElectronDens
 from .config import TestConfig
 
 
-def create_test_preprocesser_job(ligand_filepath=TestConfig.ligand_file):
+def create_test_preprocessor_job(ligand_filepath=TestConfig.ligand_file):
     """Helper function for creating dummy PreprocessorJob objects
 
     :param ligand_filepath: Path to an sdf file that will be used as input to the PreprocessorJob
@@ -38,7 +38,7 @@ def create_successful_preprocessor_job():
     :return: Dummy PreprocessorJob object
     :rtype: PreprocessorJob
     """
-    preprocessor_job = create_test_preprocesser_job()
+    preprocessor_job = create_test_preprocessor_job()
     output_protein = create_test_protein()
     create_test_ligand(output_protein)
     preprocessor_job.output_protein = output_protein
