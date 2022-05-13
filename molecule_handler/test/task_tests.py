@@ -25,6 +25,8 @@ class TaskTests(PPlusTestCase):
         self.assertEqual(job.status, Status.SUCCESS)
         self.assertIsNotNone(job.output_protein)
         self.assertEqual(job.output_protein.ligand_set.count(), 2)
+        for ligand in job.output_protein.ligand_set.all():
+            self.assertIsNotNone(ligand.image)
 
     def test_preprocess_molecule_with_ligand(self):
         """Test the preprocessor correctly processes a protein with an explicitly set ligand"""

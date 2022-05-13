@@ -130,5 +130,5 @@ class PreprocessorWrapper:
                 if image.name == image_name:
                     new_image_name = f'{ligand_name}_{ligand.id}.svg'
                     ligand.image.save(new_image_name, File(image.open('rb')))
-                break
+                    break
             ligand.save()
