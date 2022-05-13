@@ -2,6 +2,7 @@
 from proteins_plus.test.utils import PPlusTestCase, call_api
 from molecule_handler.models import Protein, Ligand
 
+from ..models import PoseviewJob
 from ..views import PoseviewView, PoseviewJobViewSet
 from .config import TestConfig
 from .utils import create_successful_poseview_job
@@ -36,6 +37,53 @@ class ViewTests(PPlusTestCase):
                 }
                 response = call_api(PoseviewView, 'post', data)
         self.assertEqual(response.status_code, 202)
+
+    def test_query_with_protein_id_and_ligand_file(self):
+        """Test poseview endpoint with protein id and ligand file"""
+        with open(TestConfig.protein_file) as protein_file:
+            input_protein = Protein.from_file(protein_file)
+        input_protein.save()
+        with open(TestConfig.ligand_file) as ligand_file:
+            data = {
+                'protein_id': input_protein.id,
+                'ligand_file': ligand_file
+            }
+            response = call_api(PoseviewView, 'post', data)
+        self.assertEqual(response.status_code, 202)
+
+        # uploading the ligand file does not change the original protein
+        self.assertFalse(input_protein.ligand_set.exists())
+        job = PoseviewJob.objects.get(id=response.data['job_id'])
+        # the ligand from the file was associated with a copy of the protein
+        self.assertTrue(job.input_protein.ligand_set.exists())
+
+    def test_query_with_protein_id_and_ligand_from_other_protein(self):
+        """Test poseview endpoint with protein id and ligand id from another protein"""
+        with open(TestConfig.protein_file) as protein_file:
+            input_protein = Protein.from_file(protein_file)
+        input_protein.save()
+        with open(TestConfig.protein_file) as protein_file:
+            other_protein = Protein.from_file(protein_file)
+        other_protein.save()
+        with open(TestConfig.ligand_file) as ligand_file:
+            input_ligand = Ligand.from_file(ligand_file, other_protein)
+        input_ligand.save()
+
+        data = {
+            'protein_id': input_protein.id,
+            'ligand_id': input_ligand.id,
+        }
+        response = call_api(PoseviewView, 'post', data)
+        self.assertEqual(response.status_code, 202)
+
+        # uploading the ligand file does not change the original protein
+        self.assertFalse(input_protein.ligand_set.exists())
+        job = PoseviewJob.objects.get(id=response.data['job_id'])
+        # the job ligand was associated with a copy of the protein
+        self.assertTrue(job.input_protein.ligand_set.exists())
+        self.assertEqual(job.input_protein.ligand_set.first().id, job.input_ligand.id)
+        # the job ligand is also a copy to ensure protein and ligand have the same lifecycle
+        self.assertNotEqual(job.input_ligand.id, input_ligand.id)
 
     def test_get_poseview_job(self):
         """Test getting Poseview results"""

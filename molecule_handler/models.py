@@ -1,7 +1,6 @@
 """molecule_handler database models"""
 import os
 from tempfile import NamedTemporaryFile
-from contextlib import nullcontext
 
 from django.core.files import File
 from django.db import models
@@ -64,7 +63,7 @@ class Protein(ProteinsPlusHashableModel):
         :rtype: NamedTemporaryFile or None
         """
         if self.ligand_set.count() == 0:
-            return nullcontext(None)
+            return None
 
         temp_file = NamedTemporaryFile(mode='w+', suffix='.sdf')
         for ligand in self.ligand_set.all():

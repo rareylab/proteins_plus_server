@@ -1,7 +1,7 @@
 """ediascorer admin site configuration"""
 from django.contrib import admin
 
-from .models import EdiaJob, AtomScores
+from .models import EdiaJob, EdiaScores
 
 
 class EdiaJobAdmin(admin.ModelAdmin):
@@ -10,4 +10,4 @@ class EdiaJobAdmin(admin.ModelAdmin):
 
 
 admin.site.register(EdiaJob, EdiaJobAdmin)
-admin.site.register(AtomScores)
+admin.site.register(EdiaScores)

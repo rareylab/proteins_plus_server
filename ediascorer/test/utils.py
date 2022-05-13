@@ -4,7 +4,7 @@ from django.core.files import File
 from molecule_handler.models import ElectronDensityMap
 from molecule_handler.test.utils import create_test_protein
 
-from ..models import EdiaJob, AtomScores
+from ..models import EdiaJob, EdiaScores
 from .config import TestConfig
 
 
@@ -60,8 +60,8 @@ def create_successful_edia_job(
     output_protein = create_test_protein(pdb_code=pdb_code)
     job.output_protein = output_protein
     with open(atom_scores) as atom_scores_file:
-        atom_scores = AtomScores(scores=atom_scores_file.read(), parent_edia_job=job)
-    atom_scores.save()
-    job.atom_scores = atom_scores
+        edia_scores = EdiaScores(structure_scores=dict(), atom_scores=atom_scores_file.read(), parent_edia_job=job)
+    edia_scores.save()
+    job.edia_scores = edia_scores
     job.save()
     return job

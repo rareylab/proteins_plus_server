@@ -10,9 +10,9 @@ from proteins_plus.serializers import ProteinsPlusJobResponseSerializer
 from proteins_plus.job_handler import submit_task
 from molecule_handler.models import Protein, Ligand, ElectronDensityMap
 
-from .models import AtomScores, EdiaJob
+from .models import EdiaScores, EdiaJob
 from .tasks import ediascore_protein_task
-from .serializers import EdiaJobSerializer, AtomScoresSerializer, \
+from .serializers import EdiaJobSerializer, EdiaScoresSerializer, \
     EdiascorerSubmitSerializer
 
 
@@ -27,11 +27,22 @@ class EdiascorerView(APIView):
     def post(self, request):
         """API endpoint for executing the ediascorer binary
 
-        :param request: Http request containing the job data. Structure of
-                        request.data is given by the EdiascorerSubmitSerializer
-        :type request: HttpRequest
-        :return: Http Response indicating a successful submission or any errors.
-        :rtype: HttpResponse
+        The EDIAscorer calculates atomwise electron density support scores. To calculate score the
+        EDIAscorer requires an electron density map, which can be either retrieved with a PDB code
+        or explicitly uploaded. If a ligand file is uploaded it will be added to the
+        "structure_scores" of the EDIA scores object.
+
+        Required:
+         - either "protein_file" or "protein_id"
+         - either "pdb_code" or "electron_density_map" (file)
+
+        Optional:
+         - custom "ligand_file" to add ligands
+
+        *Estimating Electron Density Support for Individual Atoms and Molecular Fragments in
+        X-ray Structures
+        Agnes Meyder, Eva Nittinger, Gudrun Lange, Robert Klein, and Matthias Rarey
+        Journal of Chemical Information and Modeling 2017 57 (10), 2437-2447*
         """
         serializer = EdiascorerSubmitSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -42,10 +53,15 @@ class EdiascorerView(APIView):
         else:
             input_protein = Protein.from_file(
                 request_data['protein_file'], pdb_code=request_data['pdb_code'])
-            if request_data['ligand_file']:
-                ligand = Ligand.from_file(request_data['ligand_file'], input_protein)
-                ligand.save()
             input_protein.save()
+        if request_data['ligand_file']:
+            if request_data['protein_id']:
+                # remove id so that input protein will be copied
+                input_protein.id = None
+                input_protein.save()
+            ligand = Ligand.from_file(request_data['ligand_file'], input_protein)
+            ligand.save()
+        input_protein.save()
 
         job = EdiaJob(input_protein=input_protein)
         job.save()
@@ -77,7 +93,7 @@ class EdiaJobViewSet(ReadOnlyModelViewSet):  # pylint: disable=too-many-ancestor
     serializer_class = EdiaJobSerializer
 
 
-class AtomScoresViewSet(ReadOnlyModelViewSet):  # pylint: disable=too-many-ancestors
-    """Viewset for retrieving specific or listing all AtomScores objects"""
-    queryset = AtomScores.objects.all()
-    serializer_class = AtomScoresSerializer
+class EdiaScoresViewSet(ReadOnlyModelViewSet):  # pylint: disable=too-many-ancestors
+    """Retrieve specific or list all EDIA scores objects"""
+    queryset = EdiaScores.objects.all()
+    serializer_class = EdiaScoresSerializer

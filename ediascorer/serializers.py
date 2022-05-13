@@ -4,7 +4,7 @@ from proteins_plus.serializers import ProteinsPlusJobSerializer, ProteinsPlusJob
 from molecule_handler.models import Protein
 from molecule_handler.input_validation import MoleculeInputValidator
 
-from .models import EdiaJob, AtomScores
+from .models import EdiaJob, EdiaScores
 
 
 class EdiaJobSerializer(ProteinsPlusJobSerializer):
@@ -16,17 +16,17 @@ class EdiaJobSerializer(ProteinsPlusJobSerializer):
             'input_protein',
             'density_file_pdb_code',
             'electron_density_map',
-            'atom_scores',
+            'edia_scores',
             'output_protein'
         ]
 
 
-class AtomScoresSerializer(serializers.ModelSerializer):
-    """Serializer for the AtomScores model"""
+class EdiaScoresSerializer(serializers.ModelSerializer):
+    """EDIA scores data"""
 
     class Meta:
-        model = AtomScores
-        fields = ['id', 'scores', 'parent_edia_job']
+        model = EdiaScores
+        fields = ['id', 'atom_scores', 'structure_scores', 'parent_edia_job']
 
 
 class EdiascorerSubmitSerializer(ProteinsPlusJobSubmitSerializer):  # pylint: disable=abstract-method

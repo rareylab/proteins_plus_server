@@ -10,7 +10,7 @@ class ProtossJobSerializer(ProteinsPlusJobSerializer):
 
     class Meta(ProteinsPlusJobSerializer.Meta):
         model = ProtossJob
-        fields = ProteinsPlusJobSerializer.Meta.fields + ['input_protein', 'output_protein']
+        fields = ProteinsPlusJobSerializer.Meta.fields + ['input_protein', 'input_ligand', 'output_protein']
 
 
 class ProtossSubmitSerializer(ProteinsPlusJobSubmitSerializer):  # pylint: disable=abstract-method

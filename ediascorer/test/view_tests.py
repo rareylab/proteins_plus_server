@@ -1,11 +1,12 @@
 """tests for ediascorer views"""
+import json
 import uuid
 from django.core.files import File
 
 from proteins_plus.test.utils import PPlusTestCase, call_api
 from molecule_handler.test.utils import create_test_protein
 
-from ..views import EdiascorerView, EdiaJobViewSet, AtomScoresViewSet
+from ..views import EdiascorerView, EdiaJobViewSet, EdiaScoresViewSet
 from ..models import EdiaJob
 from .config import TestConfig
 from .utils import create_successful_edia_job
@@ -38,6 +39,21 @@ class ViewTests(PPlusTestCase):
                 response = call_api(EdiascorerView, 'post', data)
 
         self.assertEqual(response.status_code, 202)
+
+    def test_post_protein_id_and_ligand_file(self):
+        """Test ediascorer endpoint with protein id and ligand file"""
+        protein = create_test_protein()
+        with open(TestConfig.ligand_file) as ligand_file:
+            data = {'protein_id': protein.id, 'ligand_file': ligand_file}
+            response = call_api(EdiascorerView, 'post', data)
+
+        self.assertEqual(response.status_code, 202)
+
+        # uploading the ligand file does not change the original protein
+        self.assertFalse(protein.ligand_set.exists())
+        job = EdiaJob.objects.get(id=response.data['job_id'])
+        # the ligand from the file was associated with a copy of the protein
+        self.assertTrue(job.input_protein.ligand_set.exists())
 
     def test_post_protein_id_with_explicit_pdb_code(self):
         """Test ediascorer endpoint with protein id and explicit pdb code
@@ -131,18 +147,18 @@ class ViewTests(PPlusTestCase):
             'input_protein',
             'density_file_pdb_code',
             'electron_density_map',
-            'atom_scores',
+            'edia_scores',
             'output_protein'
         ]
         for field in fields:
             self.assertIn(field, response.data)
 
         response = call_api(
-            AtomScoresViewSet,
+            EdiaScoresViewSet,
             'get',
             viewset_actions={'get': 'retrieve'},
-            pk=response.data['atom_scores']
+            pk=response.data['edia_scores']
         )
-        fields = ['id', 'scores', 'parent_edia_job']
+        fields = ['id', 'atom_scores', 'structure_scores', 'parent_edia_job']
         for field in fields:
             self.assertIn(field, response.data)

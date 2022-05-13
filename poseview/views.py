@@ -37,7 +37,18 @@ class PoseviewView(APIView):
 
         if request_data['ligand_id']:
             input_ligand = Ligand.objects.get(id=request_data['ligand_id'])
+            # create a new protein ligand pair if both are not associated already
+            if not input_protein.ligand_set.filter(id=input_ligand.id).exists():
+                input_protein.id = None
+                input_protein.save()
+                input_ligand.id = None
+                input_ligand.protein = input_protein
+                input_ligand.save()
         else:
+            # copy the protein to not modify the original
+            if request_data['protein_id']:
+                input_protein.id = None
+                input_protein.save()
             input_ligand = Ligand.from_file(request_data['ligand_file'], input_protein)
             input_ligand.save()
 

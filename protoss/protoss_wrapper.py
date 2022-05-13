@@ -38,21 +38,26 @@ class ProtossWrapper:
         :param directory: Path to desired output directory
         :type directory: Path
         """
-        protein = job.input_protein
+        protein_file = job.input_protein.write_temp()
+        if job.input_ligand:
+            # use custom ligand if one was given
+            ligand_file = job.input_ligand.write_temp()
+        else:
+            # use associated ligands if not custom ligand was given
+            ligand_file = job.input_protein.write_ligands_temp()
 
-        with protein.write_temp() as protein_file, protein.write_ligands_temp() as ligand_file:
-            args = [
-                settings.BINARIES['protoss'],
-                '--input', protein_file.name,
-                '--output', os.path.join(str(directory.absolute()), 'protein_out.pdb')
-            ]
-            if ligand_file:
-                args.extend(['--ligand_input', ligand_file.name,
-                             '--ligand_output',
-                             os.path.join(str(directory.absolute()), 'ligand_out.sdf')])
+        args = [
+            settings.BINARIES['protoss'],
+            '--input', protein_file.name,
+            '--output', os.path.join(str(directory.absolute()), 'protein_out.pdb')
+        ]
+        if ligand_file:
+            args.extend(['--ligand_input', ligand_file.name,
+                         '--ligand_output',
+                         os.path.join(str(directory.absolute()), 'ligand_out.sdf')])
 
-            logger.debug('Executing command line call: %s', " ".join(args))
-            subprocess.check_call(args)
+        logger.debug('Executing command line call: %s', " ".join(args))
+        subprocess.check_call(args)
 
     @staticmethod
     def load_results(job, path):

@@ -9,5 +9,5 @@ urlpatterns = [
 
 router = DefaultRouter()
 router.register('jobs', views.EdiaJobViewSet)
-router.register('scores', views.AtomScoresViewSet)
+router.register('scores', views.EdiaScoresViewSet)
 urlpatterns.extend(router.urls)

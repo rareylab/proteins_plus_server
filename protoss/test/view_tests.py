@@ -37,6 +37,21 @@ class ViewTests(PPlusTestCase):
 
         self.assertEqual(response.status_code, 202)
 
+    def test_post_protein_id_and_ligand_file(self):
+        """Test protoss endpoint with protein id and ligand file"""
+        protein = create_test_protein()
+        with open(TestConfig.ligand_file) as ligand_file:
+            data = {'protein_id': protein.id, 'ligand_file': ligand_file}
+            response = call_api(ProtossView, 'post', data)
+
+        self.assertEqual(response.status_code, 202)
+
+        # uploading the ligand file does not change the original protein
+        self.assertFalse(protein.ligand_set.exists())
+        job = ProtossJob.objects.get(id=response.data['job_id'])
+        # the ligand from the file was associated with a copy of the protein
+        self.assertTrue(job.input_protein.ligand_set.exists())
+
     def test_post_non_existing_protein(self):
         """Test protoss view with non existing protein id"""
         data = {'protein_id': uuid.uuid4()}
