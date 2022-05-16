@@ -17,15 +17,15 @@ from .serializers import EdiaJobSerializer, EdiaScoresSerializer, \
 
 
 class EdiascorerView(APIView):
-    """View for executing the Ediascorer"""
+    """View for executing the EDIAscorer"""
     parser_classes = (JSONParser, MultiPartParser, FormParser)
 
     @extend_schema(
         request=EdiascorerSubmitSerializer,
-        responses=ProteinsPlusJobResponseSerializer
+        responses=ProteinsPlusJobResponseSerializer,
     )
     def post(self, request):
-        """API endpoint for executing the ediascorer binary
+        """Start an EDIAscorer job.
 
         The EDIAscorer calculates atomwise electron density support scores. To calculate score the
         EDIAscorer requires an electron density map, which can be either retrieved with a PDB code
@@ -88,7 +88,7 @@ class EdiascorerView(APIView):
 
 
 class EdiaJobViewSet(ReadOnlyModelViewSet):  # pylint: disable=too-many-ancestors
-    """Viewset for retrieving specific or listing all EdiaJob objects"""
+    """Retrieve specific or list all EDIAscorer jobs"""
     queryset = EdiaJob.objects.all()
     serializer_class = EdiaJobSerializer
 

@@ -23,13 +23,21 @@ class ProtossView(APIView):
         responses=ProteinsPlusJobResponseSerializer,
     )
     def post(self, request):
-        """API endpoint for protossing protein objects in the database
+        """Start a Protoss job.
 
-        :param request: Http request containing the job data. Structure of
-                        request.data is given by the ProtossSubmitSerializer
-        :type request: HttpRequest
-        :return: Http Response indicating a successful submission or any errors.
-        :rtype: HttpResponse
+        Protoss predicts hydrogen positions for proteins. If there are ligands associated with a
+        protein these are used in the calculation. Uploading a custom ligand file will remove
+        clashing ligands in the protein.
+
+        Required:
+         - either "protein_id" or "protein_file"
+
+        Optional:
+         - custom "ligand_file"
+
+         *Protoss: A holistic approach to predict tautomers and protonation states in protein-ligand complexes
+         Stefan Bietz and Sascha Urbaczek and Benjamin Schulz and Matthias Rarey
+         Journal of Cheminformatics vol. 6, no. 1, p. 12, 2014*
         """
         serializer = ProtossSubmitSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -60,6 +68,6 @@ class ProtossView(APIView):
 
 
 class ProtossJobViewSet(ReadOnlyModelViewSet):  # pylint: disable=too-many-ancestors
-    """Viewset for retrieving specifiv or listing all ProtossJob instances from database"""
+    """Retrieve specific or list all Protoss jobs"""
     queryset = ProtossJob.objects.all()
     serializer_class = ProtossJobSerializer

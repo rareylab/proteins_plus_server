@@ -8,7 +8,7 @@ from .models import EdiaJob, EdiaScores
 
 
 class EdiaJobSerializer(ProteinsPlusJobSerializer):
-    """Serializer for the EdiaJob model"""
+    """EDIAscorer job data"""
 
     class Meta(ProteinsPlusJobSerializer.Meta):
         model = EdiaJob
@@ -30,7 +30,7 @@ class EdiaScoresSerializer(serializers.ModelSerializer):
 
 
 class EdiascorerSubmitSerializer(ProteinsPlusJobSubmitSerializer):  # pylint: disable=abstract-method
-    """Serializer for the Protoss job submission data"""
+    """EDIAscorer job submission data"""
     protein_id = serializers.UUIDField(required=False, default=None)
     protein_file = serializers.FileField(required=False, default=None)
     ligand_file = serializers.FileField(required=False, default=None)

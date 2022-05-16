@@ -6,7 +6,7 @@ from .models import ProtossJob
 
 
 class ProtossJobSerializer(ProteinsPlusJobSerializer):
-    """Serializer for ProtossJob model"""
+    """Protoss job data"""
 
     class Meta(ProteinsPlusJobSerializer.Meta):
         model = ProtossJob
@@ -14,7 +14,7 @@ class ProtossJobSerializer(ProteinsPlusJobSerializer):
 
 
 class ProtossSubmitSerializer(ProteinsPlusJobSubmitSerializer):  # pylint: disable=abstract-method
-    """Serializer for the Protoss job submission data"""
+    """Protoss job submission data"""
     protein_id = serializers.UUIDField(required=False, default=None)
     protein_file = serializers.FileField(required=False, default=None)
     ligand_file = serializers.FileField(required=False, default=None)

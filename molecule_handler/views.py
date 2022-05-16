@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework.response import Response
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from drf_spectacular.utils import extend_schema
 
 from proteins_plus.serializers import ProteinsPlusJobResponseSerializer
@@ -17,20 +17,25 @@ from .tasks import preprocess_molecule_task
 
 class ProteinUploadView(APIView):
     """View for uploading proteins and ligands"""
-    parser_classes = (MultiPartParser, FormParser)
+    parser_classes = (JSONParser, MultiPartParser, FormParser)
 
     @extend_schema(
         request=UploadSerializer,
         responses=ProteinsPlusJobResponseSerializer,
     )
     def post(self, request):
-        """API endpoint for uploading protein and ligand data into the database
+        """Upload proteins and ligands.
 
-        :param request: Http request containing the upload data. Structure of
-                        request.data is given by the UploadSerializer
-        :type request: HttpRequest
-        :return: Http Response indicating a successful submission or any errors.
-        :rtype: HttpResponse
+        Uploading proteins and ligands will preprocess them. Ligands will be detected in protein
+        files, separated into ligand models, and 2D representation will be generated for these
+        ligands. Uploaded ligands will override any ligands present in a PDB entry or a protein
+        file.
+
+        Required:
+         - either "pdb_code" or "protein_file"
+
+        Optional:
+         - custom "ligand_file" to override ligands
         """
         serializer = UploadSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -66,13 +71,13 @@ class ProteinUploadView(APIView):
 
 
 class ProteinViewSet(ReadOnlyModelViewSet):  # pylint: disable=too-many-ancestors
-    """Viewset for retrieving specific or listing all Protein instances from database"""
+    """Retrieve specific or list all proteins"""
     queryset = Protein.objects.all()
     serializer_class = ProteinSerializer
 
 
 class LigandViewSet(ReadOnlyModelViewSet):  # pylint: disable=too-many-ancestors
-    """Viewset for retrieving specific or listing all Ligand instances from database"""
+    """Retrieve specific or list all ligands"""
     queryset = Ligand.objects.all()
     serializer_class = LigandSerializer
 
@@ -84,12 +89,12 @@ class ProteinSiteViewSet(ReadOnlyModelViewSet):  # pylint: disable=too-many-ance
 
 
 class ElectronDensityMapViewSet(ReadOnlyModelViewSet):  # pylint: disable=too-many-ancestors
-    """Viewset for retrieving specific or listing all ElectronDensityMap objects"""
+    """Retrieve specific or list all electron density maps"""
     queryset = ElectronDensityMap.objects.all()
     serializer_class = ElectronDensityMapSerializer
 
 
 class PreprocessorJobViewSet(ReadOnlyModelViewSet):  # pylint: disable=too-many-ancestors
-    """Viewset for retrieving specific or listing all PreprocessorJob instances from database"""
+    """Retrieve specific or list all preprocessor jobs"""
     queryset = PreprocessorJob.objects.all()
     serializer_class = PreprocessorJobSerializer

@@ -6,7 +6,7 @@ from .input_validation import MoleculeInputValidator
 
 
 class ProteinSerializer(serializers.ModelSerializer):
-    """Serializer for the Protein model"""
+    """Protein data"""
 
     class Meta:
         model = Protein
@@ -23,7 +23,10 @@ class ProteinSerializer(serializers.ModelSerializer):
 
 
 class LigandSerializer(serializers.ModelSerializer):
-    """Serializer for the Ligand model"""
+    """Ligand data
+
+    Image is in SVG format.
+    """
 
     class Meta:
         model = Ligand
@@ -39,7 +42,10 @@ class ProteinSiteSerializer(serializers.ModelSerializer):
 
 
 class ElectronDensityMapSerializer(serializers.ModelSerializer):
-    """Serializer for the ElectronDensityMap model"""
+    """Electron density map data
+
+    Electron density is in CCP4 format.
+    """
 
     class Meta:
         model = ElectronDensityMap
@@ -47,7 +53,7 @@ class ElectronDensityMapSerializer(serializers.ModelSerializer):
 
 
 class PreprocessorJobSerializer(ProteinsPlusJobSerializer):
-    """Serializer for the PreprocessorJob model"""
+    """Preprocessor job data"""
 
     class Meta(ProteinsPlusJobSerializer.Meta):
         model = PreprocessorJob
@@ -61,7 +67,7 @@ class PreprocessorJobSerializer(ProteinsPlusJobSerializer):
 
 
 class UploadSerializer(ProteinsPlusJobSubmitSerializer):  # pylint: disable=abstract-method
-    """Serializer for Protein upload data"""
+    """Upload data"""
     pdb_code = serializers.CharField(min_length=4, max_length=4, default=None)
     uniprot_code = serializers.CharField(min_length=6, max_length=10, default=None)
     protein_file = serializers.FileField(default=None)
