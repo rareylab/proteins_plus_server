@@ -1,8 +1,9 @@
 """Test for custom molecule handler commands"""
-from django.core.management import call_command
+from django.core.management import call_command, CommandError
 from proteins_plus.test.utils import PPlusTestCase
 from ..models import PreprocessorJob, Protein, Ligand, ProteinSite, ElectronDensityMap
-from .utils import create_successful_preprocessor_job, create_test_proteinsite, create_test_electrondensitymap
+from .utils import create_successful_preprocessor_job, create_test_proteinsite,\
+    create_test_electrondensitymap
 
 
 class CommandsTests(PPlusTestCase):
@@ -22,3 +23,11 @@ class CommandsTests(PPlusTestCase):
         self.assertFalse(Ligand.objects.filter(id=ligand.id).exists())
         self.assertFalse(ProteinSite.objects.filter(id=protein_site.id).exists())
         self.assertFalse(ElectronDensityMap.objects.filter(id=density_map.id).exists())
+
+    def test_download_pdb(self):
+        """Test download_pdb command"""
+
+        # Since a valid internet connection is necessary for download_pdb we
+        # only do negative tests.
+        self.assertRaises(CommandError, call_command, 'download_pdb', '--target_dir',
+                          '/ThisIsA/VeryUnlikely/PathTo-Exist,isIt?42424242')
