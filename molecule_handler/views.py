@@ -9,9 +9,9 @@ from drf_spectacular.utils import extend_schema
 
 from proteins_plus.serializers import ProteinsPlusJobResponseSerializer
 from proteins_plus.job_handler import submit_task
-from .models import Protein, Ligand, ElectronDensityMap, PreprocessorJob
-from .serializers import ProteinSerializer, LigandSerializer, ElectronDensityMapSerializer, \
-    PreprocessorJobSerializer, UploadSerializer
+from .models import Protein, Ligand, ProteinSite, ElectronDensityMap, PreprocessorJob
+from .serializers import ProteinSerializer, LigandSerializer, ProteinSiteSerializer, \
+    ElectronDensityMapSerializer, PreprocessorJobSerializer, UploadSerializer
 from .tasks import preprocess_molecule_task
 
 
@@ -75,6 +75,12 @@ class LigandViewSet(ReadOnlyModelViewSet):  # pylint: disable=too-many-ancestors
     """Viewset for retrieving specific or listing all Ligand instances from database"""
     queryset = Ligand.objects.all()
     serializer_class = LigandSerializer
+
+
+class ProteinSiteViewSet(ReadOnlyModelViewSet):  # pylint: disable=too-many-ancestors
+    """Viewset for retrieving specific or listing all ProteinSite instances from database"""
+    queryset = ProteinSite.objects.all()
+    serializer_class = ProteinSiteSerializer
 
 
 class ElectronDensityMapViewSet(ReadOnlyModelViewSet):  # pylint: disable=too-many-ancestors

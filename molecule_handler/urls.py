@@ -10,6 +10,7 @@ urlpatterns = [
 router = DefaultRouter()
 router.register('proteins', views.ProteinViewSet)
 router.register('ligands', views.LigandViewSet)
+router.register('protein_sites', views.ProteinSiteViewSet)
 router.register('electron_density_maps', views.ElectronDensityMapViewSet)
 router.register('upload/jobs', views.PreprocessorJobViewSet)
 urlpatterns.extend(router.urls)

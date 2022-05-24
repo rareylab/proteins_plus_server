@@ -1,7 +1,7 @@
 """molecule_handler model serializers for django rest framework"""
 from rest_framework import serializers
 from proteins_plus.serializers import ProteinsPlusJobSerializer, ProteinsPlusJobSubmitSerializer
-from .models import Protein, Ligand, ElectronDensityMap, PreprocessorJob
+from .models import Protein, Ligand, ProteinSite, ElectronDensityMap, PreprocessorJob
 from .input_validation import MoleculeInputValidator
 
 
@@ -28,6 +28,14 @@ class LigandSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ligand
         fields = ['id', 'name', 'protein', 'file_type', 'file_string', 'image']
+
+
+class ProteinSiteSerializer(serializers.ModelSerializer):
+    """Serializer for the Protein model"""
+
+    class Meta:
+        model = ProteinSite
+        fields = ['id', 'protein', 'site_description']
 
 
 class ElectronDensityMapSerializer(serializers.ModelSerializer):
