@@ -24,7 +24,19 @@ class PoseviewView(APIView):
         responses=ProteinsPlusJobResponseSerializer
     )
     def post(self, request):
-        """API endpoint for generating Poseview images for proteins and ligands"""
+        """Start a PoseView job.
+
+        PoseView generates projections of protein-ligand interactions to 2D images. The ligand
+        specified by either "ligand_file" or "ligand_id" will be used to define the binding site
+        and the protein-ligand interactions.
+
+        Required:
+         - either "protein_file" or "protein_id"
+         - either "ligand_file" or "ligand_id"
+
+        *Stierand, K., Rarey, M. PoseView -- molecular interaction patterns at a glance.
+        J Cheminform 2, P50 (2010).*
+        """
         serializer = PoseviewJobSubmitSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         request_data = serializer.validated_data
@@ -63,6 +75,6 @@ class PoseviewView(APIView):
 
 
 class PoseviewJobViewSet(ReadOnlyModelViewSet):
-    """Poseview job views"""
+    """Retrieve specific or list all PoseView jobs"""
     queryset = PoseviewJob.objects.all()
     serializer_class = PoseviewJobSerializer

@@ -6,7 +6,7 @@ from .models import PoseviewJob
 
 
 class PoseviewJobSerializer(ProteinsPlusJobSerializer):
-    """Serializer for the PoseviewJob model"""
+    """PoseView job data"""
 
     class Meta:
         model = PoseviewJob
@@ -18,7 +18,7 @@ class PoseviewJobSerializer(ProteinsPlusJobSerializer):
 
 
 class PoseviewJobSubmitSerializer(ProteinsPlusJobSubmitSerializer):  # pylint: disable=abstract-method
-    """Serializer for Poseview job submission data"""
+    """PoseView job submission data"""
     protein_id = serializers.UUIDField(required=False, default=None)
     protein_file = serializers.FileField(required=False, default=None)
     ligand_id = serializers.UUIDField(required=False, default=None)
