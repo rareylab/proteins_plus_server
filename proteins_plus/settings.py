@@ -122,8 +122,8 @@ STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Celery settings
-CELERY_BROKER_URL = 'redis://localhost:6379'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_BROKER_URL = 'redis://localhost:6378'
+CELERY_RESULT_BACKEND = 'redis://localhost:6378'
 
 # Swagger Config
 REST_FRAMEWORK = {'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'}
@@ -131,8 +131,14 @@ SPECTACULAR_SETTINGS = {
     'TITLE': 'ProteinsPlus Swagger',
     'DESCRIPTION': 'Software tools for protein analysis',
     'VERSION': '1.0.0',
-    'COMPONENT_SPLIT_REQUEST': True
+    'COMPONENT_SPLIT_REQUEST': True,
+    'SWAGGER_UI_SETTINGS': {
+        'url': '/api/v2/schema/',
+    },
 }
+if DEBUG:
+    del SPECTACULAR_SETTINGS['SWAGGER_UI_SETTINGS']
+
 # Media files (Images for ligands)
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
