@@ -3,13 +3,11 @@ from django.core.files import File
 from .models import Ligand
 
 
-def load_processed_ligands(path, input_protein, output_protein):
+def load_processed_ligands(path, output_protein):
     """Extract Ligand objects from multi sdf file after execution of a job.
 
     :param path: Path the output directory of the job
     :type path: Path
-    :param input_protein: Input Protein object of the executed job
-    :type input_protein: Protein
     :param output_protein: Output Protein object of the executed job
     :type output_protein: Protein
     :raises RuntimeError: If more than one sdf file is found in the output directory
@@ -32,12 +30,4 @@ def load_processed_ligands(path, input_protein, output_protein):
                 file_string=ligand_string + '$$$$',
                 protein=output_protein
             )
-
-            # TODO: Check if new images were created. If so, connect them to the ligand objects
-            # instead of the old images.
-            old_ligand = input_protein.ligand_set.get(name=ligand_name)
-            if old_ligand.image:
-                new_image = f'{ligand.name}_{ligand.id}.svg'
-                ligand.image.save(new_image, File(old_ligand.image.open('rb')))
-
             ligand.save()

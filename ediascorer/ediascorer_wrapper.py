@@ -99,7 +99,7 @@ class EdiascorerWrapper:
         """
         EdiascorerWrapper.load_scored_protein(job, path)
         EdiascorerWrapper.load_edia_scores(job, path)
-        load_processed_ligands(path, job.input_protein, job.output_protein)
+        load_processed_ligands(path, job.output_protein)
         job.save()
 
     @staticmethod

@@ -47,8 +47,10 @@ class ProtossView(APIView):
                 input_protein.save()
             ligand = Ligand.from_file(request_data['ligand_file'], input_protein)
             ligand.save()
+            job = ProtossJob(input_protein=input_protein, input_ligand=ligand)
+        else:
+            job = ProtossJob(input_protein=input_protein)
 
-        job = ProtossJob(input_protein=input_protein)
         job_id, retrieved = submit_task(job, protoss_protein_task, request_data['use_cache'])
         serializer = ProteinsPlusJobResponseSerializer({
             'job_id': job_id,

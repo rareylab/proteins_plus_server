@@ -69,7 +69,7 @@ class ProtossWrapper:
         :type path: Path
         """
         ProtossWrapper.load_protossed_protein(job, path)
-        load_processed_ligands(path, job.input_protein, job.output_protein)
+        load_processed_ligands(path, job.output_protein)
         job.save()
 
     @staticmethod

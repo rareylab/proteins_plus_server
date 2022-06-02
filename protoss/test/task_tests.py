@@ -33,7 +33,7 @@ class TaskTests(PPlusTestCase):
     def test_protoss_protein_with_ligands(self):
         """test of protoss workflow with protein and multiple ligands"""
         input_protein = create_test_protein()
-        create_multiple_test_ligands(input_protein)
+        ligands = create_multiple_test_ligands(input_protein)
 
         job = ProtossJob(input_protein=input_protein)
         job.save()
@@ -43,6 +43,16 @@ class TaskTests(PPlusTestCase):
         self.assertEqual(job.status, Status.SUCCESS)
         self.assertIsNotNone(job.output_protein)
         self.assertEqual(job.output_protein.ligand_set.count(), 2)
+        self.assertIsNotNone(job.output_protein.ligand_set.first().image)
+
+        job = ProtossJob(input_protein=input_protein, input_ligand=ligands[0])
+        job.save()
+
+        protoss_protein_task.run(job.id)
+        job = ProtossJob.objects.get(id=job.id)
+        self.assertEqual(job.status, Status.SUCCESS)
+        self.assertIsNotNone(job.output_protein)
+        self.assertEqual(job.output_protein.ligand_set.count(), 1)
         self.assertIsNotNone(job.output_protein.ligand_set.first().image)
 
     def test_protoss_non_existing_protein(self):
