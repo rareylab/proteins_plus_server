@@ -53,6 +53,9 @@ class DoGSiteWrapper:
                 tmp_file = job.input_ligand.write_temp()
                 args.append('--ligandFile')
                 args.append(tmp_file.name)
+            if job.ligand_name:
+                args.append('--refLigName')
+                args.append(str(job.ligand_name))
             if job.chain_id:
                 args.append('--chain')
                 args.append(str(job.chain_id))

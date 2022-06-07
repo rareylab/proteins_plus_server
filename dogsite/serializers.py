@@ -15,6 +15,7 @@ class DoGSiteJobSerializer(ProteinsPlusJobSerializer):
             'input_protein',
             'input_ligand',
             'chain_id',
+            'ligand_name',
             'calc_subpockets',
             'ligand_bias',
             'output_pockets',
@@ -38,6 +39,7 @@ class DoGSiteJobSubmitSerializer(ProteinsPlusJobSubmitSerializer):  # pylint: di
     protein_file = serializers.FileField(required=False, default=None)
     ligand_id = serializers.UUIDField(required=False, default=None)
     ligand_file = serializers.FileField(required=False, default=None)
+    ligand_name = serializers.CharField(required=False, max_length=100, default=None)
     chain_id = serializers.CharField(required=False, max_length=2, default=None)
     calc_subpockets = serializers.BooleanField()
     ligand_bias = serializers.BooleanField()

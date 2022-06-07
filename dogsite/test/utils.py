@@ -9,7 +9,8 @@ def create_test_dogsite_job(
         ligand_name=TestConfig.ligand,
         chain_id=TestConfig.chain_id,
         calc_subpockets=TestConfig.calc_subpockets,
-        ligand_bias=TestConfig.ligand_bias):
+        ligand_bias=TestConfig.ligand_bias,
+        use_ligand_name=TestConfig.use_ligand_name):
     """Helper function for creating dummy DoGSiteJob objects
 
     :param ligand_name: Optional ligand name
@@ -20,6 +21,8 @@ def create_test_dogsite_job(
     :type calc_subpockets: bool
     :param ligand_bias: Optional boolean to use ligand bias if set to true
     :type ligand_bias: bool
+    :param use_ligand_name: Optional bool to use ligand name
+    :type use_ligand_name: bool
     :return: dummy DoGSiteJob object
     :rtype: DoGSiteJob
     """
@@ -28,13 +31,22 @@ def create_test_dogsite_job(
     if ligand_name:
         input_ligand = create_test_ligand(input_protein, ligand_name=ligand_name)
 
-    job = DoGSiteJob(
-        input_protein=input_protein,
-        input_ligand=input_ligand,
-        chain_id=chain_id,
-        calc_subpockets=calc_subpockets,
-        ligand_bias=ligand_bias
-    )
+    if use_ligand_name:
+        job = DoGSiteJob(
+            input_protein=input_protein,
+            chain_id=chain_id,
+            calc_subpockets=calc_subpockets,
+            ligand_bias=ligand_bias,
+            ligand_name=ligand_name
+        )
+    else:
+        job = DoGSiteJob(
+            input_protein=input_protein,
+            input_ligand=input_ligand,
+            chain_id=chain_id,
+            calc_subpockets=calc_subpockets,
+            ligand_bias=ligand_bias
+        )
     job.save()
     return job
 

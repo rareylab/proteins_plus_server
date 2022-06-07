@@ -20,6 +20,8 @@ class DoGSiteJob(ProteinsPlusJob):
         Protein, on_delete=models.CASCADE, related_name='child_dogsite_job_set')
     input_ligand = models.ForeignKey(Ligand, on_delete=models.CASCADE, null=True,
                                      related_name='child_dogsite_job_set')
+    # ligand can also be given by using the ligand name
+    ligand_name = models.CharField(max_length=100, default='')
     # can be used to limit pocket detection to a chain
     chain_id = models.CharField(max_length=2, default='')
     # can be pocket or subpocket
@@ -34,5 +36,5 @@ class DoGSiteJob(ProteinsPlusJob):
     dogsite_info = models.OneToOneField(DoGSiteInfo, on_delete=models.CASCADE, null=True)
 
     # hash all inputs
-    hash_attributes = ['input_protein', 'input_ligand', 'chain_id', 'calc_subpockets',
-                       'ligand_bias']
+    hash_attributes = ['input_protein', 'input_ligand', 'chain_id', 'ligand_name',
+                       'calc_subpockets', 'ligand_bias']

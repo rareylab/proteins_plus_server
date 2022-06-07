@@ -95,6 +95,41 @@ class ViewTests(PPlusTestCase):
         response = call_api(DoGSiteView, 'post', data)
         self.assertEqual(response.status_code, 202)
 
+        # ligand name is empty
+        data = {
+            'protein_id': input_protein.id,
+            'ligand_id': input_ligand.id,
+            'chain_id': 'A',
+            'ligand_name': '',
+            'calc_subpockets': False,
+            'ligand_bias': True
+        }
+        response = call_api(DoGSiteView, 'post', data)
+        self.assertEqual(response.status_code, 202)
+
+        # ligand name and chain id are set
+        data = {
+            'protein_id': input_protein.id,
+            'ligand_id': input_ligand.id,
+            'chain_id': 'A',
+            'ligand_name': 'P86_A_400',
+            'calc_subpockets': False,
+            'ligand_bias': True
+        }
+        response = call_api(DoGSiteView, 'post', data)
+        self.assertEqual(response.status_code, 202)
+
+        # ligand name is set
+        data = {
+            'protein_id': input_protein.id,
+            'ligand_id': input_ligand.id,
+            'ligand_name': 'P86_A_400',
+            'calc_subpockets': False,
+            'ligand_bias': True
+        }
+        response = call_api(DoGSiteView, 'post', data)
+        self.assertEqual(response.status_code, 202)
+
         # analysis detail and ligand bias true
         data = {
             'protein_id': input_protein.id,
@@ -198,6 +233,7 @@ class ViewTests(PPlusTestCase):
             'input_protein',
             'input_ligand',
             'chain_id',
+            'ligand_name',
             'calc_subpockets',
             'ligand_bias',
             'output_pockets',

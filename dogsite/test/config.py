@@ -10,5 +10,6 @@ class TestConfig:  # pylint: disable=too-few-public-methods
     chain_id = ''
     calc_subpockets = False
     ligand_bias = False
+    use_ligand_name = False
     protein_file = testdir / (protein + '.pdb')
     ligand_file = testdir / (ligand + '.sdf')

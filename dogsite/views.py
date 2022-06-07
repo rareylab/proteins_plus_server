@@ -70,7 +70,24 @@ class DoGSiteView(APIView):
         if request_data['ligand_bias']:
             ligand_bias = request_data['ligand_bias']
 
-        if request_data['chain_id']:
+        if request_data['ligand_name'] and request_data['chain_id']:
+            job = DoGSiteJob(
+                input_protein=input_protein,
+                input_ligand=input_ligand,
+                chain_id=request_data['chain_id'],
+                ligand_name=request_data['ligand_name'],
+                calc_subpockets=calc_subpockets,
+                ligand_bias=ligand_bias
+            )
+        elif request_data['ligand_name']:
+            job = DoGSiteJob(
+                input_protein=input_protein,
+                input_ligand=input_ligand,
+                ligand_name=request_data['ligand_name'],
+                calc_subpockets=calc_subpockets,
+                ligand_bias=ligand_bias
+            )
+        elif request_data['chain_id']:
             job = DoGSiteJob(
                 input_protein=input_protein,
                 input_ligand=input_ligand,
