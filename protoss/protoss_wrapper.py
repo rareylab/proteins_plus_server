@@ -56,7 +56,7 @@ class ProtossWrapper:
                          '--ligand_output',
                          os.path.join(str(directory.absolute()), 'ligand_out.sdf')])
 
-        logger.debug('Executing command line call: %s', " ".join(args))
+        logger.info('Executing command line call: %s', " ".join(args))
         subprocess.check_call(args)
 
     @staticmethod

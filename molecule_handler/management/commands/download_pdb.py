@@ -32,7 +32,7 @@ def download_pdb_files(target_dir, pdb_file_format):
         f'{MoleculeHandlerSettings.PDB_FTP_SERVER}/data/structures/divided/{pdb_file_format}/',
         str(target_dir.resolve())
     ]
-    logger.debug('Executing command line call: %s', " ".join(args))
+    logger.info('Executing command line call: %s', " ".join(args))
     subprocess.check_call(args)
 
 

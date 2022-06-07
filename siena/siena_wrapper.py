@@ -65,7 +65,7 @@ class SienaWrapper:
                 raise ValueError('No valid input binding site specification')
             args.append(tmp_file.name)
 
-            logger.debug('Executing command line call: %s', " ".join(args))
+            logger.info('Executing command line call: %s', " ".join(args))
             subprocess.check_call(args)
 
     @staticmethod

@@ -51,7 +51,7 @@ class PreprocessorWrapper:
             if ligand_file:
                 args.extend(['--ligand', ligand_file.name])
 
-            logger.debug('Executing command line call: %s', " ".join(args))
+            logger.info('Executing command line call: %s', " ".join(args))
             subprocess.check_call(args)
 
     @staticmethod

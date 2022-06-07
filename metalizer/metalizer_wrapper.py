@@ -53,7 +53,7 @@ class MetalizerWrapper:
                     '--max_free_sites', str(0.25),
                     '--output', str(metalized_protein_path)
                 ]
-                logger.debug('Executing command line call: %s', " ".join(args))
+                logger.info('Executing command line call: %s', " ".join(args))
                 subprocess.check_call(args, stdout=metalizer_result_file)
         return metalized_protein_path, metalizer_result_path
 

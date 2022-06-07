@@ -32,5 +32,5 @@ class GenerateSienaDatabaseWrapper:  # pylint: disable=too-few-public-methods
             '-o', str(destination_dir / f'{database_filename}.log')
         ]
 
-        logger.debug('Executing command line call: %s', " ".join(args))
+        logger.info('Executing command line call: %s', " ".join(args))
         subprocess.check_call(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)

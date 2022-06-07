@@ -62,7 +62,7 @@ class DoGSiteWrapper:
             if job.ligand_bias:
                 args.append('--useLigandsToAnnotateGrid')
 
-            logger.debug('Executing command line call: %s', " ".join(args))
+            logger.info('Executing command line call: %s', " ".join(args))
             subprocess.check_call(args, stdout=subprocess.DEVNULL)
 
     @staticmethod

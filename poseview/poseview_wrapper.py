@@ -43,7 +43,7 @@ class PoseviewWrapper:
                     '-t', '',  # don't write text to the image
                     '-o', image.name
                 ]
-                logger.debug('Executing command line call: %s', " ".join(args))
+                logger.info('Executing command line call: %s', " ".join(args))
                 poseview_directory = os.path.dirname(settings.BINARIES['poseview'])
                 subprocess.check_call(args, stdout=subprocess.DEVNULL, cwd=poseview_directory)
         return image

@@ -52,7 +52,7 @@ class EdiascorerWrapper:
             args.extend(['--ligand', ligand_file.name])
 
         try:
-            logger.debug('Executing command line call: %s', " ".join(args))
+            logger.info('Executing command line call: %s', " ".join(args))
             subprocess.check_call(args)
         except subprocess.CalledProcessError as error:
             # Diese beiden exit codes werden vom Ediascorer zurückgegeben, je nach dem

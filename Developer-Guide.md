@@ -830,7 +830,7 @@ class YourToolWrapper:
             '--outdir', str(directory.absolute()),
         ]
 
-        logger.debug('Executing command line call: %s', " ".join(args))
+        logger.info('Executing command line call: %s', " ".join(args))
         subprocess.check_call(args)
 
     @staticmethod
