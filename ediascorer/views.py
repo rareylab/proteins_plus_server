@@ -27,7 +27,7 @@ class EdiascorerView(APIView):
     def post(self, request):
         """Start an EDIAscorer job.
 
-        The EDIAscorer calculates atom-wise electron density support scores. To calculate score the
+        The EDIAscorer calculates atom-wise electron density support scores. To calculate the scores
         EDIAscorer requires an electron density map, which can be either retrieved with a PDB code
         or explicitly uploaded. If a ligand file is uploaded it will be added to the
         "structure_scores" of the EDIA scores object.
@@ -39,9 +39,9 @@ class EdiascorerView(APIView):
         Optional:
          - custom "ligand_file" to add ligands
 
-        *Estimating Electron Density Support for Individual Atoms and Molecular Fragments in
+        *Meyder A., Nittinger E., Lange G., Klein R., Rarey M.
+        Estimating Electron Density Support for Individual Atoms and Molecular Fragments in
         X-ray Structures
-        Agnes Meyder, Eva Nittinger, Gudrun Lange, Robert Klein, and Matthias Rarey
         Journal of Chemical Information and Modeling 2017 57 (10), 2437-2447*
         """
         serializer = EdiascorerSubmitSerializer(data=request.data)

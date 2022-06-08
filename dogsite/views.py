@@ -41,9 +41,9 @@ class DoGSiteView(APIView):
          - "ligand_bias" to use the provided ligand to extend pockets to fully cover the ligand.
          - "chain_id" to focus binding site prediction on a single chain only.
 
-        *Analyzing the Topology of Active Sites: On the Prediction of Pockets and Subpockets
-         Andrea Volkamer, Axel Griewel, Thomas Grombacher, and Matthias Rarey
-         Journal of Chemical Information and Modeling 2010 50 (11), 2041-2052*
+        *Volkamer A., Griewel A., Grombacher T., Rarey M.
+        Analyzing the Topology of Active Sites: On the Prediction of Pockets and Subpockets
+        Journal of Chemical Information and Modeling 2010 50 (11), 2041-2052*
         """
         serializer = DoGSiteJobSubmitSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)

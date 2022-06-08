@@ -40,8 +40,9 @@ class SienaView(APIView):
          - either "ligand_file" or "ligand_id" to define the query binding site.
          - either "protein_site_id" or "protein_site_json" to define the query binding site.
 
-        *Stefan Bietz and Matthias Rarey Journal of Chemical Information and Modeling 2016 56 (1),
-         248-259*
+        *Bietz S., Rarey M.
+        SIENA: Efficient Compilation of Selective Protein Binding Site Ensembles
+        Journal of Chemical Information and Modeling 2016 56 (1) 248-259*
         """
         serializer = SienaSubmitSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)

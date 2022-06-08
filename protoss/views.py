@@ -35,8 +35,9 @@ class ProtossView(APIView):
         Optional:
          - custom "ligand_file"
 
-         *Protoss: A holistic approach to predict tautomers and protonation states in protein-ligand complexes
-         Stefan Bietz and Sascha Urbaczek and Benjamin Schulz and Matthias Rarey
+         *Bietz S., Urbaczek S., Schulz B., Rarey M.
+         Protoss: A holistic approach to predict tautomers and protonation states in protein-ligand
+         complexes
          Journal of Cheminformatics vol. 6, no. 1, p. 12, 2014*
         """
         serializer = ProtossSubmitSerializer(data=request.data)

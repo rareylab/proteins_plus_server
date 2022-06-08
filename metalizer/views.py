@@ -40,10 +40,10 @@ class MetalizerView(APIView):
         Optional:
          - "distance_threshold" cutoff for atoms considered coordination partners (N,O,S,Cl).
 
-         *Katrin Schöning-Stierand, Konrad Diedrich, Rainer Fährrolfes, Florian Flachsenberg,
-          Agnes Meyder, Eva Nittinger, Ruben Steinegger, Matthias Rarey,
+         *Schöning-Stierand K., Diedrich K., Fährrolfes R., Flachsenberg F.,
+          Meyder A., Nittinger E., Steinegger R., Rarey M.,
           ProteinsPlus: interactive analysis of protein–ligand binding interfaces,
-          Nucleic Acids Research, Volume 48, Issue W1, 02 July 2020, Pages W48–W53*
+          Nucleic Acids Research, Volume 48, Issue W1, 2020, Pages W48-W53*
         """
         serializer = MetalizerJobSubmitSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)

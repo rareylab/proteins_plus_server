@@ -35,7 +35,7 @@ class PoseviewView(APIView):
          - either "ligand_file" or "ligand_id"
 
         *Stierand, K., Rarey, M. PoseView -- molecular interaction patterns at a glance.
-        J Cheminform 2, P50 (2010).*
+        Journal of Cheminformatics, 2, P50 (2010).*
         """
         serializer = PoseviewJobSubmitSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
