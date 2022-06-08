@@ -25,7 +25,26 @@ class MetalizerView(APIView):
         responses=ProteinsPlusJobResponseSerializer
     )
     def post(self, request):
-        """Post new Metalizer job"""
+        """Start a METALizer job
+
+        METALizer predicts the coordination geometry of metals in metalloproteins. Provide
+        a protein structure and a metal in the structure to obtain a list of the most likely
+        geometric coordination of the metal atom.
+
+        Required:
+         - either "protein_id" or "protein_file"
+         - "residue_id" Residue number of the metal.
+         - "chain_id" Chain identifier of the metal.
+         - "name" Name of the metal.
+
+        Optional:
+         - "distance_threshold" cutoff for atoms considered coordination partners (N,O,S,Cl).
+
+         *Katrin Schöning-Stierand, Konrad Diedrich, Rainer Fährrolfes, Florian Flachsenberg,
+          Agnes Meyder, Eva Nittinger, Ruben Steinegger, Matthias Rarey,
+          ProteinsPlus: interactive analysis of protein–ligand binding interfaces,
+          Nucleic Acids Research, Volume 48, Issue W1, 02 July 2020, Pages W48–W53*
+        """
         serializer = MetalizerJobSubmitSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         request_data = serializer.validated_data

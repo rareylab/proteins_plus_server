@@ -8,7 +8,7 @@ from .models import SienaJob, SienaInfo
 
 
 class SienaJobSerializer(ProteinsPlusJobSerializer):
-    """Serializer for the SienaJob model"""
+    """Siena job data"""
 
     class Meta(ProteinsPlusJobSerializer.Meta):
         model = SienaJob
@@ -22,7 +22,7 @@ class SienaJobSerializer(ProteinsPlusJobSerializer):
 
 
 class SienaInfoSerializer(serializers.ModelSerializer):
-    """Serializer for the SienaInfo model"""
+    """Siena result info data"""
 
     class Meta:
         model = SienaInfo
@@ -30,7 +30,7 @@ class SienaInfoSerializer(serializers.ModelSerializer):
 
 
 class SienaSubmitSerializer(ProteinsPlusJobSubmitSerializer):  # pylint: disable=abstract-method
-    """Serializer for the Siena job submission data"""
+    """Siena job submission data"""
     protein_id = serializers.UUIDField(required=False, default=None)
     protein_file = serializers.FileField(required=False, default=None)
     ligand_id = serializers.UUIDField(required=False, default=None)

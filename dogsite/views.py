@@ -17,7 +17,7 @@ from .tasks import dogsite_task
 
 
 class DoGSiteView(APIView):
-    """DoGSite submission API"""
+    """View for executing DoGSite"""
     parser_classes = (JSONParser, MultiPartParser, FormParser)
 
     @extend_schema(
@@ -25,7 +25,26 @@ class DoGSiteView(APIView):
         responses=ProteinsPlusJobResponseSerializer
     )
     def post(self, request):
-        """Post new DoGSite job"""
+        """Start a DoGSite job
+
+        DoGSite detects and describes binding sites which can then easily be visualized. It is a
+        grid-based method that uses a Difference of Gaussian filter to detect potential binding
+        pockets based on the 3D structure of the protein. Global properties, describing the size,
+        shape and chemical features of the predicted (sub)pockets are calculated automatically.
+
+        Required:
+         - either "protein_file" or "protein_id" for the protein structure.
+
+        Optional:
+         - either "ligand_file" or "ligand_id" for calculating ligand coverage of a pocket.
+         - "calc_subpockets" to output also subpockets (parts of pockets).
+         - "ligand_bias" to use the provided ligand to extend pockets to fully cover the ligand.
+         - "chain_id" to focus binding site prediction on a single chain only.
+
+        *Analyzing the Topology of Active Sites: On the Prediction of Pockets and Subpockets
+         Andrea Volkamer, Axel Griewel, Thomas Grombacher, and Matthias Rarey
+         Journal of Chemical Information and Modeling 2010 50 (11), 2041-2052*
+        """
         serializer = DoGSiteJobSubmitSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         request_data = serializer.validated_data
@@ -77,12 +96,12 @@ class DoGSiteView(APIView):
 
 
 class DoGSiteJobViewSet(ReadOnlyModelViewSet):
-    """DoGSite job views"""
+    """Retrieve specific or list of DoGSite jobs"""
     queryset = DoGSiteJob.objects.all()
     serializer_class = DoGSiteJobSerializer
 
 
 class DoGSiteInfoViewSet(ReadOnlyModelViewSet):
-    """DoGSite info views"""
+    """Retrieve specific or list of DoGSite result info objects"""
     queryset = DoGSiteInfo.objects.all()
     serializer_class = DoGSiteInfoSerializer

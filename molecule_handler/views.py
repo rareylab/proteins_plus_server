@@ -83,7 +83,7 @@ class LigandViewSet(ReadOnlyModelViewSet):  # pylint: disable=too-many-ancestors
 
 
 class ProteinSiteViewSet(ReadOnlyModelViewSet):  # pylint: disable=too-many-ancestors
-    """Viewset for retrieving specific or listing all ProteinSite instances from database"""
+    """Retrieve specific or list all ProteinSite"""
     queryset = ProteinSite.objects.all()
     serializer_class = ProteinSiteSerializer
 

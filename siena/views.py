@@ -24,13 +24,24 @@ class SienaView(APIView):
         responses=ProteinsPlusJobResponseSerializer
     )
     def post(self, request):
-        """API endpoint for executing the siena binary
+        """Start a Siena job.
 
-        :param request: Http request containing the job data. Structure of
-                        request.data is given by the SienaSubmitSerializer
-        :type request: HttpRequest
-        :return: Http Response indicating a successful submission or any errors.
-        :rtype: HttpResponse
+        Siena searches for similar binding sites in the Protein Data Bank (PDB). Provide a protein
+        structure as input and a query binding site by either uploading a ligand as reference or
+        a list of residues making up the binding site. Siena returns a list of similar binding sites
+        as an superposed structural ensemble. Siena can be used to investigate similar binding
+        pockets, structural variability and different ligands binding in the same or similar
+        pockets.
+
+        Required:
+         - either "protein_file" or "protein_id"
+
+        Optional:
+         - either "ligand_file" or "ligand_id" to define the query binding site.
+         - either "protein_site_id" or "protein_site_json" to define the query binding site.
+
+        *Stefan Bietz and Matthias Rarey Journal of Chemical Information and Modeling 2016 56 (1),
+         248-259*
         """
         serializer = SienaSubmitSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -75,12 +86,12 @@ class SienaView(APIView):
 
 
 class SienaJobViewSet(ReadOnlyModelViewSet):
-    """Siena job views"""
+    """Retrieve specific or list all Siena job"""
     queryset = SienaJob.objects.all()
     serializer_class = SienaJobSerializer
 
 
 class SienaInfoViewSet(ReadOnlyModelViewSet):
-    """Siena info views"""
+    """Retrieve specific or list all Siena result info objects"""
     queryset = SienaInfo.objects.all()
     serializer_class = SienaInfoSerializer

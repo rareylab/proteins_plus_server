@@ -7,7 +7,7 @@ from .models import DoGSiteJob, DoGSiteInfo
 
 
 class DoGSiteJobSerializer(ProteinsPlusJobSerializer):
-    """Serializer for the DoGSiteJob model"""
+    """DoGSite job data"""
 
     class Meta:
         model = DoGSiteJob
@@ -24,7 +24,7 @@ class DoGSiteJobSerializer(ProteinsPlusJobSerializer):
 
 
 class DoGSiteInfoSerializer(serializers.ModelSerializer):
-    """Serializer for the DoGSiteInfo model"""
+    """DoGSite result info data"""
 
     class Meta:
         model = DoGSiteInfo
@@ -32,7 +32,7 @@ class DoGSiteInfoSerializer(serializers.ModelSerializer):
 
 
 class DoGSiteJobSubmitSerializer(ProteinsPlusJobSubmitSerializer):  # pylint: disable=abstract-method
-    """Serializer for the DoGSite job submission data"""
+    """DoGSite job submission data"""
 
     protein_id = serializers.UUIDField(required=False, default=None)
     protein_file = serializers.FileField(required=False, default=None)

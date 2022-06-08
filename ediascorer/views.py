@@ -27,14 +27,14 @@ class EdiascorerView(APIView):
     def post(self, request):
         """Start an EDIAscorer job.
 
-        The EDIAscorer calculates atomwise electron density support scores. To calculate score the
+        The EDIAscorer calculates atom-wise electron density support scores. To calculate score the
         EDIAscorer requires an electron density map, which can be either retrieved with a PDB code
         or explicitly uploaded. If a ligand file is uploaded it will be added to the
         "structure_scores" of the EDIA scores object.
 
         Required:
-         - either "protein_file" or "protein_id"
-         - either "pdb_code" or "electron_density_map" (file)
+         - either "protein_file" or "protein_id" for the protein structure.
+         - either "pdb_code" or "electron_density_map" (file) for the electron density.
 
         Optional:
          - custom "ligand_file" to add ligands

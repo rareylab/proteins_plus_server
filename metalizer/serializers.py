@@ -7,7 +7,7 @@ from .models import MetalizerJob, MetalizerInfo
 
 
 class MetalizerJobSerializer(ProteinsPlusJobSerializer):
-    """Serializer for the MetalizerJob model"""
+    """Metalizer job data"""
 
     class Meta:
         model = MetalizerJob
@@ -23,7 +23,7 @@ class MetalizerJobSerializer(ProteinsPlusJobSerializer):
 
 
 class MetalizerInfoSerializer(serializers.ModelSerializer):
-    """Serializer for the MetalizerInfo model"""
+    """Metalizer result info data"""
 
     class Meta:
         model = MetalizerInfo
@@ -31,10 +31,10 @@ class MetalizerInfoSerializer(serializers.ModelSerializer):
 
 
 class MetalizerJobSubmitSerializer(ProteinsPlusJobSubmitSerializer):  # pylint: disable=abstract-method
-    """Serializer for the Metalizer job submission data"""
+    """Metalizer job submission data"""
     protein_id = serializers.UUIDField(required=False, default=None)
     protein_file = serializers.FileField(required=False, default=None)
-    residue_id = serializers.IntegerField()
+    residue_id = serializers.CharField(max_length=4)
     chain_id = serializers.CharField(max_length=2)
     name = serializers.CharField(max_length=2)
     distance_threshold = serializers.FloatField(default=3.0)
