@@ -1,5 +1,19 @@
 # ProteinsPlus
 
+The [proteins.plus](https://proteins.plus/) web server makes a wide-range of software tools for
+working with protein structures in drug discovery and bio/cheminformatics easily accessible for
+everyone. This repository contains the backend of the web server.
+
+The web front end is coming soon.
+
+You can access ProteinsPlus programmatically via its API. A good starting point to do this are the
+many interactive notebooks we compiled in the
+[ProteinsPlus Examples](https://github.com/rareylab/proteins_plus_examples) project. You can also 
+check out the API directly in the [swagger-ui](https://proteins.plus/api/v2).
+
+This project is developed at the Universitaet Hamburg, ZBH - Center for Bioinformatics by the 
+group of Matthias Rarey.
+
 ## Installation
 
 Get Python dependencies with [conda](https://docs.conda.io/en/latest/miniconda.html).
@@ -86,4 +100,4 @@ find . -type f -name "*.py" | xargs pylint --load-plugins pylint_django --django
 ## Development Guide
 
 If you intend to work with the server's code, please read the Developer Guide found in
-**Developer-Guide.md**. 
+**Developer-Guide.md**.
