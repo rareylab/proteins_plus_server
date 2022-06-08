@@ -1,0 +1,1827 @@
+openapi: 3.0.3
+info:
+  title: ProteinsPlus Swagger
+  version: 1.0.0
+  description: Software tools for protein analysis
+paths:
+  /dogsite/:
+    post:
+      operationId: dogsite_create
+      description: |-
+        Start a DoGSite job
+
+        DoGSite detects and describes binding sites which can then easily be visualized. It is a
+        grid-based method that uses a Difference of Gaussian filter to detect potential binding
+        pockets based on the 3D structure of the protein. Global properties, describing the size,
+        shape and chemical features of the predicted (sub)pockets are calculated automatically.
+
+        Required:
+         - either "protein_file" or "protein_id" for the protein structure.
+
+        Optional:
+         - either "ligand_file" or "ligand_id" for calculating ligand coverage of a pocket.
+         - "calc_subpockets" to output also subpockets (parts of pockets).
+         - "ligand_bias" to use the provided ligand to extend pockets to fully cover the ligand.
+         - "chain_id" to focus binding site prediction on a single chain only.
+
+        *Volkamer A., Griewel A., Grombacher T., Rarey M.
+        Analyzing the Topology of Active Sites: On the Prediction of Pockets and Subpockets
+        Journal of Chemical Information and Modeling 2010 50 (11), 2041-2052*
+      tags:
+      - dogsite
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DoGSiteJobSubmitRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DoGSiteJobSubmitRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DoGSiteJobSubmitRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProteinsPlusJobResponse'
+          description: ''
+  /dogsite/info/:
+    get:
+      operationId: dogsite_info_list
+      description: Retrieve specific or list of DoGSite result info objects
+      tags:
+      - dogsite
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DoGSiteInfo'
+          description: ''
+  /dogsite/info/{id}/:
+    get:
+      operationId: dogsite_info_retrieve
+      description: Retrieve specific or list of DoGSite result info objects
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this do g site info.
+        required: true
+      tags:
+      - dogsite
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DoGSiteInfo'
+          description: ''
+  /dogsite/jobs/:
+    get:
+      operationId: dogsite_jobs_list
+      description: Retrieve specific or list of DoGSite jobs
+      tags:
+      - dogsite
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DoGSiteJob'
+          description: ''
+  /dogsite/jobs/{id}/:
+    get:
+      operationId: dogsite_jobs_retrieve
+      description: Retrieve specific or list of DoGSite jobs
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this do g site job.
+        required: true
+      tags:
+      - dogsite
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DoGSiteJob'
+          description: ''
+  /ediascorer/:
+    post:
+      operationId: ediascorer_create
+      description: |-
+        Start an EDIAscorer job.
+
+        The EDIAscorer calculates atom-wise electron density support scores. To calculate the scores
+        EDIAscorer requires an electron density map, which can be either retrieved with a PDB code
+        or explicitly uploaded. If a ligand file is uploaded it will be added to the
+        "structure_scores" of the EDIA scores object.
+
+        Required:
+         - either "protein_file" or "protein_id" for the protein structure.
+         - either "pdb_code" or "electron_density_map" (file) for the electron density.
+
+        Optional:
+         - custom "ligand_file" to add ligands
+
+        *Meyder A., Nittinger E., Lange G., Klein R., Rarey M.
+        Estimating Electron Density Support for Individual Atoms and Molecular Fragments in
+        X-ray Structures
+        Journal of Chemical Information and Modeling 2017 57 (10), 2437-2447*
+      tags:
+      - ediascorer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EdiascorerSubmitRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EdiascorerSubmitRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EdiascorerSubmitRequest'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProteinsPlusJobResponse'
+          description: ''
+  /ediascorer/jobs/:
+    get:
+      operationId: ediascorer_jobs_list
+      description: Retrieve specific or list all EDIAscorer jobs
+      tags:
+      - ediascorer
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EdiaJob'
+          description: ''
+  /ediascorer/jobs/{id}/:
+    get:
+      operationId: ediascorer_jobs_retrieve
+      description: Retrieve specific or list all EDIAscorer jobs
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this edia job.
+        required: true
+      tags:
+      - ediascorer
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EdiaJob'
+          description: ''
+  /ediascorer/scores/:
+    get:
+      operationId: ediascorer_scores_list
+      description: Retrieve specific or list all EDIA scores objects
+      tags:
+      - ediascorer
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EdiaScores'
+          description: ''
+  /ediascorer/scores/{id}/:
+    get:
+      operationId: ediascorer_scores_retrieve
+      description: Retrieve specific or list all EDIA scores objects
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this edia scores.
+        required: true
+      tags:
+      - ediascorer
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EdiaScores'
+          description: ''
+  /metalizer/:
+    post:
+      operationId: metalizer_create
+      description: |-
+        Start a METALizer job
+
+        METALizer predicts the coordination geometry of metals in metalloproteins. Provide
+        a protein structure and a metal in the structure to obtain a list of the most likely
+        geometric coordination of the metal atom.
+
+        Required:
+         - either "protein_id" or "protein_file"
+         - "residue_id" Residue number of the metal.
+         - "chain_id" Chain identifier of the metal.
+         - "name" Name of the metal.
+
+        Optional:
+         - "distance_threshold" cutoff for atoms considered coordination partners (N,O,S,Cl).
+
+         *Schöning-Stierand K., Diedrich K., Fährrolfes R., Flachsenberg F.,
+          Meyder A., Nittinger E., Steinegger R., Rarey M.,
+          ProteinsPlus: interactive analysis of protein–ligand binding interfaces,
+          Nucleic Acids Research, Volume 48, Issue W1, 2020, Pages W48-W53*
+      tags:
+      - metalizer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MetalizerJobSubmitRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MetalizerJobSubmitRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/MetalizerJobSubmitRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProteinsPlusJobResponse'
+          description: ''
+  /metalizer/info/:
+    get:
+      operationId: metalizer_info_list
+      description: Metalizer info views
+      tags:
+      - metalizer
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MetalizerInfo'
+          description: ''
+  /metalizer/info/{id}/:
+    get:
+      operationId: metalizer_info_retrieve
+      description: Metalizer info views
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this metalizer info.
+        required: true
+      tags:
+      - metalizer
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MetalizerInfo'
+          description: ''
+  /metalizer/jobs/:
+    get:
+      operationId: metalizer_jobs_list
+      description: Metalizer job views
+      tags:
+      - metalizer
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MetalizerJob'
+          description: ''
+  /metalizer/jobs/{id}/:
+    get:
+      operationId: metalizer_jobs_retrieve
+      description: Metalizer job views
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this metalizer job.
+        required: true
+      tags:
+      - metalizer
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MetalizerJob'
+          description: ''
+  /molecule_handler/electron_density_maps/:
+    get:
+      operationId: molecule_handler_electron_density_maps_list
+      description: Retrieve specific or list all electron density maps
+      tags:
+      - molecule_handler
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ElectronDensityMap'
+          description: ''
+  /molecule_handler/electron_density_maps/{id}/:
+    get:
+      operationId: molecule_handler_electron_density_maps_retrieve
+      description: Retrieve specific or list all electron density maps
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this electron density map.
+        required: true
+      tags:
+      - molecule_handler
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ElectronDensityMap'
+          description: ''
+  /molecule_handler/ligands/:
+    get:
+      operationId: molecule_handler_ligands_list
+      description: Retrieve specific or list all ligands
+      tags:
+      - molecule_handler
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ligand'
+          description: ''
+  /molecule_handler/ligands/{id}/:
+    get:
+      operationId: molecule_handler_ligands_retrieve
+      description: Retrieve specific or list all ligands
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this ligand.
+        required: true
+      tags:
+      - molecule_handler
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ligand'
+          description: ''
+  /molecule_handler/protein_sites/:
+    get:
+      operationId: molecule_handler_protein_sites_list
+      description: Retrieve specific or list all ProteinSite
+      tags:
+      - molecule_handler
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProteinSite'
+          description: ''
+  /molecule_handler/protein_sites/{id}/:
+    get:
+      operationId: molecule_handler_protein_sites_retrieve
+      description: Retrieve specific or list all ProteinSite
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this protein site.
+        required: true
+      tags:
+      - molecule_handler
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProteinSite'
+          description: ''
+  /molecule_handler/proteins/:
+    get:
+      operationId: molecule_handler_proteins_list
+      description: Retrieve specific or list all proteins
+      tags:
+      - molecule_handler
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Protein'
+          description: ''
+  /molecule_handler/proteins/{id}/:
+    get:
+      operationId: molecule_handler_proteins_retrieve
+      description: Retrieve specific or list all proteins
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this protein.
+        required: true
+      tags:
+      - molecule_handler
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Protein'
+          description: ''
+  /molecule_handler/upload/:
+    post:
+      operationId: molecule_handler_upload_create
+      description: |-
+        Upload proteins and ligands.
+
+        Uploading proteins and ligands will preprocess them. Ligands will be detected in protein
+        files, separated into ligand models, and 2D representation will be generated for these
+        ligands. Uploaded ligands will override any ligands present in a PDB entry or a protein
+        file.
+
+        Required:
+         - either "pdb_code" or "protein_file"
+
+        Optional:
+         - custom "ligand_file" to override ligands
+      tags:
+      - molecule_handler
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UploadRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UploadRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UploadRequest'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProteinsPlusJobResponse'
+          description: ''
+  /molecule_handler/upload/jobs/:
+    get:
+      operationId: molecule_handler_upload_jobs_list
+      description: Retrieve specific or list all preprocessor jobs
+      tags:
+      - molecule_handler
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PreprocessorJob'
+          description: ''
+  /molecule_handler/upload/jobs/{id}/:
+    get:
+      operationId: molecule_handler_upload_jobs_retrieve
+      description: Retrieve specific or list all preprocessor jobs
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this preprocessor job.
+        required: true
+      tags:
+      - molecule_handler
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PreprocessorJob'
+          description: ''
+  /poseview/:
+    post:
+      operationId: poseview_create
+      description: |-
+        Start a PoseView job.
+
+        PoseView generates projections of protein-ligand interactions to 2D images. The ligand
+        specified by either "ligand_file" or "ligand_id" will be used to define the binding site
+        and the protein-ligand interactions.
+
+        Required:
+         - either "protein_file" or "protein_id"
+         - either "ligand_file" or "ligand_id"
+
+        *Stierand, K., Rarey, M. PoseView -- molecular interaction patterns at a glance.
+        Journal of Cheminformatics, 2, P50 (2010).*
+      tags:
+      - poseview
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PoseviewJobSubmitRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PoseviewJobSubmitRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PoseviewJobSubmitRequest'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProteinsPlusJobResponse'
+          description: ''
+  /poseview/jobs/:
+    get:
+      operationId: poseview_jobs_list
+      description: Retrieve specific or list all PoseView jobs
+      tags:
+      - poseview
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PoseviewJob'
+          description: ''
+  /poseview/jobs/{id}/:
+    get:
+      operationId: poseview_jobs_retrieve
+      description: Retrieve specific or list all PoseView jobs
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this poseview job.
+        required: true
+      tags:
+      - poseview
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PoseviewJob'
+          description: ''
+  /protoss/:
+    post:
+      operationId: protoss_create
+      description: |-
+        Start a Protoss job.
+
+        Protoss predicts hydrogen positions for proteins. If there are ligands associated with a
+        protein these are used in the calculation. Uploading a custom ligand file will remove
+        clashing ligands in the protein.
+
+        Required:
+         - either "protein_id" or "protein_file"
+
+        Optional:
+         - custom "ligand_file"
+
+         *Bietz S., Urbaczek S., Schulz B., Rarey M.
+         Protoss: A holistic approach to predict tautomers and protonation states in protein-ligand
+         complexes
+         Journal of Cheminformatics vol. 6, no. 1, p. 12, 2014*
+      tags:
+      - protoss
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProtossSubmitRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProtossSubmitRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ProtossSubmitRequest'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProteinsPlusJobResponse'
+          description: ''
+  /protoss/jobs/:
+    get:
+      operationId: protoss_jobs_list
+      description: Retrieve specific or list all Protoss jobs
+      tags:
+      - protoss
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProtossJob'
+          description: ''
+  /protoss/jobs/{id}/:
+    get:
+      operationId: protoss_jobs_retrieve
+      description: Retrieve specific or list all Protoss jobs
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this protoss job.
+        required: true
+      tags:
+      - protoss
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProtossJob'
+          description: ''
+  /schema/:
+    get:
+      operationId: schema_retrieve
+      description: |-
+        OpenApi3 schema for this API. Format can be selected via content negotiation.
+
+        - YAML: application/vnd.oai.openapi
+        - JSON: application/vnd.oai.openapi+json
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - json
+          - yaml
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - af
+          - ar
+          - ar-dz
+          - ast
+          - az
+          - be
+          - bg
+          - bn
+          - br
+          - bs
+          - ca
+          - cs
+          - cy
+          - da
+          - de
+          - dsb
+          - el
+          - en
+          - en-au
+          - en-gb
+          - eo
+          - es
+          - es-ar
+          - es-co
+          - es-mx
+          - es-ni
+          - es-ve
+          - et
+          - eu
+          - fa
+          - fi
+          - fr
+          - fy
+          - ga
+          - gd
+          - gl
+          - he
+          - hi
+          - hr
+          - hsb
+          - hu
+          - hy
+          - ia
+          - id
+          - ig
+          - io
+          - is
+          - it
+          - ja
+          - ka
+          - kab
+          - kk
+          - km
+          - kn
+          - ko
+          - ky
+          - lb
+          - lt
+          - lv
+          - mk
+          - ml
+          - mn
+          - mr
+          - my
+          - nb
+          - ne
+          - nl
+          - nn
+          - os
+          - pa
+          - pl
+          - pt
+          - pt-br
+          - ro
+          - ru
+          - sk
+          - sl
+          - sq
+          - sr
+          - sr-latn
+          - sv
+          - sw
+          - ta
+          - te
+          - tg
+          - th
+          - tk
+          - tr
+          - tt
+          - udm
+          - uk
+          - ur
+          - uz
+          - vi
+          - zh-hans
+          - zh-hant
+      tags:
+      - schema
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/vnd.oai.openapi:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/yaml:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/vnd.oai.openapi+json:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /siena/:
+    post:
+      operationId: siena_create
+      description: |-
+        Start a Siena job.
+
+        Siena searches for similar binding sites in the Protein Data Bank (PDB). Provide a protein
+        structure as input and a query binding site by either uploading a ligand as reference or
+        a list of residues making up the binding site. Siena returns a list of similar binding sites
+        as an superposed structural ensemble. Siena can be used to investigate similar binding
+        pockets, structural variability and different ligands binding in the same or similar
+        pockets.
+
+        Required:
+         - either "protein_file" or "protein_id"
+
+        Optional:
+         - either "ligand_file" or "ligand_id" to define the query binding site.
+         - either "protein_site_id" or "protein_site_json" to define the query binding site.
+
+        *Bietz S., Rarey M.
+        SIENA: Efficient Compilation of Selective Protein Binding Site Ensembles
+        Journal of Chemical Information and Modeling 2016 56 (1) 248-259*
+      tags:
+      - siena
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SienaSubmitRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SienaSubmitRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SienaSubmitRequest'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProteinsPlusJobResponse'
+          description: ''
+  /siena/info/:
+    get:
+      operationId: siena_info_list
+      description: Retrieve specific or list all Siena result info objects
+      tags:
+      - siena
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SienaInfo'
+          description: ''
+  /siena/info/{id}/:
+    get:
+      operationId: siena_info_retrieve
+      description: Retrieve specific or list all Siena result info objects
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this siena info.
+        required: true
+      tags:
+      - siena
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SienaInfo'
+          description: ''
+  /siena/jobs/:
+    get:
+      operationId: siena_jobs_list
+      description: Retrieve specific or list all Siena job
+      tags:
+      - siena
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SienaJob'
+          description: ''
+  /siena/jobs/{id}/:
+    get:
+      operationId: siena_jobs_retrieve
+      description: Retrieve specific or list all Siena job
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this siena job.
+        required: true
+      tags:
+      - siena
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SienaJob'
+          description: ''
+components:
+  schemas:
+    DoGSiteInfo:
+      type: object
+      description: DoGSite result info data
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        info:
+          type: object
+          additionalProperties: {}
+        parent_dogsite_job:
+          type: string
+          format: uuid
+      required:
+      - id
+      - info
+      - parent_dogsite_job
+    DoGSiteJob:
+      type: object
+      description: DoGSite job data
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        status:
+          type: string
+        date_created:
+          type: string
+          format: date
+          readOnly: true
+        date_last_accessed:
+          type: string
+          format: date
+          readOnly: true
+        error:
+          type: string
+          nullable: true
+        input_protein:
+          type: string
+          format: uuid
+        input_ligand:
+          type: string
+          format: uuid
+          nullable: true
+        chain_id:
+          type: string
+          maxLength: 2
+        calc_subpockets:
+          type: boolean
+        ligand_bias:
+          type: boolean
+        output_pockets:
+          type: array
+          items:
+            type: string
+            format: uuid
+        output_densities:
+          type: array
+          items:
+            type: string
+            format: uuid
+        dogsite_info:
+          type: string
+          format: uuid
+          nullable: true
+      required:
+      - date_created
+      - date_last_accessed
+      - id
+      - input_protein
+      - output_densities
+      - output_pockets
+      - status
+    DoGSiteJobSubmitRequest:
+      type: object
+      description: DoGSite job submission data
+      properties:
+        use_cache:
+          type: boolean
+          default: true
+        protein_id:
+          type: string
+          format: uuid
+        protein_file:
+          type: string
+          format: binary
+        ligand_id:
+          type: string
+          format: uuid
+        ligand_file:
+          type: string
+          format: binary
+        chain_id:
+          type: string
+          maxLength: 2
+        calc_subpockets:
+          type: boolean
+        ligand_bias:
+          type: boolean
+      required:
+      - calc_subpockets
+      - ligand_bias
+    EdiaJob:
+      type: object
+      description: EDIAscorer job data
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        status:
+          type: string
+        date_created:
+          type: string
+          format: date
+          readOnly: true
+        date_last_accessed:
+          type: string
+          format: date
+          readOnly: true
+        error:
+          type: string
+          nullable: true
+        input_protein:
+          type: string
+          format: uuid
+        density_file_pdb_code:
+          type: string
+          nullable: true
+          maxLength: 4
+        electron_density_map:
+          type: string
+          format: uuid
+          nullable: true
+        edia_scores:
+          type: string
+          format: uuid
+          nullable: true
+        output_protein:
+          type: string
+          format: uuid
+          nullable: true
+      required:
+      - date_created
+      - date_last_accessed
+      - id
+      - input_protein
+      - status
+    EdiaScores:
+      type: object
+      description: EDIA scores data
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        atom_scores:
+          type: object
+          additionalProperties: {}
+        structure_scores:
+          type: object
+          additionalProperties: {}
+        parent_edia_job:
+          type: string
+          format: uuid
+      required:
+      - atom_scores
+      - id
+      - parent_edia_job
+      - structure_scores
+    EdiascorerSubmitRequest:
+      type: object
+      description: EDIAscorer job submission data
+      properties:
+        use_cache:
+          type: boolean
+          default: true
+        protein_id:
+          type: string
+          format: uuid
+        protein_file:
+          type: string
+          format: binary
+        ligand_file:
+          type: string
+          format: binary
+        pdb_code:
+          type: string
+          maxLength: 4
+          minLength: 4
+        electron_density_map:
+          type: string
+          format: binary
+    ElectronDensityMap:
+      type: object
+      description: |-
+        Electron density map data
+
+        Electron density is in CCP4 format.
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        file:
+          type: string
+          format: uri
+        date_created:
+          type: string
+          format: date-time
+          readOnly: true
+        date_last_accessed:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - date_created
+      - date_last_accessed
+      - file
+      - id
+    Ligand:
+      type: object
+      description: |-
+        Ligand data
+
+        Image is in SVG format.
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        protein:
+          type: string
+          format: uuid
+          nullable: true
+        file_type:
+          type: string
+          maxLength: 3
+        file_string:
+          type: string
+        image:
+          type: string
+          format: uri
+          nullable: true
+      required:
+      - file_string
+      - id
+      - name
+    MetalizerInfo:
+      type: object
+      description: Metalizer result info data
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        info:
+          type: object
+          additionalProperties: {}
+        parent_metalizer_job:
+          type: string
+          format: uuid
+      required:
+      - id
+      - info
+      - parent_metalizer_job
+    MetalizerJob:
+      type: object
+      description: Metalizer job data
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        status:
+          type: string
+        date_created:
+          type: string
+          format: date
+          readOnly: true
+        date_last_accessed:
+          type: string
+          format: date
+          readOnly: true
+        error:
+          type: string
+          nullable: true
+        input_protein:
+          type: string
+          format: uuid
+        residue_id:
+          type: string
+          maxLength: 4
+        chain_id:
+          type: string
+          maxLength: 2
+        name:
+          type: string
+          maxLength: 2
+        distance_threshold:
+          type: number
+          format: float
+        output_protein:
+          type: string
+          format: uuid
+          nullable: true
+        metalizer_info:
+          type: string
+          format: uuid
+          nullable: true
+      required:
+      - chain_id
+      - date_created
+      - date_last_accessed
+      - distance_threshold
+      - id
+      - input_protein
+      - name
+      - residue_id
+      - status
+    MetalizerJobSubmitRequest:
+      type: object
+      description: Metalizer job submission data
+      properties:
+        use_cache:
+          type: boolean
+          default: true
+        protein_id:
+          type: string
+          format: uuid
+        protein_file:
+          type: string
+          format: binary
+        residue_id:
+          type: string
+          maxLength: 4
+        chain_id:
+          type: string
+          maxLength: 2
+        name:
+          type: string
+          maxLength: 2
+        distance_threshold:
+          type: number
+          format: float
+          default: 3.0
+      required:
+      - chain_id
+      - name
+      - residue_id
+    PoseviewJob:
+      type: object
+      description: PoseView job data
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        status:
+          type: string
+        date_created:
+          type: string
+          format: date
+          readOnly: true
+        date_last_accessed:
+          type: string
+          format: date
+          readOnly: true
+        error:
+          type: string
+          nullable: true
+        input_protein:
+          type: string
+          format: uuid
+        input_ligand:
+          type: string
+          format: uuid
+        image:
+          type: string
+          format: uri
+          nullable: true
+      required:
+      - date_created
+      - date_last_accessed
+      - id
+      - input_ligand
+      - input_protein
+      - status
+    PoseviewJobSubmitRequest:
+      type: object
+      description: PoseView job submission data
+      properties:
+        use_cache:
+          type: boolean
+          default: true
+        protein_id:
+          type: string
+          format: uuid
+        protein_file:
+          type: string
+          format: binary
+        ligand_id:
+          type: string
+          format: uuid
+        ligand_file:
+          type: string
+          format: binary
+    PreprocessorJob:
+      type: object
+      description: Preprocessor job data
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        status:
+          type: string
+        date_created:
+          type: string
+          format: date
+          readOnly: true
+        date_last_accessed:
+          type: string
+          format: date
+          readOnly: true
+        error:
+          type: string
+          nullable: true
+        protein_name:
+          type: string
+          maxLength: 255
+        pdb_code:
+          type: string
+          nullable: true
+          maxLength: 4
+        output_protein:
+          type: string
+          format: uuid
+          nullable: true
+        protein_string:
+          type: string
+          nullable: true
+        ligand_string:
+          type: string
+          nullable: true
+      required:
+      - date_created
+      - date_last_accessed
+      - id
+      - protein_name
+      - status
+    Protein:
+      type: object
+      description: Protein data
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        pdb_code:
+          type: string
+          nullable: true
+          maxLength: 4
+        file_type:
+          type: string
+          maxLength: 3
+        ligand_set:
+          type: array
+          items:
+            type: string
+            format: uuid
+        file_string:
+          type: string
+        date_created:
+          type: string
+          format: date-time
+          readOnly: true
+        date_last_accessed:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - date_created
+      - date_last_accessed
+      - file_string
+      - id
+      - ligand_set
+      - name
+    ProteinSite:
+      type: object
+      description: Serializer for the Protein model
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        protein:
+          type: string
+          format: uuid
+          nullable: true
+        site_description:
+          type: object
+          additionalProperties: {}
+      required:
+      - id
+      - site_description
+    ProteinsPlusJobResponse:
+      type: object
+      description: Job submission response data
+      properties:
+        job_id:
+          type: string
+          format: uuid
+        retrieved_from_cache:
+          type: boolean
+          default: false
+      required:
+      - job_id
+    ProtossJob:
+      type: object
+      description: Protoss job data
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        status:
+          type: string
+        date_created:
+          type: string
+          format: date
+          readOnly: true
+        date_last_accessed:
+          type: string
+          format: date
+          readOnly: true
+        error:
+          type: string
+          nullable: true
+        input_protein:
+          type: string
+          format: uuid
+        input_ligand:
+          type: string
+          format: uuid
+          nullable: true
+        output_protein:
+          type: string
+          format: uuid
+          nullable: true
+      required:
+      - date_created
+      - date_last_accessed
+      - id
+      - input_protein
+      - status
+    ProtossSubmitRequest:
+      type: object
+      description: Protoss job submission data
+      properties:
+        use_cache:
+          type: boolean
+          default: true
+        protein_id:
+          type: string
+          format: uuid
+        protein_file:
+          type: string
+          format: binary
+        ligand_file:
+          type: string
+          format: binary
+    SienaInfo:
+      type: object
+      description: Siena result info data
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        statistic:
+          type: object
+          additionalProperties: {}
+        alignment:
+          type: string
+        parent_siena_job:
+          type: string
+          format: uuid
+      required:
+      - alignment
+      - id
+      - parent_siena_job
+      - statistic
+    SienaJob:
+      type: object
+      description: Siena job data
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        status:
+          type: string
+        date_created:
+          type: string
+          format: date
+          readOnly: true
+        date_last_accessed:
+          type: string
+          format: date
+          readOnly: true
+        error:
+          type: string
+          nullable: true
+        input_protein:
+          type: string
+          format: uuid
+        input_ligand:
+          type: string
+          format: uuid
+          nullable: true
+        input_site:
+          type: string
+          format: uuid
+          nullable: true
+        output_info:
+          type: string
+          format: uuid
+          nullable: true
+        output_proteins:
+          type: array
+          items:
+            type: string
+            format: uuid
+      required:
+      - date_created
+      - date_last_accessed
+      - id
+      - input_protein
+      - output_proteins
+      - status
+    SienaSubmitRequest:
+      type: object
+      description: Siena job submission data
+      properties:
+        use_cache:
+          type: boolean
+          default: true
+        protein_id:
+          type: string
+          format: uuid
+        protein_file:
+          type: string
+          format: binary
+        ligand_id:
+          type: string
+          format: uuid
+        ligand_file:
+          type: string
+          format: binary
+        protein_site_id:
+          type: string
+          format: uuid
+        protein_site_json:
+          type: object
+          additionalProperties: {}
+    UploadRequest:
+      type: object
+      description: Upload data
+      properties:
+        use_cache:
+          type: boolean
+          default: true
+        pdb_code:
+          type: string
+          maxLength: 4
+          minLength: 4
+        uniprot_code:
+          type: string
+          maxLength: 10
+          minLength: 6
+        protein_file:
+          type: string
+          format: binary
+        ligand_file:
+          type: string
+          format: binary
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: Session

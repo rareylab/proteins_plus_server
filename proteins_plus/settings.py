@@ -16,7 +16,9 @@ SECRET_KEY = 'django-insecure-vnltu0uost-cm8h=psgz6$v!pfz^%w)8v2el!eez-$qsbb$ic#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '.localhost', '127.0.0.1', '[::1]', 'proteins.plus',
+]
 
 # Application definition
 
@@ -114,7 +116,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = '/static/server/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
@@ -133,15 +135,13 @@ SPECTACULAR_SETTINGS = {
     'VERSION': '1.0.0',
     'COMPONENT_SPLIT_REQUEST': True,
     'SWAGGER_UI_SETTINGS': {
-        'url': '/api/v2/schema/',
+        'url': '/schema/' if DEBUG else '/api/v2/schema/',
     },
 }
-if DEBUG:
-    del SPECTACULAR_SETTINGS['SWAGGER_UI_SETTINGS']
 
 # Media files (Images for ligands)
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/media/'
+MEDIA_URL = '/static/media/'
 
 # Media paths
 MEDIA_DIRECTORIES = {

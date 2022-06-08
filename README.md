@@ -22,7 +22,7 @@ conda activate pplus
 Open a separate terminal and start the redis server which is needed by celery which we use for
 distributed task execution.
 ```bash
-redis-server
+redis-server --port 6378
 ```
 
 Open another separate terminal and start the celery worker.
