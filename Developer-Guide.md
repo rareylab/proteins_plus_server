@@ -38,10 +38,11 @@ guidelines and the tutorial below.
     - [Caching](#caching)
 - [Deployment](#deployment)
     - [Start and Stop](#start-and-stop)
-    - [Redis](#redis)
-    - [Celery](#celery)
-    - [Gunicorn](#gunicorn)
-    - [Display Server](#display-server)
+        - [Redis](#redis)
+        - [Celery](#celery)
+        - [Gunicorn](#gunicorn)
+        - [Display Server](#display-server)
+    - [Clean](#clean)
 
 ---
 
@@ -882,7 +883,8 @@ conda install -c anaconda gunicorn
 ```
 
 Two scripts, start.sh and stop.sh, are provided as utilities to start and stop all necessary
-processes. The necessary processes are the following:
+processes. These scripts are intended to be run from the project directory. The necessary
+processes are the following:
 
 - redis
 - celery
@@ -901,25 +903,30 @@ process is terminated irregularly it may leave a dead PID file behind, which may
 when restarting the process. The stop script stops processes using their PID files. Display servers
 are not managed by the stop script.
 
-## Redis
+### Redis
 
 Redis is the message passing framework that coordinates passing asynchronous jobs to celery
 workers. A `redis/` directory containing a configuration has been provided. This configuration will
 write all log output and all database dumps into the `redis/` directory.
 
-## Celery
+### Celery
 
 Celery is the asynchronous job processing framework. A directory structure for running and logging
 has been provided that corresponds to the commands in the start script.
 
-## Gunicorn
+### Gunicorn
 
 Gunicorn is the production python server that actually hanldes requests. A `gunicorn/` directory
 containing a configuration has been provided. This configuration will write all log output into the
 `gunicorn/` directory.
 
-## Display server
+### Display server
 
 A display server is necessary for SVG drawing functionality, which is present for ex. in the
 preprocessor or PoseView. Checking whether a display is running and using that display is handled
 in the start script.
+
+## Clean
+
+A clean script has been provided to be run periodically. It will clean up unused data and stale
+cached objects. It is intended to be run from the project directory.

@@ -1,3 +1,4 @@
+#!/bin/bash
 # end processes started with the start.sh in the reverse order of starting them to avoid errors
 
 if [ -f ./gunicorn/gunicorn.pid ]; then

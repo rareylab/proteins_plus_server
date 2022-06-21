@@ -1,3 +1,4 @@
+#!/bin/bash
 # start all processes needed to run the proteins.plus server
 
 function get_vnc_displays () {
