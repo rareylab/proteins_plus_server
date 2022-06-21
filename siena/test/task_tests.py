@@ -14,15 +14,12 @@ class TaskTests(PPlusTestCase):
     """Celery task tests"""
 
     def setUp(self):
+        """Test set up"""
         self.original_siena_search_db = SienaSettings.SIENA_SEARCH_DB
-        db_proteins = [TestConfig.protein_file_4agm, TestConfig.protein_file_1a3e]
-        self.tmp_siena_db_handler = TmpSienaDB(db_proteins)
-        self.tmp_empty_siena_db_handler = TmpSienaDB([])
 
     def tearDown(self):
+        """Test tear down"""
         SienaSettings.SIENA_SEARCH_DB = self.original_siena_search_db
-        self.tmp_siena_db_handler.close()
-        self.tmp_empty_siena_db_handler.close()
 
     def test_available(self):
         """Test if binary exists at the correct location and is licensed"""
@@ -33,7 +30,7 @@ class TaskTests(PPlusTestCase):
         """test of siena workflow with protein and ligand input"""
 
         # global overwrite of siena-app-settings
-        SienaSettings.SIENA_SEARCH_DB = self.tmp_siena_db_handler.get_siena_db()
+        SienaSettings.SIENA_SEARCH_DB = TestConfig.siena_test_search_db
 
         job = create_test_siena_job(pdb_code=TestConfig.protein_4agm,
                                     protein_filepath=TestConfig.protein_file_4agm,
@@ -57,7 +54,7 @@ class TaskTests(PPlusTestCase):
         """test of siena workflow with protein and protein site input"""
 
         # global overwrite of siena-app-settings
-        SienaSettings.SIENA_SEARCH_DB = self.tmp_siena_db_handler.get_siena_db()
+        SienaSettings.SIENA_SEARCH_DB = TestConfig.siena_test_search_db
 
         inputs = [(TestConfig.protein_4agm, TestConfig.protein_file_4agm,
                    TestConfig.site_json_4agm),
@@ -98,7 +95,7 @@ class TaskTests(PPlusTestCase):
         """Test invalid input without ligand or site"""
 
         # global overwrite of siena-app-settings
-        SienaSettings.SIENA_SEARCH_DB = self.tmp_siena_db_handler.get_siena_db()
+        SienaSettings.SIENA_SEARCH_DB = TestConfig.siena_test_search_db
 
         job = SienaJob(
             input_protein=create_test_protein(pdb_code=TestConfig.protein_4agm,
@@ -123,7 +120,7 @@ class TaskTests(PPlusTestCase):
         """Test no results from SIENA search"""
 
         # global overwrite of siena-app-settings
-        SienaSettings.SIENA_SEARCH_DB = self.tmp_empty_siena_db_handler.get_siena_db()
+        SienaSettings.SIENA_SEARCH_DB = TestConfig.siena_test_search_db_empty
 
         job = create_test_siena_job(pdb_code=TestConfig.protein_4agm,
                                     protein_filepath=TestConfig.protein_file_4agm,
