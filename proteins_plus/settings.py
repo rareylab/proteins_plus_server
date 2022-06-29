@@ -11,10 +11,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-vnltu0uost-cm8h=psgz6$v!pfz^%w)8v2el!eez-$qsbb$ic#'
+SECRET_KEY = 'django-insecure-vnltu0uost-cm8h=psgz6$v!pfz^%w)8v2el!eez-$qsbb$ic#' \
+    if 'SECRET_KEY' not in os.environ else os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = True \
+    if 'DEBUG' in os.environ and os.environ['DEBUG'].capitalize() != 'False' else True
 
 ALLOWED_HOSTS = [
     '.localhost', '127.0.0.1', '[::1]', 'proteins.plus',
@@ -75,11 +77,11 @@ WSGI_APPLICATION = 'proteins_plus.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'HOST': 'localhost',
-        'PORT': 5432,
+        'HOST': 'localhost' if 'PPLUS_DB_HOST' not in os.environ else os.environ['PPLUS_DB_HOST'],
+        'PORT': 5432 if 'PPLUS_DB_PORT' not in os.environ else os.environ['PPLUS_DB_PORT'],
         'NAME': 'pplusdb' if 'PPLUS_DB_NAME' not in os.environ else os.environ['PPLUS_DB_NAME'],
-        'USER': 'pplususer',
-        'PASSWORD': 'PPlusRocks',
+        'USER': 'pplususer' if 'PPLUS_DB_USER' not in os.environ else os.environ['PPLUS_DB_USER'],
+        'PASSWORD': 'PPlusRocks' if 'PPLUS_DB_PASS' not in os.environ else os.environ['PPLUS_DB_PASS'],
     },
 }
 
@@ -135,13 +137,14 @@ SPECTACULAR_SETTINGS = {
     'DESCRIPTION': 'Software tools for protein analysis',
     'VERSION': '1.0.0',
     'COMPONENT_SPLIT_REQUEST': True,
+    'SCHEMA_PATH_PREFIX_INSERT': '' if 'MOUNT_POINT' not in os.environ else os.environ['MOUNT_POINT'],
     'SWAGGER_UI_SETTINGS': {
-        'url': '/schema/' if DEBUG else '/api/v2/schema/',
+        'url': '/schema/' if 'SCHEMA_URL' not in os.environ else os.environ['SCHEMA_URL'],
     },
 }
 
 # Media files (Images for ligands)
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media') if 'MEDIA_ROOT' not in os.environ else os.environ['MEDIA_ROOT']
 MEDIA_URL = '/static/media/'
 
 # Media paths
