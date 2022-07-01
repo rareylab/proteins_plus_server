@@ -159,7 +159,7 @@ if 'PPLUS_BINARIES_JSON' in os.environ:
     BINARY_PATHS_CONFIG = os.environ['PPLUS_BINARIES_JSON']
 else:
     BINARY_PATHS_CONFIG = os.path.join(BASE_DIR, 'proteins_plus', 'binaries.json')
-with open(BINARY_PATHS_CONFIG) as binary_paths_file:
+with open(BINARY_PATHS_CONFIG, encoding='utf8') as binary_paths_file:
     BINARIES = json.load(binary_paths_file)
 
 # Important urls

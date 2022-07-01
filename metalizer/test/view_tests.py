@@ -25,7 +25,7 @@ class ViewTests(PPlusTestCase):
 
     def test_protein_file(self):
         """Test Metalizer with protein file"""
-        with open(TestConfig.protein_file) as protein_file:
+        with open(TestConfig.protein_file, encoding='utf8') as protein_file:
             data = {
                 'protein_file': protein_file,
                 'residue_id': 1300,
@@ -38,7 +38,7 @@ class ViewTests(PPlusTestCase):
 
     def test_other_case(self):
         """Test Metalizer with protein file"""
-        with open(TestConfig.protein_file) as protein_file:
+        with open(TestConfig.protein_file, encoding='utf8') as protein_file:
             data = {
                 'protein_file': protein_file,
                 'residue_id': 1300,

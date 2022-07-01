@@ -17,9 +17,9 @@ class MoleculeInputValidatorTests(PPlusTestCase):
         """Test for validation of molecular input"""
         protein = create_test_protein()
         ligand = create_test_ligand(protein)
-        with open(TestConfig.protein_file, 'r') as protein_file, \
+        with open(TestConfig.protein_file, 'r', encoding='utf8') as protein_file, \
                 open(TestConfig.density_file, 'rb') as density_file, \
-                open(TestConfig.ligand_file, 'r') as ligand_file:
+                open(TestConfig.ligand_file, 'r', encoding='utf8') as ligand_file:
             data = {'protein_id': protein.id,
                     'ligand_id': ligand.id,
                     'pdb_code': TestConfig.protein,

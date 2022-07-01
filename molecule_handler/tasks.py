@@ -1,7 +1,7 @@
 """molecule_handler celery tasks"""
 import requests
-from celery import shared_task
 from django.conf import settings
+from celery import shared_task
 from proteins_plus.job_handler import execute_job
 from .preprocessor_wrapper import PreprocessorWrapper
 from .models import PreprocessorJob

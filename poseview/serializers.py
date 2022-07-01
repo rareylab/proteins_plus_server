@@ -29,7 +29,8 @@ class PoseviewJobSubmitSerializer(ProteinsPlusJobSubmitSerializer):  # pylint: d
 
         :param data: data to validate
         :type data: collections.OrderedDict
-        :raises serializers.ValidationError: If neither files nor model IDs for ligand and protein were provided
+        :raises serializers.ValidationError: If neither files nor model IDs for ligand and protein
+        were provided
         :return: Validated data
         :rtype: collections.OrderedDict
         """

@@ -36,7 +36,7 @@ class ProteinSiteHandler:
         """
         reference = None
         site_dict = {'residue_ids': []}
-        with open(edf_path, 'r') as edf_file:
+        with open(edf_path, 'r', encoding='utf8') as edf_file:
             for line in edf_file:
                 if line.startswith('REFERENCE'):
                     if reference is not None:

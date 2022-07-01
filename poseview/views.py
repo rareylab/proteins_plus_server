@@ -74,7 +74,7 @@ class PoseviewView(APIView):
         return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
 
 
-class PoseviewJobViewSet(ReadOnlyModelViewSet):
+class PoseviewJobViewSet(ReadOnlyModelViewSet):  # pylint: disable=too-many-ancestors
     """Retrieve specific or list all PoseView jobs"""
     queryset = PoseviewJob.objects.all()
     serializer_class = PoseviewJobSerializer

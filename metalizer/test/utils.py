@@ -31,8 +31,11 @@ def create_successful_metalizer_job():
     job = create_test_metalizer_job()
     output_protein = create_test_protein(TestConfig.protein)
     job.output_protein = output_protein
-    with open(TestConfig.metalizer_result_file) as metalizer_result_file:
-        job.metalizer_info = MetalizerInfo(parent_metalizer_job=job, info=metalizer_result_file.read())
+    with open(TestConfig.metalizer_result_file, encoding='utf8') as metalizer_result_file:
+        job.metalizer_info = MetalizerInfo(
+            parent_metalizer_job=job,
+            info=metalizer_result_file.read()
+        )
     job.metalizer_info.save()
     job.save()
     return job

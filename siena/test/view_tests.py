@@ -26,14 +26,14 @@ class ViewTests(PPlusTestCase):
         self.assertEqual(response.status_code, 202)
 
         # protein file with ligand id is allowed
-        with open(TestConfig.protein_file_4agm) as protein_file:
+        with open(TestConfig.protein_file_4agm, encoding='utf8') as protein_file:
             data = {'protein_file': protein_file, 'ligand_id': ligand.id}
             response = call_api(SienaView, 'post', data)
         self.assertEqual(response.status_code, 202)
 
         # protein file with ligand file is allowed
-        with open(TestConfig.protein_file_4agm) as protein_file:
-            with open(TestConfig.ligand_file_4agm) as ligand_file:
+        with open(TestConfig.protein_file_4agm, encoding='utf8') as protein_file:
+            with open(TestConfig.ligand_file_4agm, encoding='utf8') as ligand_file:
                 data = {'protein_file': protein_file, 'ligand_file': ligand_file}
                 response = call_api(SienaView, 'post', data)
         self.assertEqual(response.status_code, 202)
@@ -50,13 +50,13 @@ class ViewTests(PPlusTestCase):
         self.assertEqual(response.status_code, 202)
 
         # protein file and site id is allowed
-        with open(TestConfig.protein_file_4agm) as protein_file:
+        with open(TestConfig.protein_file_4agm, encoding='utf8') as protein_file:
             data = {'protein_file': protein_file, 'protein_site_id': site.id}
             response = call_api(SienaView, 'post', data)
         self.assertEqual(response.status_code, 202)
 
         # protein file and site json is allowed
-        with open(TestConfig.protein_file_4agm) as protein_file:
+        with open(TestConfig.protein_file_4agm, encoding='utf8') as protein_file:
             data = {'protein_file': protein_file,
                     'protein_site_json': site_json}
             response = call_api(SienaView, 'post', data)
@@ -70,7 +70,7 @@ class ViewTests(PPlusTestCase):
         site_json = json.dumps(TestConfig.site_json_4agm)
 
         # protein id with ligand file is not allowed
-        with open(TestConfig.ligand_file_4agm) as ligand_file:
+        with open(TestConfig.ligand_file_4agm, encoding='utf8') as ligand_file:
             data = {'protein_id': protein.id, 'ligand_file': ligand_file}
             response = call_api(SienaView, 'post', data)
         self.assertEqual(response.status_code, 400)
@@ -87,7 +87,7 @@ class ViewTests(PPlusTestCase):
         self.assertEqual(response.status_code, 400)
 
         # protein id with protein file is not allowed
-        with open(TestConfig.protein_file_4agm) as protein_file:
+        with open(TestConfig.protein_file_4agm, encoding='utf8') as protein_file:
             data = {'protein_id': protein.id, 'protein_file': protein_file, 'ligand_id': ligand.id}
             response = call_api(SienaView, 'post', data)
         self.assertEqual(response.status_code, 400)
@@ -98,13 +98,13 @@ class ViewTests(PPlusTestCase):
         self.assertEqual(response.status_code, 400)
 
         # ligand id with ligand file is not allowed
-        with open(TestConfig.ligand_file_4agm) as ligand_file:
+        with open(TestConfig.ligand_file_4agm, encoding='utf8') as ligand_file:
             data = {'protein_id': protein.id, 'ligand_id': ligand.id, 'ligand_file': ligand_file}
             response = call_api(SienaView, 'post', data)
         self.assertEqual(response.status_code, 400)
 
         # site id with ligand file is not allowed
-        with open(TestConfig.ligand_file_4agm) as ligand_file:
+        with open(TestConfig.ligand_file_4agm, encoding='utf8') as ligand_file:
             data = {'protein_id': protein.id, 'protein_site_id': site.id,
                     'ligand_file': ligand_file}
             response = call_api(SienaView, 'post', data)

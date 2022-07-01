@@ -72,13 +72,13 @@ class MetalizerView(APIView):
         return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
 
 
-class MetalizerJobViewSet(ReadOnlyModelViewSet):
+class MetalizerJobViewSet(ReadOnlyModelViewSet):  # pylint: disable=too-many-ancestors
     """Metalizer job views"""
     queryset = MetalizerJob.objects.all()
     serializer_class = MetalizerJobSerializer
 
 
-class MetalizerInfoViewSet(ReadOnlyModelViewSet):
+class MetalizerInfoViewSet(ReadOnlyModelViewSet):  # pylint: disable=too-many-ancestors
     """Metalizer info views"""
     queryset = MetalizerInfo.objects.all()
     serializer_class = MetalizerInfoSerializer

@@ -40,7 +40,8 @@ class EdiascorerWrapper:
         :raises CalledProcessError: If an error occurs during Ediascorer execution
         """
         protein_file = job.input_protein.write_temp()
-        ligand_file = job.input_ligand.write_temp() if job.input_ligand else job.input_protein.write_ligands_temp()
+        ligand_file = job.input_ligand.write_temp() \
+            if job.input_ligand else job.input_protein.write_ligands_temp()
 
         args = [
             settings.BINARIES['ediascorer'],
@@ -75,7 +76,7 @@ class EdiascorerWrapper:
         :rtype: dict
         """
         data = {}
-        with open(file, 'r') as csv_file:
+        with open(file, 'r', encoding='utf8') as csv_file:
             csv_reader = csv.DictReader(csv_file)
             for row in csv_reader:
                 if 'Infile id' in row:

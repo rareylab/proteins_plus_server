@@ -4,7 +4,6 @@ import csv
 from pathlib import Path
 import subprocess
 from tempfile import TemporaryDirectory
-from django.core.files import File
 from proteins_plus import settings
 from molecule_handler.models import ElectronDensityMap, ProteinSite
 
@@ -150,7 +149,7 @@ class DoGSiteWrapper:
         if not txt_file.is_file():
             raise RuntimeError('DoGSite: Internal error, no output descriptor file found.')
         data = []
-        with open(txt_file, 'r') as csv_file:
+        with open(txt_file, 'r', encoding='utf8') as csv_file:
             csv_reader = csv.DictReader(csv_file, delimiter='\t')
             for row in csv_reader:
                 data_dict = {}

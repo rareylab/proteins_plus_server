@@ -86,13 +86,13 @@ class SienaView(APIView):
         return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
 
 
-class SienaJobViewSet(ReadOnlyModelViewSet):
+class SienaJobViewSet(ReadOnlyModelViewSet):  # pylint: disable=too-many-ancestors
     """Retrieve specific or list all Siena job"""
     queryset = SienaJob.objects.all()
     serializer_class = SienaJobSerializer
 
 
-class SienaInfoViewSet(ReadOnlyModelViewSet):
+class SienaInfoViewSet(ReadOnlyModelViewSet):  # pylint: disable=too-many-ancestors
     """Retrieve specific or list all Siena result info objects"""
     queryset = SienaInfo.objects.all()
     serializer_class = SienaInfoSerializer

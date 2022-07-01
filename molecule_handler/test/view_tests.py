@@ -8,8 +8,8 @@ from ..views import ProteinUploadView, ProteinViewSet, LigandViewSet, Preprocess
 from ..models import PreprocessorJob
 
 from .config import TestConfig
-from .utils import create_test_protein, create_multiple_test_ligands, create_test_preprocessor_job, \
-    create_test_proteinsite, create_test_electrondensitymap
+from .utils import create_test_protein, create_multiple_test_ligands, \
+    create_test_preprocessor_job, create_test_proteinsite, create_test_electrondensitymap
 
 
 class ViewTests(PPlusTestCase):
@@ -42,7 +42,8 @@ class ViewTests(PPlusTestCase):
 
     def test_molecule_upload_protein_wrong_filetype(self):
         """Test Protein upload with wrong filetype"""
-        with open(TestConfig.testdir / (TestConfig.protein + '.txt'), 'rb') as protein_file:
+        wrong_filetype_path = TestConfig.testdir / (TestConfig.protein + '.txt')
+        with open(wrong_filetype_path, 'rb') as protein_file:
             data = {'protein_file': File(protein_file)}
             response = call_api(ProteinUploadView, 'post', data)
 

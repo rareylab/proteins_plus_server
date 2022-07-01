@@ -42,7 +42,7 @@ class MetalizerWrapper:
         metalized_protein_path = dir_path / 'metalized.pdb'
         metalizer_result_path = dir_path / 'metalizer_result.json'
         with job.input_protein.write_temp() as protein_file:
-            with open(metalizer_result_path, 'w') as metalizer_result_file:
+            with open(metalizer_result_path, 'w', encoding='utf8') as metalizer_result_file:
                 args = [
                     settings.BINARIES['metalizer'],
                     '--input', protein_file.name,
@@ -68,14 +68,14 @@ class MetalizerWrapper:
         :param metalizer_result_path: path to the Metalizer JSON output
         :type metalizer_result_path: Path
         """
-        with open(metalizer_result_path) as metalizer_result_file:
+        with open(metalizer_result_path, encoding='utf8') as metalizer_result_file:
             metalizer_data = json.load(metalizer_result_file)
         if not len(metalizer_data) > 0:
             raise RuntimeError('Metalizer did not generate results')
         metalizer_info = MetalizerInfo(info=metalizer_data[0], parent_metalizer_job=job)
         metalizer_info.save()
         job.metalizer_info = metalizer_info
-        with open(metalized_protein_path) as metalizer_protein_file:
+        with open(metalized_protein_path, encoding='utf8') as metalizer_protein_file:
             pdb_string = metalizer_protein_file.read()
         output_protein = Protein(
             name=job.input_protein.name,

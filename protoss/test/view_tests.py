@@ -22,7 +22,7 @@ class ViewTests(PPlusTestCase):
 
     def test_post_protein_file(self):
         """Test protoss view with a file upload"""
-        with open(TestConfig.protein_file) as protein_file:
+        with open(TestConfig.protein_file, encoding='utf8') as protein_file:
             data = {'protein_file': protein_file}
             response = call_api(ProtossView, 'post', data)
 
@@ -30,8 +30,8 @@ class ViewTests(PPlusTestCase):
 
     def test_post_protein_and_ligand_file(self):
         """Test protoss view with a protein and ligand file upload"""
-        with open(TestConfig.protein_file) as protein_file:
-            with open(TestConfig.ligand_file) as ligand_file:
+        with open(TestConfig.protein_file, encoding='utf8') as protein_file:
+            with open(TestConfig.ligand_file, encoding='utf8') as ligand_file:
                 data = {'protein_file': protein_file, 'ligand_file': ligand_file}
                 response = call_api(ProtossView, 'post', data)
 
@@ -40,7 +40,7 @@ class ViewTests(PPlusTestCase):
     def test_post_protein_id_and_ligand_file(self):
         """Test protoss endpoint with protein id and ligand file"""
         protein = create_test_protein()
-        with open(TestConfig.ligand_file) as ligand_file:
+        with open(TestConfig.ligand_file, encoding='utf8') as ligand_file:
             data = {'protein_id': protein.id, 'ligand_file': ligand_file}
             response = call_api(ProtossView, 'post', data)
 

@@ -25,4 +25,9 @@ class EdiaJob(ProteinsPlusJob):
     output_protein = models.OneToOneField(
         Protein, on_delete=models.CASCADE, null=True, related_name='parent_edia_job')
 
-    hash_attributes = ['input_protein', 'input_ligand', 'density_file_pdb_code', 'electron_density_map']
+    hash_attributes = [
+        'input_protein',
+        'input_ligand',
+        'density_file_pdb_code',
+        'electron_density_map'
+    ]

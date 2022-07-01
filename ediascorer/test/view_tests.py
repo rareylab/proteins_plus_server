@@ -1,5 +1,4 @@
 """tests for ediascorer views"""
-import json
 import uuid
 from django.core.files import File
 
@@ -25,7 +24,7 @@ class ViewTests(PPlusTestCase):
 
     def test_post_protein_file_with_explicit_pdb_code(self):
         """Test ediascorer endpoint with protein file and explicit pdb code"""
-        with open(TestConfig.protein_file) as protein_file:
+        with open(TestConfig.protein_file, encoding='utf8') as protein_file:
             data = {'pdb_code': TestConfig.protein, 'protein_file': protein_file}
             response = call_api(EdiascorerView, 'post', data)
 
@@ -33,8 +32,8 @@ class ViewTests(PPlusTestCase):
 
     def test_post_protein_and_ligand_file(self):
         """Test ediascorer endpoint with protein and ligand file"""
-        with open(TestConfig.protein_file) as protein_file:
-            with open(TestConfig.ligand_file) as ligand_file:
+        with open(TestConfig.protein_file, encoding='utf8') as protein_file:
+            with open(TestConfig.ligand_file, encoding='utf8') as ligand_file:
                 data = {'protein_file': protein_file, 'ligand_file': ligand_file}
                 response = call_api(EdiascorerView, 'post', data)
 
@@ -43,7 +42,7 @@ class ViewTests(PPlusTestCase):
     def test_post_protein_id_and_ligand_file(self):
         """Test ediascorer endpoint with protein id and ligand file"""
         protein = create_test_protein()
-        with open(TestConfig.ligand_file) as ligand_file:
+        with open(TestConfig.ligand_file, encoding='utf8') as ligand_file:
             data = {'protein_id': protein.id, 'ligand_file': ligand_file}
             response = call_api(EdiascorerView, 'post', data)
 

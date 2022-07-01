@@ -95,13 +95,13 @@ class DoGSiteView(APIView):
         return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
 
 
-class DoGSiteJobViewSet(ReadOnlyModelViewSet):
+class DoGSiteJobViewSet(ReadOnlyModelViewSet):  # pylint: disable=too-many-ancestors
     """Retrieve specific or list of DoGSite jobs"""
     queryset = DoGSiteJob.objects.all()
     serializer_class = DoGSiteJobSerializer
 
 
-class DoGSiteInfoViewSet(ReadOnlyModelViewSet):
+class DoGSiteInfoViewSet(ReadOnlyModelViewSet):  # pylint: disable=too-many-ancestors
     """Retrieve specific or list of DoGSite result info objects"""
     queryset = DoGSiteInfo.objects.all()
     serializer_class = DoGSiteInfoSerializer

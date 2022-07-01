@@ -26,6 +26,6 @@ class TaskTests(PPlusTestCase):
         self.assertEqual(job.status, Status.SUCCESS)
         self.assertIsNotNone(job.output_protein)
         self.assertIsNotNone(job.metalizer_info)
-        with open(TestConfig.metalizer_result_file) as metalizer_result_file:
+        with open(TestConfig.metalizer_result_file, encoding='utf8') as metalizer_result_file:
             metalizer_result = json.load(metalizer_result_file)
         self.assertEqual(job.metalizer_info.info, metalizer_result)

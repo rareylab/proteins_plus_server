@@ -36,7 +36,7 @@ class Status:  # pylint: disable=too-few-public-methods
 
 
 @extend_schema_field(OpenApiTypes.STR)
-class StatusField(serializers.Field):
+class StatusField(serializers.Field):  # pylint: disable=abstract-method
     """Custom serializer field for status"""
 
     def to_representation(self, value):

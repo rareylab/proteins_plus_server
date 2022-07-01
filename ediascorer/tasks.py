@@ -1,9 +1,11 @@
 """ediascorer celery tasks"""
 from tempfile import TemporaryFile
 import requests
-from celery import shared_task
+
 from django.conf import settings
 from django.core.files import File
+from celery import shared_task
+
 from proteins_plus.job_handler import execute_job
 from molecule_handler.models import ElectronDensityMap
 from .models import EdiaJob

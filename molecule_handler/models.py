@@ -54,7 +54,7 @@ class Protein(ProteinsPlusHashableModel):
         :return: temporary protein file
         :rtype: NamedTemporaryFile
         """
-        temp_file = NamedTemporaryFile(mode='w+', suffix='.pdb')
+        temp_file = NamedTemporaryFile(mode='w+', suffix='.pdb')  # pylint: disable=consider-using-with
         temp_file.write(self.file_string)
         temp_file.seek(0)
         return temp_file
@@ -68,7 +68,7 @@ class Protein(ProteinsPlusHashableModel):
         if self.ligand_set.count() == 0:
             return None
 
-        temp_file = NamedTemporaryFile(mode='w+', suffix='.sdf')
+        temp_file = NamedTemporaryFile(mode='w+', suffix='.sdf')  # pylint: disable=consider-using-with
         for ligand in self.ligand_set.all():
             temp_file.write(ligand.file_string)
         temp_file.seek(0)
@@ -108,7 +108,7 @@ class Ligand(ProteinsPlusHashableModel):
         :return: temporary ligand file
         :rtype: NamedTemporaryFile
         """
-        temp_file = NamedTemporaryFile(mode='w+', suffix='.' + self.file_type)
+        temp_file = NamedTemporaryFile(mode='w+', suffix='.' + self.file_type)  # pylint: disable=consider-using-with
         temp_file.write(self.file_string)
         temp_file.seek(0)
         return temp_file
@@ -156,7 +156,7 @@ class ProteinSite(ProteinsPlusHashableModel):
         :return: temporary EDF file
         :rtype: NamedTemporaryFile
         """
-        temp_file = NamedTemporaryFile(mode='w+', suffix='.edf')
+        temp_file = NamedTemporaryFile(mode='w+', suffix='.edf')  # pylint: disable=consider-using-with
         temp_file.write(ProteinSiteHandler.proteinsite_to_edf(self, protein_filepath))
         temp_file.seek(0)
         return temp_file

@@ -31,7 +31,7 @@ class PoseviewWrapper:
         :return: generated image
         :rtype: NamedTemporaryFile
         """
-        image = NamedTemporaryFile(mode='rb', suffix='.svg')
+        image = NamedTemporaryFile(mode='rb', suffix='.svg')  # pylint: disable=consider-using-with
         with job.input_protein.write_temp() as protein_file:
             with job.input_ligand.write_temp() as ligand_file:
                 # run command in Poseview directory (necessary for licensing)

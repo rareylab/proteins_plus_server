@@ -27,7 +27,7 @@ class ViewTests(PPlusTestCase):
         self.assertEqual(response.status_code, 202)
 
         # protein file and ligand id
-        with open(TestConfig.protein_file) as protein_file:
+        with open(TestConfig.protein_file, encoding='utf8') as protein_file:
             data = {
                 'protein_file': protein_file,
                 'ligand_id': input_ligand.id,
@@ -39,8 +39,8 @@ class ViewTests(PPlusTestCase):
         self.assertEqual(response.status_code, 202)
 
         # protein file and ligand file
-        with open(TestConfig.protein_file) as protein_file:
-            with open(TestConfig.ligand_file) as ligand_file:
+        with open(TestConfig.protein_file, encoding='utf8') as protein_file:
+            with open(TestConfig.ligand_file, encoding='utf8') as ligand_file:
                 data = {
                     'protein_file': protein_file,
                     'ligand_file': ligand_file,
@@ -52,7 +52,7 @@ class ViewTests(PPlusTestCase):
         self.assertEqual(response.status_code, 202)
 
         # protein id and ligand file
-        with open(TestConfig.ligand_file) as ligand_file:
+        with open(TestConfig.ligand_file, encoding='utf8') as ligand_file:
             data = {
                 'protein_id': input_protein.id,
                 'ligand_file': ligand_file,
@@ -160,7 +160,7 @@ class ViewTests(PPlusTestCase):
         self.assertEqual(response.status_code, 400)
 
         # protein id and protein file at the same time is not allowed
-        with open(TestConfig.protein_file) as protein_file:
+        with open(TestConfig.protein_file, encoding='utf8') as protein_file:
             data = {
                 'protein_id': input_protein.id,
                 'protein_file': protein_file,
@@ -173,7 +173,7 @@ class ViewTests(PPlusTestCase):
         self.assertEqual(response.status_code, 400)
 
         # ligand id and ligand file at the same time is not allowed
-        with open(TestConfig.ligand_file) as ligand_file:
+        with open(TestConfig.ligand_file, encoding='utf8') as ligand_file:
             data = {
                 'protein_id': input_protein.id,
                 'ligand_id': input_ligand.id,

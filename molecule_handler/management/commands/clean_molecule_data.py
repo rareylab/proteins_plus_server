@@ -2,7 +2,7 @@
 import logging
 from django.core.management.base import BaseCommand
 from proteins_plus.utils import clean_up_models
-from molecule_handler.models import Protein, ElectronDensityMap, ProteinSite
+from molecule_handler.models import Protein, ElectronDensityMap
 
 
 class Command(BaseCommand):

@@ -13,10 +13,10 @@ def create_poseview_job():
     :return: Poseview Job
     :rtype: PoseviewJob
     """
-    with open(TestConfig.protein_file) as protein_file:
+    with open(TestConfig.protein_file, encoding='utf8') as protein_file:
         input_protein = Protein.from_file(protein_file)
     input_protein.save()
-    with open(TestConfig.ligand_file) as ligand_file:
+    with open(TestConfig.ligand_file, encoding='utf8') as ligand_file:
         input_ligand = Ligand.from_file(ligand_file, input_protein)
     input_ligand.save()
 

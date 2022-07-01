@@ -1,6 +1,5 @@
 """Base serializers for ProteinsPlus objects"""
 from rest_framework import serializers
-from drf_spectacular.utils import extend_schema_serializer, OpenApiResponse, OpenApiExample
 from proteins_plus.job_handler import StatusField
 
 

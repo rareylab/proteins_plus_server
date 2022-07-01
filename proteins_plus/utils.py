@@ -27,7 +27,7 @@ def compare_json_dict(first, second):
     return 0
 
 
-def compare_json_value(first, second):
+def compare_json_value(first, second):  # pylint: disable=too-many-return-statements
     """JSON value sort comparator
 
     Can handle all JSON legal values.

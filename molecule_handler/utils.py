@@ -1,5 +1,4 @@
 """Helper functions for handling molecule data"""
-from django.core.files import File
 from .models import Ligand
 
 

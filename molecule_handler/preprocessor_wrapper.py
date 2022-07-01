@@ -66,7 +66,7 @@ class PreprocessorWrapper:
         if filestring is None:
             return nullcontext(None)
 
-        tmpfile = NamedTemporaryFile('w+', suffix=f'.{file_type}')
+        tmpfile = NamedTemporaryFile('w+', suffix=f'.{file_type}')  # pylint: disable=consider-using-with
         tmpfile.write(filestring)
         tmpfile.seek(0)
 

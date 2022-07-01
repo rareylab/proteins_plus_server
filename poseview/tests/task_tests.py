@@ -20,7 +20,7 @@ class TaskTests(PPlusTestCase):
         poseview_basename = os.path.basename(settings.BINARIES['poseview'])
         poseview_directory = os.path.dirname(settings.BINARIES['poseview'])
         args = ['./' + poseview_basename, '-h']
-        process = subprocess.run(args, stdout=subprocess.DEVNULL, cwd=poseview_directory)
+        process = subprocess.run(args, stdout=subprocess.DEVNULL, cwd=poseview_directory)  # pylint: disable=subprocess-run-check
         self.assertEqual(process.returncode, 0)
 
     def test_poseview(self):

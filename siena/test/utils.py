@@ -94,7 +94,7 @@ class TmpSienaDB:
         :param compressed: Whether protein files are compressed.
         :type compressed: bool
         """
-        self.directory = TemporaryDirectory()
+        self.directory = TemporaryDirectory()  # pylint: disable=consider-using-with
         dir_path = Path(self.directory.name)
 
         pdb_data_dir = dir_path / 'pdb_data'

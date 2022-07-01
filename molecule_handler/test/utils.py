@@ -15,7 +15,7 @@ def create_test_preprocessor_job(ligand_filepath=TestConfig.ligand_file):
     :return: Dummy PreprocessorJob object
     :rtype: PreprocessorJob
     """
-    with open(TestConfig.protein_file) as protein_file:
+    with open(TestConfig.protein_file, encoding='utf8') as protein_file:
         protein_string = protein_file.read()
     job = PreprocessorJob(
         protein_name=TestConfig.protein,
@@ -24,7 +24,7 @@ def create_test_preprocessor_job(ligand_filepath=TestConfig.ligand_file):
     )
 
     if ligand_filepath is not None:
-        with open(ligand_filepath) as ligand_file:
+        with open(ligand_filepath, encoding='utf8') as ligand_file:
             ligand_string = ligand_file.read()
         job.ligand_string = ligand_string
 
@@ -67,7 +67,7 @@ def create_test_protein(protein_name=TestConfig.protein,
     """
     protein_string = ''
     if not empty:
-        with open(protein_filepath) as protein_file:
+        with open(protein_filepath, encoding='utf8') as protein_file:
             protein_string = protein_file.read()
     protein = Protein(
         name=protein_name, file_type='pdb', pdb_code=pdb_code, file_string=protein_string)
@@ -88,7 +88,7 @@ def create_test_ligand(protein, ligand_name=TestConfig.ligand,
     :return: Dummy Ligand object
     :rtype: Ligand
     """
-    with open(ligand_filepath) as ligand_file:
+    with open(ligand_filepath, encoding='utf8') as ligand_file:
         ligand_string = ligand_file.read()
     ligand = Ligand(
         name=ligand_name, file_type='sdf', file_string=ligand_string, protein=protein)

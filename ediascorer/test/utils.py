@@ -59,8 +59,12 @@ def create_successful_edia_job(
     job = create_test_edia_job(pdb_code=pdb_code, density_filepath=density_filepath)
     output_protein = create_test_protein(pdb_code=pdb_code)
     job.output_protein = output_protein
-    with open(atom_scores) as atom_scores_file:
-        edia_scores = EdiaScores(structure_scores=dict(), atom_scores=atom_scores_file.read(), parent_edia_job=job)
+    with open(atom_scores, encoding='utf8') as atom_scores_file:
+        edia_scores = EdiaScores(
+            structure_scores={},
+            atom_scores=atom_scores_file.read(),
+            parent_edia_job=job
+        )
     edia_scores.save()
     job.edia_scores = edia_scores
     job.save()

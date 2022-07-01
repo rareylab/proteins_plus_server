@@ -40,7 +40,7 @@ class CommandsTests(PPlusTestCase):
             log_file_path = dir_path / f'{database_file.name}.log'
             self.assertTrue(log_file_path.is_file())
             found = False
-            with open(log_file_path, 'r') as log_file:
+            with open(log_file_path, 'r', encoding='utf8') as log_file:
                 for line in log_file:
                     if 'New in db: 2' in line:
                         found = True

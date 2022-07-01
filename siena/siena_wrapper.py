@@ -101,7 +101,7 @@ class SienaWrapper:
             protein.save()
             if file_basename in sdf_files_dict:
                 ligand_file_path = sdf_files_dict[file_basename]
-                with open(ligand_file_path, 'r') as ligand_file:
+                with open(ligand_file_path, 'r', encoding='utf8') as ligand_file:
                     ligand = Ligand(protein=protein,
                                     name=file_basename,
                                     file_type='sdf',
@@ -149,7 +149,7 @@ class SienaWrapper:
         alignment_file = path / 'alignment.txt'
         if not alignment_file.is_file():
             raise RuntimeError('Siena: Error loading alignment.txt file')
-        with open(alignment_file, 'r') as file:
+        with open(alignment_file, 'r', encoding='utf8') as file:
             return file.read()
 
     @staticmethod
@@ -165,7 +165,7 @@ class SienaWrapper:
         if not csv_file.is_file():
             return {}  # SIENA did not find any results
         data = []
-        with open(csv_file, 'r') as csv_file:
+        with open(csv_file, 'r', encoding='utf8') as csv_file:
             csv_reader = csv.DictReader(csv_file, delimiter=';')
             for row in csv_reader:
                 data_dict = {}

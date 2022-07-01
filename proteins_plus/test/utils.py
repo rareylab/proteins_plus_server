@@ -17,22 +17,7 @@ class PPlusTestCase(TestCase):
         Ligand.objects.all().delete()
 
 
-class MockRequest:  # pylint: disable=too-few-public-methods
-    """Mock class for imitating basic request objects"""
-
-    def __init__(self, data={}, query_params={}):
-        """Constructor
-
-        :param data: Request data, defaults to {}
-        :type data: dict, optional
-        :param query_params: Request query parameters, defaults to {}
-        :type query_params: dict, optional
-        """
-        self.data = data
-        self.query_params = query_params
-
-
-def call_api(view_class, method, data={}, query_params={},
+def call_api(view_class, method, data=None, query_params=None,
              viewset_actions=None, **req_kwargs):
     """Helper function for making calls to the api
 
@@ -60,11 +45,14 @@ def call_api(view_class, method, data={}, query_params={},
     :rtype: HttpResponse
     """
     factory = RequestFactory()
-    kwargs = {'data': data}
+    kwargs = {'data': {}}
+    if data is not None:
+        kwargs['data'] = data
 
     req_string = '\?'  # pylint: disable=anomalous-backslash-in-string
-    for key in query_params:
-        req_string += key + '=' + str(query_params[key]) + '&'
+    if query_params is not None:
+        for key in query_params:
+            req_string += key + '=' + str(query_params[key]) + '&'
 
     request = getattr(factory, method)(req_string, **kwargs)
     if viewset_actions is None:
