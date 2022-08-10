@@ -36,6 +36,7 @@ guidelines and the tutorial below.
     - [Tasks](#tasks)
     - [Tool Wrapper](#tool-wrapper)
     - [Caching](#caching)
+    - [Differences Development, Testing, Production Environments](#Differences-Development,-Testing,-Production-Environments)
 - [Deployment](#deployment)
     - [Start and Stop](#start-and-stop)
         - [Redis](#redis)
@@ -873,6 +874,23 @@ As described in the section about input **Models** and caching, the system suppo
 types as hash attributes. If you should ever encounter an unsupported attribute type, you can add
 custom hashing behaviour inside the **proteins_plus/models.py** file. Only do this with explicit
 need and permission.
+
+## Differences Development, Testing, Production Environments
+
+There are some differences how the server behaves and should be handled when run
+in one of the 3 environments:
+
+* Development: This environment refers to your personal and local copy of this repository that you 
+  use for developing new features, apps or fixing bugs. Here you do changes to the code. Most 
+  developers will only ever use the Development environment.
+* Testing: Refers to our in-house continues integration pipelines (not included in this repository).
+* Production: The environment used for hosting the server (see [Deployment](#deployment))
+
+#### GeoMine Database
+To use the GeoMine database in Development you need to set the environment variables 
+```GEOMINE_HOSTNAME```, ```GEOMINE_PGUSER``` and ```GEOMINE_PGPASSWORD```. In addition,
+if you want to change the GeoMine database name you can set the environment variable 
+```GEOMINE_DB_NAME``` to your database name. Per default these are not set in Development.
 
 # Deployment
 
