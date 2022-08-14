@@ -150,7 +150,7 @@ class ViewTests(PPlusTestCase):
         response = call_api(ProteinViewSet, 'get',
                             viewset_actions={'get': 'list'})
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.data['count'], 2)
 
     def test_retrieve_ligand(self):
         """Test retrieve and list Ligand behavior"""
@@ -168,7 +168,7 @@ class ViewTests(PPlusTestCase):
         response = call_api(LigandViewSet, 'get',
                             viewset_actions={'get': 'list'})
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.data['count'], 2)
 
     def test_retrieve_protein_site(self):
         """Test retrieve and list ProteinSite behavior"""
@@ -188,7 +188,7 @@ class ViewTests(PPlusTestCase):
         response = call_api(ProteinSiteViewSet, 'get',
                             viewset_actions={'get': 'list'})
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.data['count'], 2)
 
     def test_retrieve_electron_density_map(self):
         """Test retrieve and list ElectronDensityMap behavior"""
@@ -206,7 +206,7 @@ class ViewTests(PPlusTestCase):
         response = call_api(ElectronDensityMapViewSet, 'get',
                             viewset_actions={'get': 'list'})
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.data['count'], 2)
 
     def test_retrieve_preprocessor_job(self):
         """Test retrieve and list PreprocessorJob behavior"""
@@ -224,7 +224,7 @@ class ViewTests(PPlusTestCase):
         response = call_api(PreprocessorJobViewSet, 'get',
                             viewset_actions={'get': 'list'})
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.data['count'], 2)
 
     def test_retrieve_preprocessor_job_data(self):
         """Test retrieve and list PreprocessorJobData behavior"""
@@ -245,7 +245,7 @@ class ViewTests(PPlusTestCase):
         response = call_api(PreprocessorJobDataViewSet, 'get',
                             viewset_actions={'get': 'list'})
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.data['count'], 2)
 
     def test_cache_behaviour(self):
         """Test storing and retrieving objects from cache via api"""

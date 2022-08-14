@@ -132,7 +132,11 @@ CELERY_BROKER_URL = 'redis://localhost:6378'
 CELERY_RESULT_BACKEND = 'redis://localhost:6378'
 
 # Swagger Config
-REST_FRAMEWORK = {'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'}
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 10
+}
 SPECTACULAR_SETTINGS = {
     'TITLE': 'ProteinsPlus Swagger',
     'DESCRIPTION': 'Software tools for protein analysis',
