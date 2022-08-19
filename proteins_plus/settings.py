@@ -170,6 +170,7 @@ with open(BINARY_PATHS_CONFIG, encoding='utf8') as binary_paths_file:
 # Important urls
 URLS = {
     'pdb_files': 'https://files.rcsb.org/download/',
+    'alphafold_files': 'https://alphafold.ebi.ac.uk/api/prediction/',
     'density_files': 'https://www.ebi.ac.uk/pdbe/entry-files/',
 }
 
@@ -179,6 +180,8 @@ LOCAL_PDB_MIRROR_DIR = Path('/data/pdb/current/data/structures/all/pdb/') \
 LOCAL_DENSITY_MIRROR_DIR = Path('') \
     if 'LOCAL_DENSITY_MIRROR_DIR' not in os.environ else Path(
     os.environ['LOCAL_DENSITY_MIRROR_DIR'])
+LOCAL_AFDB_MIRROR_DIR = Path('') if 'LOCAL_AFDB_MIRROR_DIR' not in os.environ else Path(
+    os.environ['LOCAL_AFDB_MIRROR_DIR'])
 
 # Configuration of logging module
 LOGGING = {

@@ -7,7 +7,7 @@ from django.test import override_settings
 from proteins_plus.job_handler import Status
 from proteins_plus.test.utils import PPlusTestCase, is_tool_available
 from .external_tests import MockRequest
-from ..external import PDBResource
+from ..external import PDBResource, AlphaFoldResource
 
 from ..tasks import preprocess_molecule_task
 from ..models import PreprocessorJob
@@ -109,4 +109,16 @@ class TaskTests(PPlusTestCase):
         self.assertEqual(job.error, "An error occurred during the execution of Preprocessor.")
         self.assertIsNotNone(job.error_detailed)
         self.assertTrue(job.error_detailed.startswith('Traceback'))
+        self.assertIsNone(job.output_protein)
+
+    @override_settings(LOCAL_AFDB_MIRROR_DIR=Path('test_files'))
+    def test_preprocess_molecule_uniprot_code(self):
+        """Test the preprocessor correctly processes an uniprot_code on its own"""
+        job = create_test_preprocessor_job(uniprot_code='_NotReal_',
+                                           ligand_filepath=TestConfig.ligand_file)
+        with self.assertRaises(RuntimeError), patch.object(AlphaFoldResource, '_external_request',
+                                                           MockRequest.get_failed_mock_request):
+            preprocess_molecule_task.run(job.id)
+        job = PreprocessorJob.objects.get(id=job.id)
+        self.assertEqual(job.status, Status.FAILURE)
         self.assertIsNone(job.output_protein)

@@ -117,6 +117,75 @@ class PDBResource(Resource):
         return requests.get(url)
 
 
+class AlphaFoldResource(Resource):
+    """Handles fetching AlphaFoldDB entries"""
+
+    @classmethod
+    def _local_fetch(cls, uniprot_code):
+        """Tries to read the AlphaFold predicted PDB-file corresponding to uniprot_code from
+         disk.
+
+        :param uniprot_code: The Uniprot-code.
+        :return: The file string of the PDB file or None on failure.
+        """
+        if uniprot_code is None:
+            return None
+        # the local AFDB mirror is currently not used in production only for testing.
+        # A typically AF-PDB-file from EBI is named like this:
+        #    AF-<UniprotID>-<fragmentID>-model_v<version>.pdb  so this is still a to do
+        local_path = settings.LOCAL_AFDB_MIRROR_DIR / f'{uniprot_code.upper()}.pdb.gz'
+        if not local_path.is_file():
+            return None
+        # read PDB file from local mirror
+        with gzip.open(local_path, 'rt') as pdb_file:
+            file_string = pdb_file.read()
+        return file_string
+
+    @classmethod
+    def _external_fetch(cls, uniprot_code):
+        """Tries to fetch the AlphaFoldDB entry corresponding to uniprot_code from the EBI API.
+
+        :param uniprot_code: The Uniprot-code.
+        :return: The file string of the PDB file.
+        :raises: RuntimeError if request fails.
+        """
+        # try to fetch PDB file from AlphaFold-DB EBI server
+        url = f'{settings.URLS["alphafold_files"]}{uniprot_code.upper()}'
+        req = cls._external_request(url)
+        if req.status_code != 200:
+            raise RuntimeError(
+                "Error while retrieving AF-PDB prediction info file with uniprot code"
+                f" {uniprot_code}\n" +
+                f"Request: GET {url}\n" +
+                f"Response: \n{req.text}")
+        prediction_data = req.json()
+        if len(prediction_data) == 0 or 'pdbUrl' not in prediction_data[0]:
+            raise RuntimeError(
+                f"Error while retrieving AF-PDB file with uniprot code {uniprot_code}:"
+                f" Empty or bad Json\n" +
+                f"Request: GET {url}\n" +
+                f"Response: \n{req.text}" +
+                f"Json: \n{prediction_data}")
+        structure_url = prediction_data[0]['pdbUrl']
+        req2 = cls._external_request(structure_url)
+        if req2.status_code != 200:
+            raise RuntimeError(
+                f"Error while retrieving AF-PDB file with uniprot code {uniprot_code}\n" +
+                f"Request: GET {url}\n" +
+                f"Response: \n{req2.text}")
+        file_string = req2.text
+        return file_string
+
+    @classmethod
+    def _external_request(cls, url):
+        """Makes a get request to url and returns the result.
+
+        :param url: The URL.
+        :return: The response.
+        """
+        return requests.get(url)
+
+
 class DensityResource(Resource):
     """Handles fetching density files"""
 

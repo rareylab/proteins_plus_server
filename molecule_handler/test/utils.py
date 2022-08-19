@@ -7,7 +7,8 @@ from ..models import Protein, Ligand, PreprocessorJob, ProteinSite, ElectronDens
 from .config import TestConfig
 
 
-def create_test_preprocessor_job(pdb_code=None, ligand_filepath=TestConfig.ligand_file):
+def create_test_preprocessor_job(pdb_code=None, uniprot_code=None,
+                                 ligand_filepath=TestConfig.ligand_file):
     """Helper function for creating dummy PreprocessorJob objects
 
     :param pdb_code: If not None a PreprocessorJob with pdb_code is generated instead of
@@ -19,17 +20,11 @@ def create_test_preprocessor_job(pdb_code=None, ligand_filepath=TestConfig.ligan
     :return: Dummy PreprocessorJob object
     :rtype: PreprocessorJob
     """
-    if pdb_code is not None:
-        # make PDB code based input
-        job = PreprocessorJob(pdb_code=pdb_code)
+    if pdb_code is not None or uniprot_code is not None:
+        # make code based input
+        job = PreprocessorJob(pdb_code=pdb_code, uniprot_code=uniprot_code)
         job.save()
         input_data = PreprocessorJobData(parent_preprocessor_job=job)
-        if ligand_filepath is not None:
-            with open(ligand_filepath, encoding='utf8') as ligand_file:
-                input_data.input_ligand_string = ligand_file.read()
-        input_data.save()
-        job.input_data = input_data
-        job.save()
     else:
         # make PDB file based input
         job = PreprocessorJob(pdb_code=TestConfig.protein)
@@ -37,12 +32,12 @@ def create_test_preprocessor_job(pdb_code=None, ligand_filepath=TestConfig.ligan
         input_data = PreprocessorJobData(parent_preprocessor_job=job)
         with open(TestConfig.protein_file, 'r', encoding='utf8') as protein_file:
             input_data.input_protein_string = protein_file.read()
-        if ligand_filepath is not None:
-            with open(ligand_filepath, encoding='utf8') as ligand_file:
-                input_data.input_ligand_string = ligand_file.read()
-        input_data.save()
-        job.input_data = input_data
-        job.save()
+    if ligand_filepath is not None:
+        with open(ligand_filepath, encoding='utf8') as ligand_file:
+            input_data.input_ligand_string = ligand_file.read()
+    input_data.save()
+    job.input_data = input_data
+    job.save()
     return job
 
 

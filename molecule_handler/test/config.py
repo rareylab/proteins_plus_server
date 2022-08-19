@@ -36,3 +36,5 @@ class TestConfig:  # pylint: disable=too-few-public-methods
     protein_1a3e = '1a3e'
     protein_file_1a3e = testdir / (protein_1a3e + '.pdb')
     edf_file_1a3e = testdir / '1a3e_residue_query.edf'
+    af_protein = 'A0A024B5K5'
+    af_protein_file = testdir / (af_protein + '.pdb.gz')

@@ -15,6 +15,7 @@ class ProteinSerializer(serializers.ModelSerializer):
             'id',
             'name',
             'pdb_code',
+            'uniprot_code',
             'file_type',
             'ligand_set',
             'file_string',
@@ -92,8 +93,9 @@ class UploadSerializer(ProteinsPlusJobSubmitSerializer):  # pylint: disable=abst
         :return: Validated data
         """
         validator = MoleculeInputValidator(data)
-        if not validator.has_valid_pdb_code() and not validator.has_valid_protein_file():
+        if not validator.has_valid_pdb_code() and not validator.has_valid_protein_file() \
+                and not validator.has_valid_uniprot_code():
             raise serializers.ValidationError('Neither pdb code not pdb file were provided.')
-        validator.has_valid_uniprot_code()
+
         validator.has_valid_ligand_file()
         return data

@@ -1,6 +1,5 @@
 """A django model friendly wrapper around the preprocessor binary"""
 import logging
-import io
 import subprocess
 import tempfile
 from contextlib import nullcontext
@@ -10,7 +9,7 @@ from tempfile import TemporaryDirectory
 from django.conf import settings
 from django.core.files import File
 
-from .external import PDBResource
+from .external import AlphaFoldResource, PDBResource
 from .models import Protein, Ligand
 
 logger = logging.getLogger(__name__)
@@ -74,6 +73,8 @@ class PreprocessorWrapper:
             protein_string = job.input_data.input_protein_string
         elif job.pdb_code:
             protein_string = PDBResource.fetch(job.pdb_code)
+        elif job.uniprot_code:
+            protein_string = AlphaFoldResource.fetch(job.uniprot_code)
         else:
             raise RuntimeError(f'Could not prepare protein for job: {job.id}')
 

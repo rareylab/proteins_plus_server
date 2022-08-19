@@ -1,10 +1,11 @@
 """tests for external resources"""
+import gzip
 from pathlib import Path
 
 from django.test import override_settings
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
-from molecule_handler.external import PDBResource, DensityResource
+from molecule_handler.external import AlphaFoldResource, DensityResource, PDBResource
 from molecule_handler.test.config import TestConfig
 from proteins_plus.test.utils import PPlusTestCase
 
@@ -37,6 +38,13 @@ class MockRequest:
         """
         with open(TestConfig.protein_file, 'r', encoding='utf-8') as file:
             return MockRequest(status_code=200, text=file.read())
+
+    @classmethod
+    def get_successful_uniprot_mock_request(*args, **kwargs):
+        with gzip.open(TestConfig.af_protein_file, 'rt') as file:
+            m = MockRequest(status_code=200, text=file.read())
+        m.json = MagicMock(return_value=[{'pdbUrl': 'fake_url'}])
+        return m
 
     @classmethod
     def get_successful_density_mock_request(*args, **kwargs):
@@ -82,6 +90,24 @@ class ExternalTests(PPlusTestCase):
         with patch.object(PDBResource, '_external_request',
                           MockRequest.get_failed_mock_request):
             self.assertRaises(RuntimeError, PDBResource.fetch, 'nonsense')
+
+    @override_settings(LOCAL_AFDB_MIRROR_DIR=Path('test_files'))
+    def test_fetch_by_uniprot_code(self):
+        """Test fetching structure by PDB code"""
+
+        successful_mock = MockRequest.get_successful_uniprot_mock_request()
+
+        # test local fetch
+        self.assertEqual(AlphaFoldResource.fetch(TestConfig.af_protein), successful_mock.text)
+
+        # test external fetches
+        with patch.object(AlphaFoldResource, '_external_request',
+                          MockRequest.get_successful_uniprot_mock_request):
+            self.assertEqual(AlphaFoldResource.fetch('nonsense'), successful_mock.text)
+
+        with patch.object(AlphaFoldResource, '_external_request',
+                          MockRequest.get_failed_mock_request):
+            self.assertRaises(RuntimeError, AlphaFoldResource.fetch, 'nonsense')
 
     @override_settings(LOCAL_DENSITY_MIRROR_DIR=Path('test_files'))
     def test_fetch_density_by_pdb_code(self):

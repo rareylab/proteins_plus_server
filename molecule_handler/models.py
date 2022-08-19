@@ -12,7 +12,7 @@ from django.conf import settings
 
 from proteins_plus.models import ProteinsPlusJob, ProteinsPlusHashableModel
 from .protein_site_handler import ProteinSiteHandler
-from .external import PDBResource, DensityResource
+from .external import AlphaFoldResource, PDBResource, DensityResource
 
 
 class Protein(ProteinsPlusHashableModel):
@@ -73,6 +73,26 @@ class Protein(ProteinsPlusHashableModel):
         file_string = PDBResource.fetch(pdb_code)
         return Protein(
             name=pdb_code,
+            pdb_code=pdb_code,
+            uniprot_code=uniprot_code,
+            file_type='pdb',
+            file_string=file_string
+        )
+
+    @staticmethod
+    def from_uniprot_code(uniprot_code, pdb_code=None):
+        """Fetch structure file from AlphaFoldDB/EBI server and save it in a Protein instance
+
+        :param uniprot_code: Uniprot code of the protein. Used for downloading structure.
+        :type uniprot_code: str
+        :param pdb_code: PDB code of the protein.
+        :type pdb_code: str
+        :return: A new Protein model instance.
+        :rtype: Protein
+        """
+        file_string = fetch_by_uniprot_code(uniprot_code)
+        return Protein(
+            name=uniprot_code,
             pdb_code=pdb_code,
             uniprot_code=uniprot_code,
             file_type='pdb',

@@ -33,7 +33,7 @@ class ProteinUploadView(APIView):
         file.
 
         Required:
-         - either "pdb_code" or "protein_file"
+         - either "protein_file", "pdb_code" or "uniprot_code" (for AlphaFold predicted structure)
 
         Optional:
          - custom "ligand_file" to override ligands
