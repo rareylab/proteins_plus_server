@@ -169,6 +169,13 @@ URLS = {
     'density_files': 'https://www.ebi.ac.uk/pdbe/entry-files/',
 }
 
+# local data mirrors
+LOCAL_PDB_MIRROR_DIR = Path('/data/pdb/current/data/structures/all/pdb/') \
+    if 'LOCAL_PDB_MIRROR_DIR' not in os.environ else Path(os.environ['LOCAL_PDB_MIRROR_DIR'])
+LOCAL_DENSITY_MIRROR_DIR = Path('') \
+    if 'LOCAL_DENSITY_MIRROR_DIR' not in os.environ else Path(
+    os.environ['LOCAL_DENSITY_MIRROR_DIR'])
+
 # Configuration of logging module
 LOGGING = {
     'version': 1,

@@ -1,10 +1,12 @@
 """tests for molecule_handler views"""
+import tempfile
+
 from django.core.files import File
 
 from proteins_plus.test.utils import PPlusTestCase, call_api
 
 from ..views import ProteinUploadView, ProteinViewSet, LigandViewSet, PreprocessorJobViewSet, \
-    ProteinSiteViewSet, ElectronDensityMapViewSet
+    ProteinSiteViewSet, ElectronDensityMapViewSet, PreprocessorJobDataViewSet
 from ..models import PreprocessorJob
 
 from .config import TestConfig
@@ -40,6 +42,15 @@ class ViewTests(PPlusTestCase):
 
         self.assertEqual(response.status_code, 202)
 
+    def test_molecule_upload_protein_by_pdb_code_and_ligand(self):
+        """Test upload of Protein by pdb code"""
+        with open(TestConfig.ligand_file, 'rb') as ligand_file:
+            data = {'pdb_code':  TestConfig.protein,
+                    'ligand_file': File(ligand_file)}
+            response = call_api(ProteinUploadView, 'post', data)
+
+        self.assertEqual(response.status_code, 202)
+
     def test_molecule_upload_protein_wrong_filetype(self):
         """Test Protein upload with wrong filetype"""
         wrong_filetype_path = TestConfig.testdir / (TestConfig.protein + '.txt')
@@ -64,6 +75,40 @@ class ViewTests(PPlusTestCase):
         response = call_api(ProteinUploadView, 'post')
 
         self.assertEqual(response.status_code, 400)
+
+    def test_molecule_upload_bad_ligand(self):
+        """Test upload with empty data"""
+
+        with open(TestConfig.protein_file, 'rb') as protein_file, \
+                tempfile.NamedTemporaryFile() as ligand_file:
+
+            # empty ligand file with valid protein file
+            data = {'protein_file': File(protein_file),
+                    'ligand_file': File(ligand_file)}
+            response = call_api(ProteinUploadView, 'post', data)
+            self.assertEqual(response.status_code, 400)
+
+            # empty ligand file with valid PDB code
+            data = {'pdb_code': TestConfig.protein,
+                    'ligand_file': File(ligand_file)}
+            response = call_api(ProteinUploadView, 'post', data)
+            self.assertEqual(response.status_code, 400)
+
+            # write some content in the empty ligand file
+            ligand_file.write(b'Definitely not a valid molecule file')
+
+            # nonsense ligand file with valid protein file
+            data = {'protein_file': File(protein_file),
+                    'ligand_file': File(ligand_file)}
+            response = call_api(ProteinUploadView, 'post', data)
+            self.assertEqual(response.status_code, 400)
+
+            # nonsense ligand file with valid PDB code
+            ligand_file.write(b'Definitely not a valid molecule file')
+            data = {'pdb_code': TestConfig.protein,
+                    'ligand_file': File(ligand_file)}
+            response = call_api(ProteinUploadView, 'post', data)
+            self.assertEqual(response.status_code, 400)
 
     def test_protein_upload_with_wrong_pdb_code(self):
         """Test upload with an invalid pdb code"""
@@ -172,17 +217,32 @@ class ViewTests(PPlusTestCase):
                             viewset_actions={'get': 'retrieve'},
                             pk=job.id)
         self.assertEqual(response.status_code, 200)
-        fields = [
-            'protein_name',
-            'pdb_code',
-            'output_protein',
-            'protein_string',
-            'ligand_string'
-        ]
+        fields = ['pdb_code', 'uniprot_code', 'input_data', 'output_protein']
         for field in fields:
             self.assertIn(field, response.data)
 
         response = call_api(PreprocessorJobViewSet, 'get',
+                            viewset_actions={'get': 'list'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 2)
+
+    def test_retrieve_preprocessor_job_data(self):
+        """Test retrieve and list PreprocessorJobData behavior"""
+
+        job = create_test_preprocessor_job()
+        create_test_preprocessor_job()
+
+        response = call_api(PreprocessorJobDataViewSet, 'get',
+                            viewset_actions={'get': 'retrieve'},
+                            pk=job.input_data.id)
+        self.assertEqual(response.status_code, 200)
+        fields = ['parent_preprocessor_job', 'input_protein_string', 'input_protein_file_type',
+                  'input_ligand_string', 'input_ligand_file_type']
+
+        for field in fields:
+            self.assertIn(field, response.data)
+
+        response = call_api(PreprocessorJobDataViewSet, 'get',
                             viewset_actions={'get': 'list'})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 2)

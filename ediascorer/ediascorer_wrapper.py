@@ -7,7 +7,7 @@ from tempfile import TemporaryDirectory
 
 from django.conf import settings
 from molecule_handler.utils import load_processed_ligands
-from molecule_handler.models import Protein
+from molecule_handler.models import ElectronDensityMap, Protein
 from ediascorer.models import EdiaScores
 
 logger = logging.getLogger(__name__)
@@ -39,6 +39,12 @@ class EdiascorerWrapper:
         :type directory: Path
         :raises CalledProcessError: If an error occurs during Ediascorer execution
         """
+        if job.electron_density_map is None and job.density_file_pdb_code is not None:
+            job.electron_density_map = ElectronDensityMap.from_pdb_code(job.density_file_pdb_code)
+            job.save()
+        if not job.electron_density_map:
+            raise RuntimeError(f"No electron density input available")
+
         protein_file = job.input_protein.write_temp()
         ligand_file = job.input_ligand.write_temp() \
             if job.input_ligand else job.input_protein.write_ligands_temp()

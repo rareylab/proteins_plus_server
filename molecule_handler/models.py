@@ -1,8 +1,6 @@
 """molecule_handler database models"""
 import os
-import requests
 from tempfile import NamedTemporaryFile, TemporaryFile
-from contextlib import nullcontext
 
 from django.core.files import File
 from django.db import models
@@ -14,6 +12,7 @@ from django.conf import settings
 
 from proteins_plus.models import ProteinsPlusJob, ProteinsPlusHashableModel
 from .protein_site_handler import ProteinSiteHandler
+from .external import PDBResource, DensityResource
 
 
 class Protein(ProteinsPlusHashableModel):
@@ -30,7 +29,19 @@ class Protein(ProteinsPlusHashableModel):
 
     @staticmethod
     def from_file(protein_file, pdb_code=None, uniprot_code=None, file_type='pdb'):
-        """Build a protein from a file"""
+        """Build a protein from a file
+
+        :param protein_file: The protein file.
+        :type protein_file: file
+        :param pdb_code: PDB code of the protein.
+        :type pdb_code: str
+        :param uniprot_code: uniprot code of the protein.
+        :type uniprot_code: str
+        :param file_type: file type of the protein file.
+        :type file_type: str
+        :return: A new Protein model instance.
+        :rtype: Protein
+        """
         protein_string = protein_file.read()
         if isinstance(protein_string, bytes):
             protein_string = protein_string.decode('utf8')
@@ -46,6 +57,26 @@ class Protein(ProteinsPlusHashableModel):
             uniprot_code=uniprot_code,
             file_type=file_type,
             file_string=protein_string
+        )
+
+    @staticmethod
+    def from_pdb_code(pdb_code, uniprot_code=None):
+        """Fetch structure file from PDB server and save it in a Protein instance
+
+        :param pdb_code: PDB code of the protein. Used for downloading structure.
+        :type pdb_code: str
+        :param uniprot_code: uniprot code of the protein.
+        :type uniprot_code: str
+        :return: A new Protein model instance.
+        :rtype: Protein
+        """
+        file_string = PDBResource.fetch(pdb_code)
+        return Protein(
+            name=pdb_code,
+            pdb_code=pdb_code,
+            uniprot_code=uniprot_code,
+            file_type='pdb',
+            file_string=file_string
         )
 
     def write_temp(self):
@@ -88,7 +119,19 @@ class Ligand(ProteinsPlusHashableModel):
 
     @staticmethod
     def from_file(ligand_file, protein, file_type='sdf', image=None):
-        """Build a ligand from a file"""
+        """Build a ligand from a file
+
+        :param ligand_file: The ligand file to read.
+        :type ligand_file: file
+        :param protein: The Protein model to connect the ligand with.
+        :type protein: Protein
+        :param file_type: File type of ligand file.
+        :type file_type: str
+        :param image: Optional image of the ligand.
+        :type image: str
+        :return: A new Ligand.
+        :rtype: Ligand
+        """
         ligand_string = ligand_file.read()
         if isinstance(ligand_string, bytes):
             ligand_string = ligand_string.decode('utf8')
@@ -194,14 +237,9 @@ class ElectronDensityMap(ProteinsPlusHashableModel):
         :return: A new ElectronDensityMap
         :rtype: ElectronDensityMap instance or NONE if failure
         """
-
-        url = f'{settings.URLS["density_files"]}{pdb_code}.ccp4'
-        req = requests.get(url)
-        if req.status_code != 200:
-            return None
+        content_as_bytes = DensityResource.fetch(pdb_code)
         density_map = ElectronDensityMap()
         with TemporaryFile() as tmpfile:
-            content_as_bytes = bytearray(req.content)
             tmpfile.write(content_as_bytes)
             tmpfile.seek(0)
             density_map.file.save(f'{pdb_code}.ccp4', File(tmpfile))
@@ -210,40 +248,33 @@ class ElectronDensityMap(ProteinsPlusHashableModel):
         return density_map
 
 
+class PreprocessorJobData(ProteinsPlusHashableModel):
+    """Helper model that holds larger input data of the PreprocessorJob
+
+    Job models should be light-weight to keep bandwidth reasonably low.
+    PreProcessor can optionally load structures by Ids like PDB-Id.
+    We need to do the loading in the tasks and not in the views because
+    of performance.
+    """
+    parent_preprocessor_job = models.OneToOneField('PreprocessorJob', on_delete=models.CASCADE)
+    input_protein_string = models.TextField(null=True)
+    input_protein_file_type = models.CharField(max_length=3, default='pdb')
+    input_ligand_string = models.TextField(null=True)
+    input_ligand_file_type = models.CharField(max_length=3, default='sdf')
+
+    hash_attributes = ['input_protein_string', 'input_protein_file_type', 'input_ligand_string',
+                       'input_ligand_file_type']
+
+
 class PreprocessorJob(ProteinsPlusJob):
     """Django model for Preprocessor job objects"""
-    protein_name = models.CharField(max_length=255)
     pdb_code = models.CharField(max_length=4, null=True)
     uniprot_code = models.CharField(max_length=10, null=True)
-    protein_string = models.TextField(null=True)
-    protein_file_type = models.CharField(max_length=3, default='pdb')
-    ligand_string = models.TextField(null=True)
-    ligand_file_type = models.CharField(max_length=3, default='sdf')
-    output_protein = models.OneToOneField(Protein, on_delete=models.CASCADE,
-                                          null=True, related_name='parent_preprocessor_job')
+    input_data = models.OneToOneField(PreprocessorJobData, on_delete=models.CASCADE, null=True)
+    output_protein = models.OneToOneField(Protein, on_delete=models.CASCADE, null=True,
+                                          related_name='parent_preprocessor_job')
 
-    hash_attributes = ['pdb_code', 'uniprot_code',
-                       'protein_string', 'protein_file_type',
-                       'ligand_string', 'ligand_file_type']
-
-    @staticmethod
-    def from_file(protein_file, ligand_file=None):
-        """Build a PreprocessorJob from file(s)
-
-        :param protein_file: Protein file to build job from
-        :param ligand_file: Optional ligand file to build job from
-        """
-        protein_string = protein_file.file.read().decode('utf8')
-        protein_name = os.path.basename(protein_file.name)
-        protein_name = os.path.splitext(protein_name)[0]
-        ligand_string = None
-        if ligand_file:
-            ligand_string = ligand_file.file.read().decode('utf8')
-        return PreprocessorJob(
-            protein_name=protein_name,
-            protein_string=protein_string,
-            ligand_string=ligand_string
-        )
+    hash_attributes = ['pdb_code', 'uniprot_code', 'input_data']
 
 
 @receiver(pre_delete, sender=Ligand)

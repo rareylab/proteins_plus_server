@@ -1,5 +1,4 @@
 """molecule_handler api views"""
-import os
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.viewsets import ReadOnlyModelViewSet
@@ -9,9 +8,11 @@ from drf_spectacular.utils import extend_schema
 
 from proteins_plus.serializers import ProteinsPlusJobResponseSerializer
 from proteins_plus.job_handler import submit_task
-from .models import Protein, Ligand, ProteinSite, ElectronDensityMap, PreprocessorJob
+from .models import Protein, Ligand, ProteinSite, ElectronDensityMap, PreprocessorJob, \
+    PreprocessorJobData
 from .serializers import ProteinSerializer, LigandSerializer, ProteinSiteSerializer, \
-    ElectronDensityMapSerializer, PreprocessorJobSerializer, UploadSerializer
+    ElectronDensityMapSerializer, PreprocessorJobSerializer, UploadSerializer, \
+    PreprocessorJobDataSerializer
 from .tasks import preprocess_molecule_task
 
 
@@ -41,26 +42,21 @@ class ProteinUploadView(APIView):
         serializer.is_valid(raise_exception=True)
         request_data = serializer.validated_data
 
-        pdb_code = request_data['pdb_code']
-        uniprot_code = request_data['uniprot_code']
-        protein_name = pdb_code
-        protein_string = None
-        ligand_string = None
-
+        job = PreprocessorJob()
+        job.pdb_code = request_data['pdb_code']
+        job.uniprot_code = request_data['uniprot_code']
+        job.save()
+        assert job.id is not None, 'never make new PreprocessorJobData with not saved job model'
+        input_data = PreprocessorJobData(parent_preprocessor_job=job)
         if request_data['protein_file']:
-            protein_string = request_data['protein_file'].file.read().decode('utf8')
-            protein_name = os.path.basename(request_data['protein_file'].name)
-            protein_name = os.path.splitext(protein_name)[0]
+            input_data.input_protein_string = request_data['protein_file'].file.read().decode(
+                'utf8')
         if request_data['ligand_file']:
-            ligand_string = request_data['ligand_file'].file.read().decode('utf8')
-
-        job = PreprocessorJob(
-            protein_name=protein_name,
-            pdb_code=pdb_code,
-            uniprot_code=uniprot_code,
-            protein_string=protein_string,
-            ligand_string=ligand_string
-        )
+            input_data.input_ligand_string = request_data['ligand_file'].file.read().decode(
+                'utf8')
+        input_data.save()
+        job.input_data = input_data
+        job.save()
 
         job_id, retrieved = submit_task(job, preprocess_molecule_task, request_data['use_cache'])
         serializer = ProteinsPlusJobResponseSerializer({
@@ -92,6 +88,12 @@ class ElectronDensityMapViewSet(ReadOnlyModelViewSet):  # pylint: disable=too-ma
     """Retrieve specific or list all electron density maps"""
     queryset = ElectronDensityMap.objects.all()
     serializer_class = ElectronDensityMapSerializer
+
+
+class PreprocessorJobDataViewSet(ReadOnlyModelViewSet):  # pylint: disable=too-many-ancestors
+    """Retrieve the specific or list of all the preprocessor job input data"""
+    queryset = PreprocessorJobData.objects.all()
+    serializer_class = PreprocessorJobDataSerializer
 
 
 class PreprocessorJobViewSet(ReadOnlyModelViewSet):  # pylint: disable=too-many-ancestors

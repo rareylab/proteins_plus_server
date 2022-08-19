@@ -1,13 +1,14 @@
 """tests for molecule_handler database models"""
 import os
 from pathlib import Path
+from django.test import override_settings
 
 from proteins_plus.test.utils import PPlusTestCase
 from .config import TestConfig
 from .utils import create_test_preprocessor_job, create_successful_preprocessor_job, \
     create_test_protein, create_test_ligand, create_test_proteinsite
 from ..tasks import preprocess_molecule_task
-from ..models import PreprocessorJob, Protein, Ligand, ProteinSite
+from ..models import PreprocessorJob, Protein, Ligand, ProteinSite, ElectronDensityMap
 
 
 class ModelTests(PPlusTestCase):
@@ -80,3 +81,78 @@ class ModelTests(PPlusTestCase):
             protein_site2.save()
             self.assertEqual(protein_site.protein, protein_site2.protein)
             self.assertEqual(protein_site.site_description, protein_site2.site_description)
+
+    def test_protein_from_file(self):
+        """Test building Protein model from file"""
+        with open(TestConfig.protein_file, 'r', encoding='utf-8') as pdb_file:
+            protein = Protein.from_file(pdb_file)
+            self.assertIsNotNone(protein)
+            pdb_file.seek(0)
+            file_str = pdb_file.read()
+            self.assertEqual(protein.file_string, file_str)
+            self.assertEqual(protein.name, TestConfig.protein)
+            self.assertIsNone(protein.pdb_code)
+            self.assertIsNone(protein.uniprot_code)
+            self.assertEqual(protein.file_type, 'pdb')
+        with open(TestConfig.protein_file, 'r', encoding='utf-8') as pdb_file:
+            protein = Protein.from_file(pdb_file, pdb_code='MyPDBCode', uniprot_code='MyUniCode')
+            self.assertIsNotNone(protein)
+            pdb_file.seek(0)
+            file_str = pdb_file.read()
+            self.assertEqual(protein.file_string, file_str)
+            self.assertEqual(protein.name, 'MyPDBCode')
+            self.assertEqual(protein.pdb_code, 'MyPDBCode')
+            self.assertEqual(protein.uniprot_code, 'MyUniCode')
+            self.assertEqual(protein.file_type, 'pdb')
+
+    @override_settings(LOCAL_PDB_MIRROR_DIR=Path('test_files/'))
+    def test_protein_from_pdb_code(self):
+        """Test building Protein model from PDB code"""
+        protein = Protein.from_pdb_code(TestConfig.protein)
+        self.assertIsNotNone(protein)
+        with open(TestConfig.protein_file, 'r', encoding='utf-8') as pdb_file:
+            self.assertEqual(protein.file_string, pdb_file.read())
+        self.assertEqual(protein.name, TestConfig.protein)
+        self.assertEqual(protein.pdb_code, TestConfig.protein)
+        self.assertIsNone(protein.uniprot_code)
+        self.assertEqual(protein.file_type, 'pdb')
+
+        # the same with uniprot code
+        protein = Protein.from_pdb_code(TestConfig.protein, uniprot_code='MyUniCode')
+        self.assertIsNotNone(protein)
+        with open(TestConfig.protein_file, 'r', encoding='utf-8') as pdb_file:
+            self.assertEqual(protein.file_string, pdb_file.read())
+        self.assertEqual(protein.name, TestConfig.protein)
+        self.assertEqual(protein.pdb_code, TestConfig.protein)
+        self.assertEqual(protein.uniprot_code, 'MyUniCode')
+        self.assertEqual(protein.file_type, 'pdb')
+
+    def test_electrondensitymap_from_ccp4(self):
+        """Test building ElectronDensityMap model from ccp4 file"""
+        density_map = ElectronDensityMap.from_ccp4(TestConfig.density_file)
+        self.assertIsNotNone(density_map)
+        with open(TestConfig.density_file, 'rb') as density_file:
+            self.assertEqual(density_file.read(), density_map.file.read())
+
+    def test_protein_write_ligands_temp(self):
+        """Test writing all Ligand models of a Protein model a temporary file"""
+        # no ligand
+        protein = create_test_protein()
+        protein.save()
+        ligand_file = protein.write_ligands_temp()
+        self.assertIsNone(ligand_file)
+
+        # two ligands
+        protein = create_test_protein()
+        ligand1 = create_test_ligand(protein, ligand_name=TestConfig.ligand,
+                                     ligand_filepath=TestConfig.ligand_file)
+        ligand1.save()
+        ligand2 = create_test_ligand(protein, ligand_name=TestConfig.ligand2,
+                                     ligand_filepath=TestConfig.ligand2_file)
+        ligand2.save()
+        protein.save()
+        ligand_file = protein.write_ligands_temp()
+        self.assertIsNotNone(ligand_file)
+        self.assertTrue(ligand_file.name.endswith('.sdf'))
+        file_str = ligand_file.read()
+        self.assertEqual(file_str.split('\n').count('$$$$'), 2)

@@ -2,33 +2,47 @@
 from tempfile import TemporaryFile
 from django.core.files import File
 from proteins_plus.models import Status
-from ..models import Protein, Ligand, PreprocessorJob, ProteinSite, ElectronDensityMap
+from ..models import Protein, Ligand, PreprocessorJob, ProteinSite, ElectronDensityMap, \
+    PreprocessorJobData
 from .config import TestConfig
 
 
-def create_test_preprocessor_job(ligand_filepath=TestConfig.ligand_file):
+def create_test_preprocessor_job(pdb_code=None, ligand_filepath=TestConfig.ligand_file):
     """Helper function for creating dummy PreprocessorJob objects
 
-    :param ligand_filepath: Path to an sdf file that will be used as input to the PreprocessorJob
-                        object, defaults to TestConfig.ligand_file
+    :param pdb_code: If not None a PreprocessorJob with pdb_code is generated instead of
+                     one with a protein file string.
+    :type pdb_code: str
+    :param ligand_filepath: Path to an SDF file that will be used as input to the PreprocessorJob
+                            object, defaults to TestConfig.ligand_file
     :type ligand_filepath: Path, optional
     :return: Dummy PreprocessorJob object
     :rtype: PreprocessorJob
     """
-    with open(TestConfig.protein_file, encoding='utf8') as protein_file:
-        protein_string = protein_file.read()
-    job = PreprocessorJob(
-        protein_name=TestConfig.protein,
-        pdb_code=TestConfig.protein,
-        protein_string=protein_string,
-    )
-
-    if ligand_filepath is not None:
-        with open(ligand_filepath, encoding='utf8') as ligand_file:
-            ligand_string = ligand_file.read()
-        job.ligand_string = ligand_string
-
-    job.save()
+    if pdb_code is not None:
+        # make PDB code based input
+        job = PreprocessorJob(pdb_code=pdb_code)
+        job.save()
+        input_data = PreprocessorJobData(parent_preprocessor_job=job)
+        if ligand_filepath is not None:
+            with open(ligand_filepath, encoding='utf8') as ligand_file:
+                input_data.input_ligand_string = ligand_file.read()
+        input_data.save()
+        job.input_data = input_data
+        job.save()
+    else:
+        # make PDB file based input
+        job = PreprocessorJob(pdb_code=TestConfig.protein)
+        job.save()
+        input_data = PreprocessorJobData(parent_preprocessor_job=job)
+        with open(TestConfig.protein_file, 'r', encoding='utf8') as protein_file:
+            input_data.input_protein_string = protein_file.read()
+        if ligand_filepath is not None:
+            with open(ligand_filepath, encoding='utf8') as ligand_file:
+                input_data.input_ligand_string = ligand_file.read()
+        input_data.save()
+        job.input_data = input_data
+        job.save()
     return job
 
 

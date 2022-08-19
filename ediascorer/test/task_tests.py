@@ -1,4 +1,7 @@
 """tests for ediascorer tasks"""
+from pathlib import Path
+from django.test import override_settings
+
 from proteins_plus.job_handler import Status
 from proteins_plus.test.utils import PPlusTestCase, is_tool_available
 from molecule_handler.test.utils import create_test_ligand
@@ -59,6 +62,7 @@ class TaskTests(PPlusTestCase):
         self.assertIsNotNone(structure_scores)
         self.assertEqual(len(structure_scores.keys()), 398)  # one more ligand
 
+    @override_settings(LOCAL_DENSITY_MIRROR_DIR=Path('test_files'))
     def test_ediascore_protein_from_pdb(self):
         """Test ediascorer binary without uploading electron density file"""
         edia_job = create_test_edia_job(density_filepath=None)

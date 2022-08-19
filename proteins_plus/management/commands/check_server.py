@@ -48,9 +48,10 @@ class Command(BaseCommand):
         :param base_url: URL to the mount point of the server
         :type base_url: str
         """
-        ligand = Ligand.objects.first()
+        ligand = Ligand.objects.exclude(image__isnull=True).exclude(image__exact='').first()
+
         if not ligand:
-            # no ligand in the database is weird but not necessarily an error
+            # no ligand with image in the database not necessarily an error
             return
         image_url = urllib.parse.urljoin(base_url, ligand.image.url)
         response = requests.get(image_url)

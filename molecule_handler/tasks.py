@@ -1,6 +1,4 @@
 """molecule_handler celery tasks"""
-import requests
-from django.conf import settings
 from celery import shared_task
 from proteins_plus.job_handler import execute_job
 from .preprocessor_wrapper import PreprocessorWrapper
@@ -23,13 +21,4 @@ def preprocess_molecule(job):
     :param job: PreprocessorJob object containing the job data
     :type job: PreprocessorJob
     """
-    if job.protein_string is None:
-        url = f'{settings.URLS["pdb_files"]}{job.pdb_code}.pdb'
-        req = requests.get(url)
-        if req.status_code != 200:
-            raise RuntimeError(
-                f"Error while retrieving pdb file with pdb code {job.pdb_code}\n" +
-                f"Request: GET {url}\n" +
-                f"Response: \n{req.text}")
-        job.protein_string = req.text
     PreprocessorWrapper.preprocess(job)

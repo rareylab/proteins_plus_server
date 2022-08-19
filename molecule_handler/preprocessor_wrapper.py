@@ -1,13 +1,16 @@
 """A django model friendly wrapper around the preprocessor binary"""
 import logging
+import io
 import subprocess
-from pathlib import Path
-from tempfile import TemporaryDirectory, NamedTemporaryFile
+import tempfile
 from contextlib import nullcontext
+from pathlib import Path
+from tempfile import TemporaryDirectory
 
 from django.conf import settings
 from django.core.files import File
 
+from .external import PDBResource
 from .models import Protein, Ligand
 
 logger = logging.getLogger(__name__)
@@ -39,20 +42,46 @@ class PreprocessorWrapper:
         :param directory: Path to desired output directory
         :type directory: Path
         """
-        with PreprocessorWrapper.create_temp_molecule_file(job.protein_string, 'pdb') \
-                as protein_file, \
-                PreprocessorWrapper.create_temp_molecule_file(job.ligand_string, 'sdf') \
-                        as ligand_file:
+        protein_string, ligand_string = PreprocessorWrapper.prepare_input(job)
+        with PreprocessorWrapper.create_temp_molecule_file(
+                protein_string, job.input_data.input_protein_file_type) as protein_file, \
+                PreprocessorWrapper.create_temp_molecule_file(
+                    ligand_string, job.input_data.input_ligand_file_type) as ligand_file:
             args = [
                 settings.BINARIES['preprocessor'],
                 '--protein', protein_file.name,
                 '--outdir', str(directory.absolute()),
             ]
-            if ligand_file:
+            if ligand_file is not None:
+                # use custom ligand if one was given
                 args.extend(['--ligand', ligand_file.name])
 
             logger.info('Executing command line call: %s', " ".join(args))
             subprocess.check_call(args)
+
+    @staticmethod
+    def prepare_input(job):
+        """Prepare protein and ligand input as file strings.
+
+        :param job: Job object from which input is inferred
+        :type job: PreprocessorJob
+        :return: A new Protein model of the input protein. Optionally associated
+                 with input Ligand model(s).
+        :rtype: Protein
+        """
+        # retrieve protein
+        if job.input_data is not None and job.input_data.input_protein_string:
+            protein_string = job.input_data.input_protein_string
+        elif job.pdb_code:
+            protein_string = PDBResource.fetch(job.pdb_code)
+        else:
+            raise RuntimeError(f'Could not prepare protein for job: {job.id}')
+
+        # add optional ligand
+        ligand_string = None
+        if job.input_data.input_ligand_string:
+            ligand_string = job.input_data.input_ligand_string
+        return protein_string, ligand_string
 
     @staticmethod
     def create_temp_molecule_file(filestring, file_type):
@@ -65,11 +94,9 @@ class PreprocessorWrapper:
         """
         if filestring is None:
             return nullcontext(None)
-
-        tmpfile = NamedTemporaryFile('w+', suffix=f'.{file_type}')  # pylint: disable=consider-using-with
+        tmpfile = tempfile.NamedTemporaryFile('w+', suffix=f'.{file_type}')  # pylint: disable=consider-using-with
         tmpfile.write(filestring)
         tmpfile.seek(0)
-
         return tmpfile
 
     @staticmethod
@@ -101,7 +128,7 @@ class PreprocessorWrapper:
         with pdb_files[0].open() as pdb_file:
             pdb_string = pdb_file.read()
         job.output_protein = Protein(
-            name=job.protein_name,
+            name=job.pdb_code if job.pdb_code is not None else job.uniprot_code,
             pdb_code=job.pdb_code,
             uniprot_code=job.uniprot_code,
             file_type='pdb',

@@ -1,4 +1,7 @@
 """tests for structureprofiler_tasks"""
+from pathlib import Path
+from django.test import override_settings
+
 from proteins_plus.job_handler import Status
 from proteins_plus.test.utils import PPlusTestCase, is_tool_available
 from molecule_handler.test.utils import create_test_protein, create_multiple_test_ligands
@@ -57,6 +60,7 @@ class TaskTests(PPlusTestCase):
         self.assertGreater(len(data['ligands']['1']), 0)
         self.assertGreater(len(data['active_sites']['1']), 0)
 
+    @override_settings(LOCAL_DENSITY_MIRROR_DIR=Path('test_files'))
     def test_structureprofiler_protein_from_pdb(self):
         """Test structureprofiler binary without uploading electron density file"""
         structureprofiler_job = create_test_structureprofiler_job(density_file_path=None)
