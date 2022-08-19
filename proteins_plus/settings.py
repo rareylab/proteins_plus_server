@@ -166,7 +166,7 @@ with open(BINARY_PATHS_CONFIG, encoding='utf8') as binary_paths_file:
 # Important urls
 URLS = {
     'pdb_files': 'https://files.rcsb.org/download/',
-    'density_files': 'https://www.ebi.ac.uk/pdbe/coordinates/files/',
+    'density_files': 'https://www.ebi.ac.uk/pdbe/entry-files/',
 }
 
 # Configuration of logging module
