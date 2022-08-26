@@ -45,7 +45,7 @@ class DoGSiteWrapper:
                 '--proteinFile', protein_file.name,
                 '--outputName', str(dogsite_result_path),
                 '--writeSiteResiduesEDF',
-                '--writeGridAllCCP4',
+                '--writeGridCCP4',
                 '--writeDescToFile'
             ]
 

@@ -25,8 +25,8 @@ class TaskTests(PPlusTestCase):
         self.assertIsNotNone(job.output_densities)
         self.assertIsNotNone(job.dogsite_info)
 
-        self.assertEqual(job.output_pockets.count(), 7)
-        self.assertEqual(job.output_densities.count(), 7)
+        self.assertEqual(job.output_pockets.count(), 4)
+        self.assertEqual(job.output_densities.count(), 4)
 
     def test_dogsite_without_ligand(self):
         """Test DoGSite execution without ligand producing expected results"""
@@ -38,8 +38,8 @@ class TaskTests(PPlusTestCase):
         self.assertIsNotNone(job.output_densities)
         self.assertIsNotNone(job.dogsite_info)
 
-        self.assertEqual(job.output_pockets.count(), 7)
-        self.assertEqual(job.output_densities.count(), 7)
+        self.assertEqual(job.output_pockets.count(), 4)
+        self.assertEqual(job.output_densities.count(), 4)
 
     def test_dogsite_with_ligand_bias_and_ligandfile(self):
         """Test DoGSite execution with ligand bias and ligand file producing expected results"""
@@ -51,8 +51,8 @@ class TaskTests(PPlusTestCase):
         self.assertIsNotNone(job.output_densities)
         self.assertIsNotNone(job.dogsite_info)
 
-        self.assertEqual(job.output_pockets.count(), 7)
-        self.assertEqual(job.output_densities.count(), 7)
+        self.assertEqual(job.output_pockets.count(), 6)
+        self.assertEqual(job.output_densities.count(), 6)
 
     def test_dogsite_with_ligand_bias_and_ligandname(self):
         """Test DoGSite execution with ligand bias and ligand name producing expected results"""
@@ -64,8 +64,8 @@ class TaskTests(PPlusTestCase):
         self.assertIsNotNone(job.output_densities)
         self.assertIsNotNone(job.dogsite_info)
 
-        self.assertEqual(job.output_pockets.count(), 7)
-        self.assertEqual(job.output_densities.count(), 7)
+        self.assertEqual(job.output_pockets.count(), 4)
+        self.assertEqual(job.output_densities.count(), 4)
 
     def test_dogsite_with_ligand_bias_and_without_ligandfile(self):
         """Test DoGSite execution with ligand bias and without ligand file producing expected
@@ -78,8 +78,8 @@ class TaskTests(PPlusTestCase):
         self.assertIsNotNone(job.output_densities)
         self.assertIsNotNone(job.dogsite_info)
 
-        self.assertEqual(job.output_pockets.count(), 7)
-        self.assertEqual(job.output_densities.count(), 7)
+        self.assertEqual(job.output_pockets.count(), 6)
+        self.assertEqual(job.output_densities.count(), 6)
 
     def test_dogsite_with_subpockets(self):
         """Test DoGSite execution with subpockets producing expected results"""
@@ -91,8 +91,8 @@ class TaskTests(PPlusTestCase):
         self.assertIsNotNone(job.output_densities)
         self.assertIsNotNone(job.dogsite_info)
 
-        self.assertEqual(job.output_pockets.count(), 9)
-        self.assertEqual(job.output_densities.count(), 9)
+        self.assertEqual(job.output_pockets.count(), 10)
+        self.assertEqual(job.output_densities.count(), 10)
 
     def test_dogsite_with_chainid(self):
         """Test DoGSite execution with chainid producing expected results"""
@@ -104,5 +104,5 @@ class TaskTests(PPlusTestCase):
         self.assertIsNotNone(job.output_densities)
         self.assertIsNotNone(job.dogsite_info)
 
-        self.assertEqual(job.output_pockets.count(), 3)
-        self.assertEqual(job.output_densities.count(), 3)
+        self.assertEqual(job.output_pockets.count(), 2)
+        self.assertEqual(job.output_densities.count(), 2)
